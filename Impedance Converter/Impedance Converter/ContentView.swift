@@ -353,7 +353,13 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                 displayedValue = "OFL"
             } else {
                 if (abs(engineeringValue) >= 1) {
-                    displayedValue = String(format: "%.4g", engineeringValue)
+                    let candidate = String(format: "%.4g", engineeringValue)
+                    if (abs(Double(candidate)!) >= 1000) {
+                        // Rounded up to next unit, so let's try again
+                        convertToEngineeringNotation(value: Double(candidate)!/1000);
+                    } else {
+                        displayedValue = candidate
+                    }
                 } else {
                     var trimmedValue = String(format: "%.4f", engineeringValue)
                     while trimmedValue.last == "0" {
