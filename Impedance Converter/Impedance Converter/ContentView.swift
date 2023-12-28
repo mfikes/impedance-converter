@@ -962,9 +962,11 @@ struct SmithChartView: View {
         
         if (reflectionCoefficient.magnitude > 1) {
             reflectionCoefficient = Complex.fromPolar(magnitude: 1, angleInRadians: reflectionCoefficient.angleInRadians)
+            viewModel.reflectionCoefficient = reflectionCoefficient
+            viewModel.resistance = 0
+        } else {
+            viewModel.reflectionCoefficient = reflectionCoefficient
         }
-        
-        viewModel.reflectionCoefficient = reflectionCoefficient
     }
 }
 
