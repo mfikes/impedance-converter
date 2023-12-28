@@ -958,7 +958,6 @@ struct SmithChartView: View {
             reflectionCoefficient = Complex.fromPolar(magnitude: 1, angleInRadians: reflectionCoefficient.angleInRadians)
             viewModel.reflectionCoefficient = reflectionCoefficient
             viewModel.resistance = 0
-            print(viewModel.reflectionCoefficient.magnitude)
         } else {
             viewModel.reflectionCoefficient = reflectionCoefficient
         }
