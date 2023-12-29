@@ -16,6 +16,36 @@ extension Color {
     }
 }
 
+func cos(angle: Angle) -> Double {
+    let normalizedAngle = angle.degrees.truncatingRemainder(dividingBy: 360)
+    
+    switch abs(normalizedAngle) {
+    case 90, 270:
+        return 0
+    case 180:
+        return -1
+    case 0, 360:
+        return 1
+    default:
+        return Darwin.cos(angle.radians)
+    }
+}
+
+func sin(angle: Angle) -> Double {
+    let normalizedAngle = angle.degrees.truncatingRemainder(dividingBy: 360)
+    
+    switch normalizedAngle {
+    case -270, 90:
+        return 1
+    case 270, -90:
+        return -1
+    case 0, 180, -180, 360:
+        return 0
+    default:
+        return Darwin.sin(angle.radians)
+    }
+}
+
 struct Complex {
     let real: Double
     let imaginary: Double
@@ -32,16 +62,12 @@ struct Complex {
         return sqrt(real * real + imaginary * imaginary)
     }
     
-    var angleInRadians: Double {
-        return atan2(imaginary, real)
+    var angle: Angle {
+        return Angle.init(radians: atan2(imaginary, real))
     }
     
-    var angleInDegrees: Double {
-        angleInRadians * 180 / Double.pi
-    }
-    
-    static func fromPolar(magnitude: Double, angleInRadians: Double) -> Complex {
-        return Complex(real: magnitude * cos(angleInRadians), imaginary: magnitude * sin(angleInRadians))
+    static func fromPolar(magnitude: Double, angle: Angle) -> Complex {
+        return Complex(real: magnitude * cos(angle: angle), imaginary: magnitude * sin(angle: angle))
     }
     
     var reciprocal: Complex {
@@ -638,7 +664,7 @@ struct PolarParameterView<UnitType>: View where UnitType: RawRepresentable, Unit
                     get: { self.complexValue.magnitude },
                     set: {
                         if $0 != 0 {
-                            self.complexValue = Complex.fromPolar(magnitude: $0, angleInRadians: self.complexValue.angleInRadians)
+                            self.complexValue = Complex.fromPolar(magnitude: $0, angle: self.complexValue.angle)
                         } else {
                             self.complexValue = Complex(real: 0, imaginary: 0)
                         }
@@ -646,9 +672,9 @@ struct PolarParameterView<UnitType>: View where UnitType: RawRepresentable, Unit
                 ), unit: magnitudeUnit, label: magnitudeLabel, description: magnitudeDescription)
                 
                 UnitInputView(value: Binding(
-                    get: { self.complexValue.angleInDegrees },
+                    get: { self.complexValue.angle.degrees },
                     set: {
-                        self.complexValue = Complex.fromPolar(magnitude: self.complexValue.magnitude, angleInRadians: $0 * Double.pi / 180)
+                        self.complexValue = Complex.fromPolar(magnitude: self.complexValue.magnitude, angle:Angle.init(degrees: $0))
                     }
                 ), unit: angleUnit, label: angleLabel, description: angleDescription, showNegationDecorator: true)
             }
@@ -1050,7 +1076,7 @@ struct SmithChartView: View {
         let susceptance = viewModel.susceptance
         
         if (reflectionCoefficient.magnitude > 1) {
-            reflectionCoefficient = Complex.fromPolar(magnitude: 1, angleInRadians: reflectionCoefficient.angleInRadians)
+            reflectionCoefficient = Complex.fromPolar(magnitude: 1, angle: reflectionCoefficient.angle)
             viewModel.reflectionCoefficient = reflectionCoefficient
             viewModel.resistance = 0
         } else {
