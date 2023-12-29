@@ -365,6 +365,9 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                     while trimmedValue.last == "0" {
                         trimmedValue = String(trimmedValue.dropLast())
                     }
+                    if (trimmedValue.last == ".") {
+                        trimmedValue = String(trimmedValue.dropLast())
+                    }
                     displayedValue = trimmedValue
                 }
             }
