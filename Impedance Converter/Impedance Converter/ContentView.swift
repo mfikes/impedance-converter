@@ -343,7 +343,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
         if value.isInfinite {
             displayedValue = value < 0 ? "-∞" : "∞"
         } else if value.isNaN {
-            displayedValue = ""
+            displayedValue = "-.---"
         } else {
             if (engineeringValue == 0) {
                 displayedValue = "0"
