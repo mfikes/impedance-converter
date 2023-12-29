@@ -12,6 +12,15 @@
 		ED24868B2B3727AE008820C5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED24868A2B3727AE008820C5 /* ContentView.swift */; };
 		ED24868D2B3727B0008820C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED24868C2B3727B0008820C5 /* Assets.xcassets */; };
 		ED2486902B3727B0008820C5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED24868F2B3727B0008820C5 /* Preview Assets.xcassets */; };
+		ED737AAA2B3F4B8100926575 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AA92B3F4B8100926575 /* Math.swift */; };
+		ED737AAC2B3F4C6100926575 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AAB2B3F4C6100926575 /* Colors.swift */; };
+		ED737AAE2B3F562A00926575 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AAD2B3F562A00926575 /* ViewModel.swift */; };
+		ED737AB02B3F568200926575 /* SmithChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AAF2B3F568200926575 /* SmithChartView.swift */; };
+		ED737AB22B3F570900926575 /* Units.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB12B3F570900926575 /* Units.swift */; };
+		ED737AB42B3F578400926575 /* UnitInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB32B3F578400926575 /* UnitInputView.swift */; };
+		ED737AB62B3F57F400926575 /* CircuitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB52B3F57F400926575 /* CircuitView.swift */; };
+		ED737AB82B3F589600926575 /* ParametersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB72B3F589600926575 /* ParametersView.swift */; };
+		ED737ABA2B3F593E00926575 /* ImpedanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB92B3F593E00926575 /* ImpedanceView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +31,15 @@
 		ED24868C2B3727B0008820C5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ED24868F2B3727B0008820C5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		ED2486962B39CBD1008820C5 /* Impedance-Converter-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Impedance-Converter-Info.plist"; sourceTree = SOURCE_ROOT; };
+		ED737AA92B3F4B8100926575 /* Math.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Math.swift; sourceTree = "<group>"; };
+		ED737AAB2B3F4C6100926575 /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		ED737AAD2B3F562A00926575 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		ED737AAF2B3F568200926575 /* SmithChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmithChartView.swift; sourceTree = "<group>"; };
+		ED737AB12B3F570900926575 /* Units.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Units.swift; sourceTree = "<group>"; };
+		ED737AB32B3F578400926575 /* UnitInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitInputView.swift; sourceTree = "<group>"; };
+		ED737AB52B3F57F400926575 /* CircuitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircuitView.swift; sourceTree = "<group>"; };
+		ED737AB72B3F589600926575 /* ParametersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametersView.swift; sourceTree = "<group>"; };
+		ED737AB92B3F593E00926575 /* ImpedanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpedanceView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,9 +75,18 @@
 				ED246DDE2B39D48A008ECD6D /* Segment7Standard.otf */,
 				ED2486962B39CBD1008820C5 /* Impedance-Converter-Info.plist */,
 				ED2486882B3727AE008820C5 /* Impedance_ConverterApp.swift */,
+				ED737AAD2B3F562A00926575 /* ViewModel.swift */,
 				ED24868A2B3727AE008820C5 /* ContentView.swift */,
+				ED737AB92B3F593E00926575 /* ImpedanceView.swift */,
+				ED737AB52B3F57F400926575 /* CircuitView.swift */,
+				ED737AB72B3F589600926575 /* ParametersView.swift */,
+				ED737AAF2B3F568200926575 /* SmithChartView.swift */,
+				ED737AAB2B3F4C6100926575 /* Colors.swift */,
+				ED737AA92B3F4B8100926575 /* Math.swift */,
+				ED737AB12B3F570900926575 /* Units.swift */,
 				ED24868C2B3727B0008820C5 /* Assets.xcassets */,
 				ED24868E2B3727B0008820C5 /* Preview Content */,
+				ED737AB32B3F578400926575 /* UnitInputView.swift */,
 			);
 			path = "Impedance Converter";
 			sourceTree = "<group>";
@@ -143,8 +170,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED737AAE2B3F562A00926575 /* ViewModel.swift in Sources */,
+				ED737AB42B3F578400926575 /* UnitInputView.swift in Sources */,
 				ED24868B2B3727AE008820C5 /* ContentView.swift in Sources */,
+				ED737AAC2B3F4C6100926575 /* Colors.swift in Sources */,
+				ED737AB22B3F570900926575 /* Units.swift in Sources */,
+				ED737AB02B3F568200926575 /* SmithChartView.swift in Sources */,
+				ED737AB62B3F57F400926575 /* CircuitView.swift in Sources */,
 				ED2486892B3727AE008820C5 /* Impedance_ConverterApp.swift in Sources */,
+				ED737AB82B3F589600926575 /* ParametersView.swift in Sources */,
+				ED737ABA2B3F593E00926575 /* ImpedanceView.swift in Sources */,
+				ED737AAA2B3F4B8100926575 /* Math.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
