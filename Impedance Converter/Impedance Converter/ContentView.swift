@@ -1115,6 +1115,7 @@ struct ContentView: View {
                 }
             }
             .padding(.top, 1)
+            .dynamicTypeSize(.medium)
         }
     }
 }
