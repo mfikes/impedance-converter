@@ -818,20 +818,20 @@ struct CircuitView: View {
     }
 }
 
-enum SnapToKind {
+enum ConstraintKind {
     case unset, resistance, reactance, conductance, susceptance, none
 }
 
 struct SmithChartView: View {
     @ObservedObject var viewModel: ViewModel
     
-    @State var snapToKind: SnapToKind = .unset
-    @State var snapToValue: Double = 0
+    @State var constraintKind: ConstraintKind = .unset
+    @State var constraintValue: Double = 0
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                let dotRadius:CGFloat = snapToKind == .unset ? 10 : 40
+                let dotRadius:CGFloat = constraintKind == .unset ? 10 : 40
                 Canvas { context, size in
                     
                     let center = CGPoint(x: size.width / 2, y: size.height / 2)
@@ -852,15 +852,13 @@ struct SmithChartView: View {
                     }
                     context.stroke(outerCircle, with: .color(.white), lineWidth: 1)
                     
-                    let gridColor: Color = snapToKind == .unset || snapToKind == .none ? .gray : Color(hex:"#FFFFFF", brightness: 0.4)
+                    let gridColor: Color = constraintKind == .unset || constraintKind == .none ? .gray : Color(hex:"#FFFFFF", brightness: 0.4)
                     
                     // Draw circles of constant resistance
                     let resistances: [Double] = [0.2, 0.5, 1, 2, 5]
                     for R in resistances {
                         drawResistanceCircle(context: context, center: center, radius: radius, R: R, color: gridColor, style: dashedLineStyle)
                     }
-                    
-                    
                     
                     context.clip(to: outerCircle)
                     
@@ -888,12 +886,12 @@ struct SmithChartView: View {
                     context.stroke(centerPointPath, with: .color(gridColor))
                     context.fill(centerPointPath, with: .color(gridColor))
                     
-                    if (snapToKind == .resistance || snapToKind == .conductance) {
-                        drawResistanceCircle(context: context, center: center, radius: radius, R: snapToKind == .resistance ? snapToValue / viewModel.referenceImpedance.real : snapToValue * viewModel.referenceImpedance.real, color: Color(hex:"#EF8046", brightness: 1), style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                    if (constraintKind == .resistance || constraintKind == .conductance) {
+                        drawResistanceCircle(context: context, center: center, radius: radius, R: constraintKind == .resistance ? constraintValue / viewModel.referenceImpedance.real : constraintValue * viewModel.referenceImpedance.real, color: Color(hex:"#EF8046", brightness: 1), style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
                     }
                     
-                    if (snapToKind == .reactance || snapToKind == .susceptance) {
-                        drawReactanceArc(context: context, center: center, radius: radius, X: snapToKind == .reactance ? viewModel.referenceImpedance.real / snapToValue : -1 / (snapToValue * viewModel.referenceImpedance.real), color: Color(hex:"#EF8046", brightness: 1), style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                    if (constraintKind == .reactance || constraintKind == .susceptance) {
+                        drawReactanceArc(context: context, center: center, radius: radius, X: constraintKind == .reactance ? viewModel.referenceImpedance.real / constraintValue : -1 / (constraintValue * viewModel.referenceImpedance.real), color: Color(hex:"#EF8046", brightness: 1), style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
                     }
                 }
                 .scaleEffect(x: viewModel.smithChartDisplayMode == .admittance ? -1 : 1, y: 1, anchor: .center)
@@ -1001,50 +999,50 @@ struct SmithChartView: View {
             viewModel.reflectionCoefficient = reflectionCoefficient
         }
         
-        switch snapToKind {
+        switch constraintKind {
         case .unset:
             if (viewModel.smithChartDisplayMode == .admittance) {
                 if abs((viewModel.conductance - conductance)/conductance) < 0.2 {
-                    snapToKind = .conductance
-                    snapToValue = conductance
+                    constraintKind = .conductance
+                    constraintValue = conductance
                     viewModel.conductance = conductance
                 } else if abs((viewModel.susceptance - susceptance)/susceptance) < 0.2 ||
                             abs(susceptance) < 0.001 && abs(viewModel.susceptance) < 0.001 {
-                    snapToKind = .susceptance
-                    snapToValue = susceptance
+                    constraintKind = .susceptance
+                    constraintValue = susceptance
                     viewModel.susceptance = susceptance
                 } else {
-                    snapToKind = .none
+                    constraintKind = .none
                 }
             } else {
                 if abs((viewModel.resistance - resistance)/resistance) < 0.2 {
-                    snapToKind = .resistance
-                    snapToValue = resistance
+                    constraintKind = .resistance
+                    constraintValue = resistance
                     viewModel.resistance = resistance
                 } else if abs((viewModel.reactance - reactance)/reactance) < 0.2 ||
                             abs(reactance) < 4 && abs(viewModel.reactance) < 4 {
-                    snapToKind = .reactance
-                    snapToValue = reactance
+                    constraintKind = .reactance
+                    constraintValue = reactance
                     viewModel.reactance = reactance
                 } else {
-                    snapToKind = .none
+                    constraintKind = .none
                 }
             }
         case .resistance:
-            viewModel.resistance = snapToValue
+            viewModel.resistance = constraintValue
         case .reactance:
-            viewModel.reactance = snapToValue
+            viewModel.reactance = constraintValue
         case .conductance:
-            viewModel.conductance = snapToValue
+            viewModel.conductance = constraintValue
         case .susceptance:
-            viewModel.susceptance = snapToValue
+            viewModel.susceptance = constraintValue
         case .none:
             break
         }
     }
     
     private func handleDragEnd() {
-        snapToKind = .unset
+        constraintKind = .unset
     }
 }
 
