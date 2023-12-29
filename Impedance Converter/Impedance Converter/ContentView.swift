@@ -309,7 +309,17 @@ class ViewModel: ObservableObject {
     }
 }
 
+enum SpecialRepresentation: String, CaseIterable {
+    case overflow = "OFL"
+    case underflow = "UFL"
+    case infinity = "∞"
+    case negativeInfinity = "-∞"
+    case notANumber = "-.---"
 
+    static func isSpecialRepresentation(_ value: String) -> Bool {
+        return SpecialRepresentation.allCases.contains { $0.rawValue == value }
+    }
+}
 
 struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable & CaseIterable, UnitType.RawValue == String, UnitType: UnitWithPowerOfTen {
     @Binding var value: Double
@@ -325,13 +335,11 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
     }
     
     private func convertFromEngineeringNotation() -> Double {
-        if (displayedValue == "-∞") {
-            return -Double.infinity
-        } else if (displayedValue == "∞") {
-            return Double.infinity
-        } else {
-            return (Double(displayedValue) ?? 0) * pow(10, Double(unit.powerOfTen))
-        }
+        return (Double(displayedValue) ?? 0) * pow(10, Double(unit.powerOfTen))
+    }
+    
+    private func displaySpecialRepresentation(_ representation: SpecialRepresentation) {
+        displayedValue = representation.rawValue
     }
     
     private func convertToEngineeringNotation(value: Double) {
@@ -341,16 +349,20 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
         unit = targetUnit
         
         if value.isInfinite {
-            displayedValue = value < 0 ? "-∞" : "∞"
+            if (value < 0) {
+                displaySpecialRepresentation(.negativeInfinity)
+            } else {
+                displaySpecialRepresentation(.infinity)
+            }
         } else if value.isNaN {
-            displayedValue = "-.---"
+            displaySpecialRepresentation(.notANumber)
         } else {
             if (engineeringValue == 0) {
                 displayedValue = "0"
             } else if (abs(engineeringValue) < 0.001) {
-                displayedValue = "UFL"
+                displaySpecialRepresentation(.underflow)
             } else if (abs(engineeringValue) > 9999) {
-                displayedValue = "OFL"
+                displaySpecialRepresentation(.overflow)
             } else {
                 if (abs(engineeringValue) >= 1) {
                     let candidate = String(format: "%.4g", engineeringValue)
@@ -439,6 +451,11 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                         .kerning(3)
                                         .foregroundColor(Color(hex:"#EF8046", brightness: 1.5))
                                         .tint(Color(hex:"#EF8046", brightness: 1.5))
+                                        .onTapGesture {
+                                            if SpecialRepresentation.isSpecialRepresentation(displayedValue) {
+                                                displayedValue = ""
+                                            }
+                                        }
                                 }
                             )
                             .keyboardType(.decimalPad)
