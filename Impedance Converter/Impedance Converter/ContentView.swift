@@ -639,6 +639,8 @@ struct PolarParameterView<UnitType>: View where UnitType: RawRepresentable, Unit
                     set: {
                         if $0 != 0 {
                             self.complexValue = Complex.fromPolar(magnitude: $0, angleInRadians: self.complexValue.angleInRadians)
+                        } else {
+                            self.complexValue = Complex(real: 0, imaginary: 0)
                         }
                     }
                 ), unit: magnitudeUnit, label: magnitudeLabel, description: magnitudeDescription)
