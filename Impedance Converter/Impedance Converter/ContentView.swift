@@ -165,7 +165,15 @@ enum AngleUnit: String, UnitWithPowerOfTen {
 }
 
 class ViewModel: ObservableObject {
-    @Published var impedance: Complex = Complex(real: 50, imaginary: 0)
+    
+    @Published var impedance: Complex = Complex(real: 50, imaginary: 0) {
+        didSet {
+            if impedance.real < 0 {
+                impedance = Complex(real: max(0, impedance.real), imaginary: impedance.imaginary)
+            }
+        }
+    }
+
     @Published var referenceImpedance: Complex = Complex(real: 50, imaginary: 0)
     
     @Published var complexDisplayMode: DisplayMode = .impedance {
@@ -178,7 +186,13 @@ class ViewModel: ObservableObject {
     
     @Published var smithChartDisplayMode: DisplayMode = .impedance
     
-    @Published var frequency: Double = 100000
+    @Published var frequency: Double = 100000 {
+        didSet {
+            if frequency <= 0 {
+                frequency = 0.001
+            }
+        }
+    }
     
     @Published var circuitMode: CircuitMode = .series
     
