@@ -1110,10 +1110,10 @@ struct ContentView: View {
                         ParametersView(viewModel: viewModel)
                         CircuitView(viewModel: viewModel)
                     }
-                    .frame(maxWidth: 600)
                     SmithChartView(viewModel: viewModel)
                 }
             }
+            .frame(maxWidth: 500)
             .padding(.top, 1)
             .dynamicTypeSize(.medium)
         }
