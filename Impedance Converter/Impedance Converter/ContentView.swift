@@ -461,6 +461,8 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                             .multilineTextAlignment(.trailing)
                             .font(.custom("Segment7Standard", size: 30))
                             .kerning(3)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
                             .foregroundColor(Color(hex:"#EF8046", brightness: 1.6))
                             .blur(radius: 4)
                             .overlay(
@@ -469,6 +471,8 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                         .multilineTextAlignment(.trailing)
                                         .font(.custom("Segment7Standard", size: 30))
                                         .kerning(3)
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.5)
                                         .foregroundColor(Color(hex:"#EF8046", brightness: 1.5))
                                         .tint(Color(hex:"#EF8046", brightness: 1.5))
                                         .onTapGesture {
