@@ -169,12 +169,18 @@ class ViewModel: ObservableObject {
     @Published var impedance: Complex = Complex(real: 50, imaginary: 0) {
         didSet {
             if impedance.real < 0 {
-                impedance = Complex(real: max(0, impedance.real), imaginary: impedance.imaginary)
+                impedance = Complex(real: 0, imaginary: impedance.imaginary)
             }
         }
     }
 
-    @Published var referenceImpedance: Complex = Complex(real: 50, imaginary: 0)
+    @Published var referenceImpedance: Complex = Complex(real: 50, imaginary: 0) {
+        didSet {
+            if referenceImpedance.real <= 0 {
+                referenceImpedance = Complex(real: 0.001, imaginary: impedance.imaginary)
+            }
+        }
+    }
     
     @Published var complexDisplayMode: DisplayMode = .impedance {
         didSet {
