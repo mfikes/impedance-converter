@@ -1096,6 +1096,10 @@ struct ContentView: View {
     
     @StateObject var viewModel = ViewModel()
     
+    init() {
+        UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(Color(hex:"#D9CDAD", brightness: 1.2))
+    }
+    
     var body: some View {
         ZStack {
             Color(hex:"#A1BB9B").edgesIgnoringSafeArea(.all)
