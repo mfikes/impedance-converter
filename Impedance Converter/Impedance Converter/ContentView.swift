@@ -171,6 +171,12 @@ class ViewModel: ObservableObject {
             if impedance.real < 0 {
                 impedance = Complex(real: 0, imaginary: impedance.imaginary)
             }
+            if (impedance.real.isNaN) {
+                impedance = Complex(real: 0, imaginary: impedance.imaginary)
+            }
+            if (impedance.imaginary.isNaN) {
+                impedance = Complex(real: impedance.real, imaginary: 0)
+            }
         }
     }
 
