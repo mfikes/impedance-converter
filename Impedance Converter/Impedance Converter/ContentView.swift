@@ -178,7 +178,7 @@ class ViewModel: ObservableObject {
     
     @Published var smithChartDisplayMode: DisplayMode = .impedance
     
-    @Published var frequency: Double = 1000
+    @Published var frequency: Double = 100000
     
     @Published var circuitMode: CircuitMode = .series
     
