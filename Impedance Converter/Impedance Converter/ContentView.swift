@@ -457,13 +457,18 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                         if showNegationDecorator {
                                             Spacer()
                                             Button(action: toggleNegation) {
-                                                Image(systemName: "minus.circle")
+                                                Text("-")
+                                                    .font(.custom("Segment7Standard", size: 30))
+                                                    .foregroundColor(.black)
                                             }
                                         }
                                         Spacer()
                                         ForEach(unitCases, id: \.self) { unitCase in
-                                            Button(unitCase.shouldRender ? unitCase.rawValue : "_") {
+                                            Button(action: {
                                                 selectUnit(unitCase)
+                                            }) {
+                                                Text(unitCase.shouldRender ? unitCase.rawValue : "_")
+                                                    .foregroundColor(Color(hex: "#D33533", brightness: 1.5))
                                             }
                                             Spacer()
                                         }
