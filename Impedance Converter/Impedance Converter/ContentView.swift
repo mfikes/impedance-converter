@@ -19,10 +19,10 @@ extension Color {
 func cos(angle: Angle) -> Double {
     let normalizedAngle = angle.degrees.truncatingRemainder(dividingBy: 360)
     
-    switch normalizedAngle {
+    switch abs(normalizedAngle) {
     case 90, 270:
         return 0
-    case 180, -180:
+    case 180:
         return -1
     case 0, 360:
         return 1
@@ -35,7 +35,7 @@ func sin(angle: Angle) -> Double {
     let normalizedAngle = angle.degrees.truncatingRemainder(dividingBy: 360)
     
     switch normalizedAngle {
-    case 90:
+    case -270, 90:
         return 1
     case 270, -90:
         return -1
