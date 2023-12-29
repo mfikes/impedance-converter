@@ -547,6 +547,7 @@ struct DisplayView<Content: View>: View {
     var body: some View {
         content
             .padding(.bottom, 12)
+            .padding(.horizontal, 5)
             .background(backgroundColor)
             .edgesIgnoringSafeArea(.bottom)
     }
