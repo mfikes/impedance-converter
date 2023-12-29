@@ -978,18 +978,17 @@ struct ContentView: View {
         ZStack {
             Color(hex:"#A1BB9B").edgesIgnoringSafeArea(.all)
             ScrollView {
-                ZStack {
+                VStack {
                     VStack {
-                        VStack {
-                            ComplexView(viewModel: viewModel)
-                            ParametersView(viewModel: viewModel)
-                            CircuitView(viewModel: viewModel)
-                        }
-                        .frame(maxWidth: 600)
-                        SmithChartView(viewModel: viewModel)
+                        ComplexView(viewModel: viewModel)
+                        ParametersView(viewModel: viewModel)
+                        CircuitView(viewModel: viewModel)
                     }
+                    .frame(maxWidth: 600)
+                    SmithChartView(viewModel: viewModel)
                 }
             }
+            .padding(.top, 1)
         }
     }
 }
