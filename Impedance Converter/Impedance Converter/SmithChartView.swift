@@ -76,7 +76,7 @@ struct SmithChartView: View {
                         drawReactanceArc(context: context, center: center, radius: radius, X: constraintKind == .reactance ? viewModel.referenceImpedance.real / constraintValue : -1 / (constraintValue * viewModel.referenceImpedance.real), color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
                     }
                 }
-                .scaleEffect(x: viewModel.smithChartDisplayMode == .admittance ? -1 : 1, y: 1, anchor: .center)
+                .scaleEffect(x: viewModel.displayMode == .admittance ? -1 : 1, y: 1, anchor: .center)
                 
                 Canvas { context, size in
                     
@@ -183,7 +183,7 @@ struct SmithChartView: View {
         
         switch constraintKind {
         case .unset:
-            if (viewModel.smithChartDisplayMode == .admittance) {
+            if (viewModel.displayMode == .admittance) {
                 if abs((viewModel.conductance - conductance)/conductance) < 0.2 {
                     constraintKind = .conductance
                     constraintValue = conductance
