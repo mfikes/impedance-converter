@@ -18,7 +18,7 @@ struct ReferenceImpedanceView: View {
         UnitInputView(value: Binding(
             get: { viewModel.referenceImpedance.real },
             set: { viewModel.referenceImpedance = Complex(real: $0, imaginary: 0)}
-        ), unit: ResistanceUnit.Ω, label: "Z0", description: "ref. impedance")
+        ), unit: ResistanceUnit.Ω, label: "Z₀", description: "ref. impedance")
     }
 }
 
