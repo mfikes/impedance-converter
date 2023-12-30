@@ -13,21 +13,7 @@ enum ActiveRepresentation {
 }
 
 class ViewModel: ObservableObject {
-    
-    @Published var referenceImpedance: Complex = Complex(real: 50, imaginary: 0) {
-        didSet {
-            if referenceImpedance.real <= 0 {
-                referenceImpedance = Complex(real: 0.001, imaginary: impedance.imaginary)
-            }
-        }
-    }
-    
-    var referenceAdmittance: Complex {
-        get {
-            return referenceImpedance.reciprocal
-        }
-    }
-    
+        
     @Published var frequency: Double = 100000 {
         didSet {
             if frequency <= 0 {
@@ -42,9 +28,43 @@ class ViewModel: ObservableObject {
         }
     }
     
-    @Published var activeRep: ActiveRepresentation = .impedance
+    @Published var activeRefRep: ActiveRepresentation = .impedance
+    
+    @Published var refRep: Complex = Complex(real: 50, imaginary: 0)
     
     @Published var rep: Complex = Complex(real: 50, imaginary: 0)
+    
+    @Published var activeRep: ActiveRepresentation = .impedance
+    
+    var referenceImpedance: Complex {
+        get {
+            switch (activeRefRep) {
+            case .impedance:
+                return refRep
+            case .admittance:
+                return refRep.reciprocal;
+            }
+        }
+        set {
+            refRep = newValue
+            activeRefRep = .impedance
+        }
+    }
+    
+    var referenceAdmittance: Complex {
+        get {
+            switch (activeRefRep) {
+            case .impedance:
+                return refRep.reciprocal
+            case .admittance:
+                return refRep;
+            }
+        }
+        set {
+            refRep = newValue
+            activeRefRep = .admittance
+        }
+    }
     
     var impedance: Complex {
         get {
@@ -200,12 +220,12 @@ class ViewModel: ObservableObject {
     @Published var complexDisplayMode: DisplayMode = .impedance {
         didSet {
             if complexDisplayMode != .reflectionCoefficient {
-                smithChartDisplayMode = complexDisplayMode
+                displayMode = complexDisplayMode
             }
         }
     }
     
     @Published var circuitMode: CircuitMode = .series
     
-    @Published var smithChartDisplayMode: DisplayMode = .impedance
+    @Published var displayMode: DisplayMode = .impedance
 }
