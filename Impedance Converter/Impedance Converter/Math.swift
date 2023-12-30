@@ -94,13 +94,4 @@ struct Complex {
             }
         }
     }
-    
-    /*
-    
-    static func / (left: Complex, right: Complex) -> Complex {
-        let denominator = right.real * right.real + right.imaginary * right.imaginary
-        return Complex(real: (left.real * right.real + left.imaginary * right.imaginary) / denominator,
-                       imaginary: (left.imaginary * right.real - left.real * right.imaginary) / denominator)
-    }
-     */
 }
