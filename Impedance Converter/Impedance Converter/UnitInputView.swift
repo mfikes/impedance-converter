@@ -26,7 +26,18 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
     }
     
     private func convertFromEngineeringNotation() -> Double {
-        return (Double(displayedValue) ?? 0) * pow(10, Double(unit.powerOfTen))
+        var d = Decimal(string: displayedValue) ?? Decimal(0)
+        var x = unit.powerOfTen
+        while (x != 0) {
+            if (x > 0) {
+                d *= 10;
+                x -= 1
+            } else {
+                d /= 10
+                x += 1
+            }
+        }
+        return NSDecimalNumber(decimal: d).doubleValue
     }
     
     private func displaySpecialRepresentation(_ representation: SpecialRepresentation) {
@@ -59,7 +70,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                     let candidate = String(format: "%.4g", engineeringValue)
                     if (abs(Double(candidate)!) >= 1000) {
                         // Rounded up to next unit, so let's try again
-                        convertToEngineeringNotation(value: Double(candidate)!/1000);
+                        convertToEngineeringNotation(value: Double(candidate)!*pow(10, Double(targetUnit.powerOfTen)))
                     } else {
                         displayedValue = candidate
                     }
