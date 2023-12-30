@@ -228,8 +228,6 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
     
     private func selectUnit(_ unitCase: UnitType) {
         unit = unitCase
-        value = convertFromEngineeringNotation()
-        convertToEngineeringNotation(value:value)
         dismissKeyboard()
     }
     
