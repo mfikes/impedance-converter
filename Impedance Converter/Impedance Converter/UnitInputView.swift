@@ -5,7 +5,7 @@ enum SpecialRepresentation: String, CaseIterable {
     case underflow = "UFL"
     case infinity = "∞"
     case negativeInfinity = "-∞"
-    case notANumber = "-.---"
+    case notANumber = "--"
 
     static func isSpecialRepresentation(_ value: String) -> Bool {
         return SpecialRepresentation.allCases.contains { $0.rawValue == value }
