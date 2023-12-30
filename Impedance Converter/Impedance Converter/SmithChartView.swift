@@ -190,7 +190,8 @@ struct SmithChartView: View {
                     constraintValue = conductance
                     viewModel.conductance = conductance
                 } else if abs((viewModel.susceptance - susceptance)/susceptance) < 0.2 ||
-                            abs(susceptance) < 0.001 && abs(viewModel.susceptance) < 0.001 {
+                            abs(susceptance) < 0.1 * viewModel.referenceAdmittance.real &&
+                            abs(viewModel.susceptance) < 0.1 * viewModel.referenceAdmittance.real {
                     constraintKind = .susceptance
                     constraintValue = susceptance
                     viewModel.susceptance = susceptance
@@ -203,7 +204,8 @@ struct SmithChartView: View {
                     constraintValue = resistance
                     viewModel.resistance = resistance
                 } else if abs((viewModel.reactance - reactance)/reactance) < 0.2 ||
-                            abs(reactance) < 4 && abs(viewModel.reactance) < 4 {
+                            abs(reactance) < 0.1 * viewModel.referenceImpedance.real &&
+                            abs(viewModel.reactance) < 0.1 * viewModel.referenceImpedance.real {
                     constraintKind = .reactance
                     constraintValue = reactance
                     viewModel.reactance = reactance
