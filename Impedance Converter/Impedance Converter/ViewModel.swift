@@ -8,22 +8,12 @@ enum CircuitMode {
     case series, parallel
 }
 
+enum ActiveRepresentation {
+    case impedance, admittance
+}
+
 class ViewModel: ObservableObject {
     
-    @Published var impedance: Complex = Complex(real: 50, imaginary: 0) {
-        didSet {
-            if impedance.real < 0 {
-                impedance = Complex(real: 0, imaginary: impedance.imaginary)
-            }
-            if (impedance.real.isNaN) {
-                impedance = Complex(real: 0, imaginary: impedance.imaginary)
-            }
-            if (impedance.imaginary.isNaN) {
-                impedance = Complex(real: impedance.real, imaginary: 0)
-            }
-        }
-    }
-
     @Published var referenceImpedance: Complex = Complex(real: 50, imaginary: 0) {
         didSet {
             if referenceImpedance.real <= 0 {
@@ -32,15 +22,11 @@ class ViewModel: ObservableObject {
         }
     }
     
-    @Published var complexDisplayMode: DisplayMode = .impedance {
-        didSet {
-            if complexDisplayMode != .reflectionCoefficient {
-                smithChartDisplayMode = complexDisplayMode
-            }
+    var referenceAdmittance: Complex {
+        get {
+            return referenceImpedance.reciprocal
         }
     }
-    
-    @Published var smithChartDisplayMode: DisplayMode = .impedance
     
     @Published var frequency: Double = 100000 {
         didSet {
@@ -50,20 +36,43 @@ class ViewModel: ObservableObject {
         }
     }
     
-    @Published var circuitMode: CircuitMode = .series
-    
     var omega: Double {
         get {
             return 2 * Double.pi * frequency
         }
     }
     
-    var admittance: Complex {
+    @Published var activeRep: ActiveRepresentation = .impedance
+    
+    @Published var rep: Complex = Complex(real: 50, imaginary: 0)
+    
+    var impedance: Complex {
         get {
-            return impedance.reciprocal
+            switch (activeRep) {
+            case .impedance:
+                return rep
+            case .admittance:
+                return rep.reciprocal;
+            }
         }
         set {
-            impedance = newValue.reciprocal
+            rep = newValue
+            activeRep = .impedance
+        }
+    }
+    
+    var admittance: Complex {
+        get {
+            switch (activeRep) {
+            case .impedance:
+                return rep.reciprocal
+            case .admittance:
+                return rep;
+            }
+        }
+        set {
+            rep = newValue
+            activeRep = .admittance
         }
     }
     
@@ -143,18 +152,18 @@ class ViewModel: ObservableObject {
     
     var dissipationFactor: Double {
         get {
-            switch circuitMode {
-            case .series:
+            switch activeRep {
+            case .impedance:
                 return resistance / abs(reactance)
-            case .parallel:
+            case .admittance:
                 return conductance / abs(susceptance)
             }
         }
         set {
-            switch circuitMode {
-            case .series:
+            switch activeRep {
+            case .impedance:
                 resistance =  newValue * abs(reactance)
-            case .parallel:
+            case .admittance:
                 conductance = newValue * abs(susceptance)
             }
         }
@@ -171,10 +180,32 @@ class ViewModel: ObservableObject {
     
     var reflectionCoefficient: Complex {
         get {
-            return (impedance - referenceImpedance) / (impedance + referenceImpedance)
+            switch (activeRep) {
+            case .impedance:
+                return (impedance - referenceImpedance) / (impedance + referenceImpedance)
+            case .admittance:
+                return (referenceAdmittance - admittance) / (referenceAdmittance + admittance)
+            }
         }
         set {
-            impedance = (Complex.one + newValue) / (Complex.one - newValue) * referenceImpedance
+            switch (activeRep) {
+            case .impedance:
+                impedance = referenceImpedance * (Complex.one + newValue) / (Complex.one - newValue)
+            case .admittance:
+                admittance = referenceAdmittance * (Complex.one - newValue) / (Complex.one + newValue)
+            }
         }
     }
+    
+    @Published var complexDisplayMode: DisplayMode = .impedance {
+        didSet {
+            if complexDisplayMode != .reflectionCoefficient {
+                smithChartDisplayMode = complexDisplayMode
+            }
+        }
+    }
+    
+    @Published var circuitMode: CircuitMode = .series
+    
+    @Published var smithChartDisplayMode: DisplayMode = .impedance
 }
