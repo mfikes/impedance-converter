@@ -3,6 +3,8 @@ import SwiftUI
 enum SpecialRepresentation: String, CaseIterable {
     case overflow = "OFL"
     case underflow = "UFL"
+    case negativeOverflow = "-OFL"
+    case negativeUnderflow = "-UFL"
     case infinity = "∞"
     case negativeInfinity = "-∞"
     case notANumber = "--"
@@ -62,9 +64,9 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
             if (engineeringValue == 0) {
                 displayedValue = "0"
             } else if (abs(engineeringValue) < 0.001) {
-                displaySpecialRepresentation(.underflow)
+                displaySpecialRepresentation(engineeringValue < 0 ? .negativeUnderflow : .underflow)
             } else if (abs(engineeringValue) > 9999) {
-                displaySpecialRepresentation(.overflow)
+                displaySpecialRepresentation(engineeringValue < 0 ? .negativeOverflow : .overflow)
             } else {
                 if (abs(engineeringValue) >= 1) {
                     let candidate = String(format: "%.4g", engineeringValue)
