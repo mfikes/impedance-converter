@@ -135,7 +135,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
             }
             .zIndex(1)
             ZStack {
-                Color(hex:"#400705").edgesIgnoringSafeArea(.all)
+                Color(hex:"#400705").adjusted(brightness: 0.9).edgesIgnoringSafeArea(.all)
                 HStack {
                     VStack {
                         Spacer(minLength: 12)
