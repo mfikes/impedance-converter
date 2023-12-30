@@ -164,6 +164,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                             .onChange(of: isFocused) { focused in
                                 if !focused {
                                     value = convertFromEngineeringNotation()
+                                    convertToEngineeringNotation(value:value)
                                 }
                             }
                             .toolbar {
