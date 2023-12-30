@@ -51,12 +51,7 @@ struct SmithChartView: View {
                         drawReactanceArc(context: context, center: center, radius: radius, X: -X, color: gridColor, style: dashedLineStyle)
                     }
                     
-                    // Draw horizontal line
-                    let horizontalLine = Path { path in
-                        path.move(to: CGPoint(x: center.x - radius, y: center.y))
-                        path.addLine(to: CGPoint(x: center.x + radius, y: center.y))
-                    }
-                    context.stroke(horizontalLine, with: .color(gridColor), style: dashedLineStyle)
+                    drawReactanceArc(context: context, center: center, radius: radius, X: 0, color: gridColor, style: dashedLineStyle)
                     
                     // Plotting the center point
                     let centerPoint = CGPoint(
@@ -73,7 +68,7 @@ struct SmithChartView: View {
                     }
                     
                     if (constraintKind == .reactance || constraintKind == .susceptance) {
-                        drawReactanceArc(context: context, center: center, radius: radius, X: constraintKind == .reactance ? viewModel.referenceImpedance.real / constraintValue : -1 / (constraintValue * viewModel.referenceImpedance.real), color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                        drawReactanceArc(context: context, center: center, radius: radius, X: constraintKind == .reactance ? constraintValue / viewModel.referenceImpedance.real : -constraintValue * viewModel.referenceImpedance.real, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
                     }
                 }
                 .scaleEffect(x: viewModel.displayMode == .admittance ? -1 : 1, y: 1, anchor: .center)
@@ -140,12 +135,20 @@ struct SmithChartView: View {
     }
     
     private func drawReactanceArc(context: GraphicsContext, center: CGPoint, radius: CGFloat, X: Double, color: Color, style: StrokeStyle) {
-        let arcRadius = radius * X
-        let arcCenter = CGPoint(x: center.x + radius, y: center.y - arcRadius)
-        let reactanceArc = Path { path in
-            path.addEllipse(in: CGRect(x: arcCenter.x - arcRadius, y: arcCenter.y - arcRadius, width: 2 * arcRadius, height: 2 * arcRadius))
+        if (X == 0) {
+            let horizontalLine = Path { path in
+                path.move(to: CGPoint(x: center.x - radius, y: center.y))
+                path.addLine(to: CGPoint(x: center.x + radius, y: center.y))
+            }
+            context.stroke(horizontalLine, with: .color(color), style: style)
+        } else {
+            let arcRadius = radius / X
+            let arcCenter = CGPoint(x: center.x + radius, y: center.y - arcRadius)
+            let reactanceArc = Path { path in
+                path.addEllipse(in: CGRect(x: arcCenter.x - arcRadius, y: arcCenter.y - arcRadius, width: 2 * arcRadius, height: 2 * arcRadius))
+            }
+            context.stroke(reactanceArc, with: .color(color), style: style)
         }
-        context.stroke(reactanceArc, with: .color(color), style: style)
     }
     
     private func transform(reflectionCoefficient: Complex, size: CGSize) -> CGPoint {
