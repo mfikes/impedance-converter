@@ -112,7 +112,7 @@ struct SmithChartView: View {
                 }
                 
             }
-            .background(.black)
+            .background(Color(hex: "#3A0C08").adjusted(brightness: 0.6))
             .cornerRadius(8)
             .gesture(
                 DragGesture(minimumDistance: 0)
