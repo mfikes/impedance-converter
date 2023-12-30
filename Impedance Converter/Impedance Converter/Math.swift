@@ -48,7 +48,11 @@ struct Complex {
     }
     
     var magnitude: Double {
-        return sqrt(real * real + imaginary * imaginary)
+        if (real.isInfinite || imaginary.isInfinite) {
+            return Double.infinity
+        } else {
+            return sqrt(real * real + imaginary * imaginary)
+        }
     }
     
     var angle: Angle {
@@ -60,15 +64,7 @@ struct Complex {
     }
     
     var reciprocal: Complex {
-        let denominator = real * real + imaginary * imaginary
-        if (denominator == 0) {
-            return Complex(real: Double.infinity, imaginary: -Double.infinity)
-        }
-        if (imaginary == 0) {
-            return Complex(real: real / denominator, imaginary: imaginary / denominator)
-        } else {
-            return Complex(real: real / denominator, imaginary: -imaginary / denominator)
-        }
+        return Complex.one / self
     }
     
     static func + (left: Complex, right: Complex) -> Complex {
@@ -85,8 +81,17 @@ struct Complex {
     }
     
     static func / (left: Complex, right: Complex) -> Complex {
-        let denominator = right.real * right.real + right.imaginary * right.imaginary
-        return Complex(real: (left.real * right.real + left.imaginary * right.imaginary) / denominator,
-                       imaginary: (left.imaginary * right.real - left.real * right.imaginary) / denominator)
+        if (right.real.isInfinite && !left.real.isInfinite) {
+            return zero
+        } else {
+            let denominator = right.real * right.real + right.imaginary * right.imaginary
+            if (denominator == 0) {
+                return Complex(real: left.real / denominator,
+                               imaginary: Double.nan)
+            } else {
+                return Complex(real: (left.real * right.real + left.imaginary * right.imaginary) / denominator,
+                               imaginary: (left.imaginary * right.real - left.real * right.imaginary) / denominator)
+            }
+        }
     }
 }
