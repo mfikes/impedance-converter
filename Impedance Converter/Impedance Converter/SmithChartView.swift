@@ -113,6 +113,7 @@ struct SmithChartView: View {
                 
             }
             .background(.black)
+            .cornerRadius(8)
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
