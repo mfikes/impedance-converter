@@ -164,6 +164,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                             .onChange(of: isFocused) { focused in
                                 if !focused {
                                     value = convertFromEngineeringNotation()
+                                    convertToEngineeringNotation(value:value)
                                 }
                             }
                             .toolbar {
@@ -228,8 +229,6 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
     
     private func selectUnit(_ unitCase: UnitType) {
         unit = unitCase
-        value = convertFromEngineeringNotation()
-        convertToEngineeringNotation(value:value)
         dismissKeyboard()
     }
     
