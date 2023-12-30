@@ -77,6 +77,7 @@
 				ED2486882B3727AE008820C5 /* Impedance_ConverterApp.swift */,
 				ED737AAD2B3F562A00926575 /* ViewModel.swift */,
 				ED24868A2B3727AE008820C5 /* ContentView.swift */,
+				ED737AB32B3F578400926575 /* UnitInputView.swift */,
 				ED737AB92B3F593E00926575 /* ImpedanceView.swift */,
 				ED737AB52B3F57F400926575 /* CircuitView.swift */,
 				ED737AB72B3F589600926575 /* ParametersView.swift */,
@@ -86,7 +87,6 @@
 				ED737AB12B3F570900926575 /* Units.swift */,
 				ED24868C2B3727B0008820C5 /* Assets.xcassets */,
 				ED24868E2B3727B0008820C5 /* Preview Content */,
-				ED737AB32B3F578400926575 /* UnitInputView.swift */,
 			);
 			path = "Impedance Converter";
 			sourceTree = "<group>";
