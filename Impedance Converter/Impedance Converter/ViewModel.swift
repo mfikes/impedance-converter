@@ -17,7 +17,7 @@ class ViewModel: ObservableObject {
     @Published var frequency: Double = 100000 {
         didSet {
             if frequency <= 0 {
-                frequency = 0.001
+                frequency = oldValue
             }
         }
     }
