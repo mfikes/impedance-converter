@@ -113,7 +113,7 @@ class ViewModel: ObservableObject {
             return impedance.real
         }
         set {
-            impedance = Complex(real: newValue, imaginary: reactance.isNaN ? 0 : reactance)
+            impedance = Complex(real: newValue, imaginary: reactance)
         }
     }
     
