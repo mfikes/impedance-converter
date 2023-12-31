@@ -14,6 +14,11 @@ extension UnitWithPowerOfTen where Self: RawRepresentable, Self.RawValue == Stri
     var shouldRender: Bool {
         return true
     }
+    
+    var isGreatest: Bool {
+        let casesArray = Array(Self.allCases)
+        return self == casesArray.last
+    }
 }
 
 enum FrequencyUnit: String, UnitWithPowerOfTen {
