@@ -86,6 +86,8 @@ struct RectangularParameterView<UnitType: UnitWithPowerOfTen>: View {
     var imaginaryPartLabel: String
     var realPartDescription: String
     var imaginaryPartDescription: String
+    var realCanBeNegative: Bool
+    var imaginaryCanBeNegative: Bool
     
     var body: some View {
         VStack {
@@ -93,11 +95,13 @@ struct RectangularParameterView<UnitType: UnitWithPowerOfTen>: View {
                 UnitInputView(value: Binding(
                     get: { self.complexValue.real },
                     set: { self.complexValue = Complex(real: $0, imaginary: self.complexValue.imaginary) }
-                ), unit: realPartUnit, label: realPartLabel, description: realPartDescription)
+                ), unit: realPartUnit, label: realPartLabel, description: realPartDescription,
+                              showNegationDecorator: realCanBeNegative)
                 UnitInputView(value: Binding(
                     get: { self.complexValue.imaginary },
                     set: { self.complexValue = Complex(real: self.complexValue.real, imaginary: $0) }
-                ), unit: imaginaryPartUnit, label: imaginaryPartLabel, description: imaginaryPartDescription, showNegationDecorator: true)
+                ), unit: imaginaryPartUnit, label: imaginaryPartLabel, description: imaginaryPartDescription,
+                              showNegationDecorator: imaginaryCanBeNegative)
             }
         }
     }
@@ -114,7 +118,9 @@ struct RectangularImpedanceView: View {
             realPartLabel: "R",
             imaginaryPartLabel: "X",
             realPartDescription: "resistance",
-            imaginaryPartDescription: "reactance"
+            imaginaryPartDescription: "reactance",
+            realCanBeNegative: false,
+            imaginaryCanBeNegative: true
         )
     }
 }
@@ -130,7 +136,9 @@ struct RectangularAdmittanceView: View {
             realPartLabel: "G",
             imaginaryPartLabel: "B",
             realPartDescription: "conductance",
-            imaginaryPartDescription: "susceptance"
+            imaginaryPartDescription: "susceptance",
+            realCanBeNegative: false,
+            imaginaryCanBeNegative: true
         )
     }
 }
@@ -146,7 +154,9 @@ struct RectangularReflectionCoefficientView: View {
             realPartLabel: "Re(Γ)",
             imaginaryPartLabel: "Im(Γ)",
             realPartDescription: "real part",
-            imaginaryPartDescription: "imaginary part"
+            imaginaryPartDescription: "imaginary part",
+            realCanBeNegative: true,
+            imaginaryCanBeNegative: true
         )
     }
 }
