@@ -12,7 +12,7 @@ struct SmithChartView: View {
     @State private var modeInterpolator: Double = 1
     
     @State private var animationTimer: Timer?
-
+    
     func startAnimating(up: Bool) {
         animationTimer?.invalidate()
         animationTimer = Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { _ in
@@ -25,31 +25,48 @@ struct SmithChartView: View {
         }
     }
     
+    func createCenterAndRadius(size: CGSize) -> (CGPoint, CGFloat) {
+        let center = CGPoint(x: size.width / 2, y: size.height / 2)
+        let radius = min(size.width, size.height) / 2 - 20
+        return (center, radius)
+    }
+    
+    func createDashedLineStyle() -> StrokeStyle {
+        return StrokeStyle(lineWidth: 1, dash: [1, 1])
+    }
+    
+    func transformPoint(center: CGPoint, radius: CGFloat, point: CGPoint) -> CGPoint {
+        return CGPoint(
+            x: center.x + point.x * radius,
+            y: center.y - point.y * radius
+        )
+    }
+    
+    func createOuterCircle(center: CGPoint, radius: CGFloat) -> Path {
+        return Path { path in
+            path.addEllipse(in: CGRect(x: center.x - radius, y: center.y - radius, width: 2 * radius, height: 2 * radius))
+        }
+    }
+    
+    func calculateGridColor() -> Color {
+        return constraintKind == .unset || constraintKind == .none ? .gray : Color(hex:"#FFFFFF").adjusted(brightness:0.4)
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 let dotRadius:CGFloat = constraintKind == .unset ? 10 : 40
+                
                 Canvas { context, size in
                     
-                    let center = CGPoint(x: size.width / 2, y: size.height / 2)
-                    let radius = min(size.width, size.height) / 2 - 20
-                    let dashedLineStyle = StrokeStyle(lineWidth: 1, dash: [5, 5])
-                    
-                    // Transform and scale coordinates
-                    func transform(_ point: CGPoint) -> CGPoint {
-                        return CGPoint(
-                            x: center.x + point.x * radius,
-                            y: center.y - point.y * radius
-                        )
-                    }
+                    let (center, radius) = createCenterAndRadius(size: size)
+                    let dashedLineStyle = createDashedLineStyle()
                     
                     // Draw outer circle
-                    let outerCircle = Path { path in
-                        path.addEllipse(in: CGRect(x: center.x - radius, y: center.y - radius, width: 2 * radius, height: 2 * radius))
-                    }
-                    context.stroke(outerCircle, with: .color(.white), lineWidth: 1)
+                    let outerCircle = createOuterCircle(center: center, radius: radius)
+                    context.stroke(outerCircle, with: .color(Color(hex: "#CCCCCC")), lineWidth: 1)
                     
-                    let gridColor: Color = constraintKind == .unset || constraintKind == .none ? .gray : Color(hex:"#FFFFFF").adjusted(brightness:0.4)
+                    let gridColor = calculateGridColor()
                     
                     // Draw circles of constant resistance
                     let resistances: [Double] = [0.2, 0.5, 1, 2, 5]
@@ -57,33 +74,32 @@ struct SmithChartView: View {
                         drawResistanceCircle(context: context, center: center, radius: radius, R: R, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
                     }
                     
-                    context.clip(to: outerCircle)
-                    
-                    // Draw arcs of constant reactance
-                    let reactances: [Double] = [0.2, 0.5, 1, 2, 5]
-                    for X in reactances {
-                        drawReactanceArc(context: context, center: center, radius: radius, X: X, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
-                        drawReactanceArc(context: context, center: center, radius: radius, X: -X, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
-                    }
-                    
-                    drawReactanceArc(context: context, center: center, radius: radius, X: 0, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
-                    
                     // Plotting the center point
                     let centerPoint = CGPoint(
                         x: 0,
                         y: 0
                     )
-                    let transformedCenterPoint = transform(centerPoint)
+                    let transformedCenterPoint = transformPoint(center: center, radius: radius, point: centerPoint)
                     let centerPointPath = Path(ellipseIn: CGRect(x: transformedCenterPoint.x - 5, y: transformedCenterPoint.y - 5, width: 10, height: 10))
                     context.stroke(centerPointPath, with: .color(gridColor))
                     context.fill(centerPointPath, with: .color(gridColor))
                     
-                    if (constraintKind == .resistance || constraintKind == .conductance) {
-                        drawResistanceCircle(context: context, center: center, radius: radius, R: constraintKind == .resistance ? constraintValue / viewModel.referenceImpedance.real : constraintValue * viewModel.referenceImpedance.real, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                    context.clip(to: outerCircle)
+                    
+                    let topHalfRect = CGRect(x: 0, y: 0, width: size.width, height: size.height / 2)
+                    let topHalfPath = Path { path in
+                        path.addRect(topHalfRect)
                     }
                     
-                    if (constraintKind == .reactance || constraintKind == .susceptance) {
-                        drawReactanceArc(context: context, center: center, radius: radius, X: constraintKind == .reactance ? constraintValue / viewModel.referenceImpedance.real : -constraintValue * viewModel.referenceImpedance.real, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                    drawReactanceArc(context: context, center: center, radius: radius, X: 0, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
+                    
+                    // Apply the top half clipping
+                    context.clip(to: topHalfPath)
+                    
+                    // Draw arcs of constant reactance
+                    let reactances: [Double] = [0.2, 0.5, 1, 2, 5]
+                    for X in reactances {
+                        drawReactanceArc(context: context, center: center, radius: radius, X: X, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
                     }
                 }
                 .onChange(of: viewModel.displayMode) { _ in
@@ -92,23 +108,62 @@ struct SmithChartView: View {
                 
                 Canvas { context, size in
                     
-                    let center = CGPoint(x: size.width / 2, y: size.height / 2)
-                    let radius = min(size.width, size.height) / 2 - 20
+                    let (center, radius) = createCenterAndRadius(size: size)
+                    let dashedLineStyle = createDashedLineStyle()
                     
-                    // Transform and scale coordinates
-                    func transform(_ point: CGPoint) -> CGPoint {
-                        return CGPoint(
-                            x: center.x + point.x * radius,
-                            y: center.y - point.y * radius
-                        )
+                    let outerCircle = createOuterCircle(center: center, radius: radius)
+                    
+                    let gridColor = calculateGridColor()
+                    
+                    context.clip(to: outerCircle)
+                    
+                    let bottomHalfRect = CGRect(x: 0, y: size.height / 2, width: size.width, height: size.height / 2)
+                    
+                    let bottomHalfPath = Path { path in
+                        path.addRect(bottomHalfRect)
                     }
+                    
+                    // Apply the bottom half clipping
+                    context.clip(to: bottomHalfPath)
+                    
+                    // Draw arcs of constant reactance
+                    let reactances: [Double] = [0.2, 0.5, 1, 2, 5]
+                    for X in reactances {
+                        drawReactanceArc(context: context, center: center, radius: radius, X: -X, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
+                    }
+                }
+                .onChange(of: viewModel.displayMode) { _ in
+                    startAnimating(up: viewModel.displayMode != .admittance)
+                }
+                
+                Canvas { context, size in
+                    
+                    let (center, radius) = createCenterAndRadius(size: size)
+                                        
+                    let outerCircle = createOuterCircle(center: center, radius: radius)
+                    
+                    context.clip(to: outerCircle)
+                    
+                    if (constraintKind == .resistance || constraintKind == .conductance) {
+                        drawResistanceCircle(context: context, center: center, radius: radius, R: constraintKind == .resistance ? constraintValue / viewModel.referenceImpedance.real : constraintValue / viewModel.referenceAdmittance.real, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                    }
+                    
+                    if (constraintKind == .reactance || constraintKind == .susceptance) {
+                        drawReactanceArc(context: context, center: center, radius: radius, X: constraintKind == .reactance ? constraintValue / viewModel.referenceImpedance.real : -viewModel.referenceAdmittance.real / constraintValue, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                    }
+                    
+                }
+                
+                Canvas { context, size in
+                    
+                    let (center, radius) = createCenterAndRadius(size: size)
                     
                     // Plotting the impedance using the reflection coefficient coordinates
                     let reflectionPoint = CGPoint(
                         x: viewModel.reflectionCoefficient.real,
                         y: viewModel.reflectionCoefficient.imaginary
                     )
-                    let transformedPoint = transform(reflectionPoint)
+                    let transformedPoint = transformPoint(center: center, radius: radius, point: reflectionPoint)
                     let pointPath = Path(ellipseIn: CGRect(x: transformedPoint.x - dotRadius/2, y: transformedPoint.y - dotRadius/2, width: dotRadius, height: dotRadius))
                     context.stroke(pointPath, with: .color(Color.basePrimaryOrange.adjusted(brightness: 1.6)))
                     context.fill(pointPath, with: .color(Color.basePrimaryOrange.adjusted(brightness: 1.6)))
@@ -152,21 +207,48 @@ struct SmithChartView: View {
     }
     
     private func drawReactanceArc(context: GraphicsContext, center: CGPoint, radius: CGFloat, X: Double, color: Color, style: StrokeStyle, modeInterpolator: Double) {
-        if (X == 0) {
-            let horizontalLine = Path { path in
-                path.move(to: CGPoint(x: center.x - radius, y: center.y))
-                path.addLine(to: CGPoint(x: center.x + radius, y: center.y))
-            }
-            context.stroke(horizontalLine, with: .color(color), style: style)
+        if X == 0 {
+            drawHorizontalLine(context: context, center: center, radius: radius, color: color, style: style)
         } else {
-            let arcRadius = radius / X
-            let arcCenter = CGPoint(x: center.x + modeInterpolator*radius, y: center.y - arcRadius)
+            let f = modeInterpolator / 2 + 0.5
+            let arcRadius = min((f * (radius / X) + (1 - f) * (X * radius)) / modeInterpolator, 5000)
+            let anchor = calculateAnchor(X: X, radius: radius)
+            let arcCenter = calculateArcCenter(center: center, anchor: anchor, modeInterpolator: modeInterpolator, radius: radius, arcRadius: arcRadius)
+            
             let reactanceArc = Path { path in
-                path.addEllipse(in: CGRect(x: arcCenter.x - arcRadius, y: arcCenter.y - arcRadius, width: 2 * arcRadius, height: 2 * arcRadius))
+                let rect = CGRect(x: arcCenter.x - arcRadius, y: arcCenter.y - arcRadius, width: 2 * arcRadius, height: 2 * arcRadius)
+                path.addEllipse(in: rect)
             }
             context.stroke(reactanceArc, with: .color(color), style: style)
         }
     }
+    
+    private func drawHorizontalLine(context: GraphicsContext, center: CGPoint, radius: CGFloat, color: Color, style: StrokeStyle) {
+        let horizontalLine = Path { path in
+            path.move(to: CGPoint(x: center.x - radius, y: center.y))
+            path.addLine(to: CGPoint(x: center.x + radius, y: center.y))
+        }
+        context.stroke(horizontalLine, with: .color(color), style: style)
+    }
+    
+    private func calculateAnchor(X: Double, radius: CGFloat) -> Complex {
+        return Complex(real: -1, imaginary: X) / Complex(real: 1, imaginary: X)
+    }
+    
+    private func calculateArcCenter(center: CGPoint, anchor: Complex, modeInterpolator: Double, radius: CGFloat, arcRadius: CGFloat) -> CGPoint {
+        let anchorX = radius * anchor.real
+        let anchorY = radius * anchor.imaginary
+        let p = modeInterpolator >= 0 ? 1.0 : -1.0
+        let scaledModeInterpolator = radius * modeInterpolator
+        let frontX = (anchorX + scaledModeInterpolator) / 2.0
+        let frontY = anchorY / 2.0
+        let atanArg = (frontX - anchorX) / (anchorY - frontY)
+        let centerX = frontX + p * (sqrt(arcRadius * arcRadius - (scaledModeInterpolator - frontX) * (scaledModeInterpolator - frontX) - frontY * frontY) * cos(atan(atanArg)))
+        let centerY = frontY + p * (sqrt(arcRadius * arcRadius - (scaledModeInterpolator - frontX) * (scaledModeInterpolator - frontX) - frontY * frontY) * sin(atan(atanArg)))
+        
+        return CGPoint(x: center.x + centerX, y: center.y - centerY)
+    }
+    
     
     private func transform(reflectionCoefficient: Complex, size: CGSize) -> CGPoint {
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
