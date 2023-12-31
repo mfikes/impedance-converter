@@ -36,6 +36,18 @@ class ViewModel: ObservableObject {
     
     @Published var activeRep: ActiveRepresentation = .impedance
     
+    private func ensureNoNaN(value: Complex) -> Complex {
+        if (value.real.isNaN && value.imaginary.isNaN) {
+            return Complex(real: 0, imaginary: 0)
+        } else if (value.real.isNaN) {
+            return Complex(real: 0, imaginary: value.imaginary)
+        } else if (value.imaginary.isNaN) {
+            return Complex(real: value.real, imaginary: 0)
+        } else {
+            return value
+        }
+    }
+    
     var referenceImpedance: Complex {
         get {
             switch (activeRefRep) {
@@ -76,7 +88,7 @@ class ViewModel: ObservableObject {
             }
         }
         set {
-            rep = newValue
+            rep = ensureNoNaN(value: newValue)
             activeRep = .impedance
         }
     }
@@ -91,7 +103,7 @@ class ViewModel: ObservableObject {
             }
         }
         set {
-            rep = newValue
+            rep = ensureNoNaN(value: newValue)
             activeRep = .admittance
         }
     }
@@ -101,7 +113,7 @@ class ViewModel: ObservableObject {
             return impedance.real
         }
         set {
-            impedance = Complex(real: newValue, imaginary: reactance)
+            impedance = Complex(real: newValue, imaginary: reactance.isNaN ? 0 : reactance)
         }
     }
     

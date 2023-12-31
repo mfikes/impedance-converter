@@ -15,11 +15,7 @@ struct PolarParameterView<UnitType>: View where UnitType: RawRepresentable, Unit
                 UnitInputView(value: Binding(
                     get: { self.complexValue.magnitude },
                     set: {
-                        if $0 != 0 {
-                            self.complexValue = Complex.fromPolar(magnitude: $0, angle: self.complexValue.angle)
-                        } else {
-                            self.complexValue = Complex(real: 0, imaginary: 0)
-                        }
+                        self.complexValue = Complex.fromPolar(magnitude: $0, angle: self.complexValue.angle)
                     }
                 ), unit: magnitudeUnit, label: magnitudeLabel, description: magnitudeDescription)
                 
