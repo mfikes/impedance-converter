@@ -58,6 +58,8 @@ struct Complex {
     var angle: Angle {
         if (magnitude == 0) {
             return Angle.init(radians: Double.nan)
+        } else if (imaginary == 0) {
+            return Angle.init(degrees: real < 0 ? 180 : 0)
         } else {
             return Angle.init(radians: atan2(imaginary, real))
         }
@@ -70,6 +72,10 @@ struct Complex {
             return Complex(real: magnitude * cos(angle: angle), imaginary: magnitude * sin(angle: angle))
         }
     }
+    
+    static prefix func - (value: Complex) -> Complex {
+            return Complex(real: -value.real, imaginary: -value.imaginary)
+        }
     
     var reciprocal: Complex {
         return Complex.one / self
@@ -89,7 +95,7 @@ struct Complex {
     }
     
     static func / (left: Complex, right: Complex) -> Complex {
-        if (right.real.isInfinite && !left.real.isInfinite) {
+        if (right.magnitude.isInfinite && !left.magnitude.isInfinite) {
             return zero
         } else {
             let denominator = right.real * right.real + right.imaginary * right.imaginary

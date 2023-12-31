@@ -192,21 +192,61 @@ class ViewModel: ObservableObject {
             }
         }
         set {
-            switch activeRep {
-            case .impedance:
-                resistance =  newValue * abs(reactance)
-            case .admittance:
-                conductance = newValue * abs(susceptance)
+            if displayMode == .impedance {
+                if reactance == 0 || abs(reactance).isInfinite {
+                    if resistance != 0 {
+                        reactance = resistance / newValue
+                    }
+                } else {
+                    resistance =  abs(reactance) * newValue
+                }
+            } else {
+                if susceptance == 0 || abs(susceptance).isInfinite {
+                    if conductance != 0 {
+                        susceptance = conductance / newValue
+                    }
+                } else {
+                    conductance = abs(susceptance) * newValue
+                }
             }
         }
     }
     
     var qualityFactor: Double {
         get {
-            return 1 / dissipationFactor
+            switch activeRep {
+            case .impedance:
+                return abs(reactance) / resistance
+            case .admittance:
+                return abs(susceptance) / conductance
+            }
         }
         set {
-            dissipationFactor = 1 / newValue
+            if displayMode == .impedance {
+                if reactance == 0 || abs(reactance).isInfinite {
+                    if resistance != 0 {
+                        reactance = resistance * newValue
+                    }
+                } else {
+                    if newValue == 0 {
+                        reactance = 0
+                    } else {
+                        resistance = abs(reactance) / newValue
+                    }
+                }
+            } else {
+                if susceptance == 0 || abs(susceptance).isInfinite {
+                    if conductance != 0 {
+                        susceptance = conductance * newValue
+                    }
+                } else {
+                    if newValue == 0 {
+                        susceptance = 0
+                    } else {
+                        conductance = abs(susceptance) / newValue
+                    }
+                }
+            }
         }
     }
     
@@ -214,9 +254,17 @@ class ViewModel: ObservableObject {
         get {
             switch (activeRep) {
             case .impedance:
-                return (impedance - referenceImpedance) / (impedance + referenceImpedance)
+                if (impedance.magnitude.isInfinite) {
+                    return Complex.one
+                } else {
+                    return (impedance - referenceImpedance) / (impedance + referenceImpedance)
+                }
             case .admittance:
-                return (referenceAdmittance - admittance) / (referenceAdmittance + admittance)
+                if (admittance.magnitude.isInfinite) {
+                    return -Complex.one
+                } else {
+                    return (referenceAdmittance - admittance) / (referenceAdmittance + admittance)
+                }
             }
         }
         set {
