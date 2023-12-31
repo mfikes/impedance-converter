@@ -48,6 +48,14 @@ class ViewModel: ObservableObject {
         }
     }
     
+    private func ensurePositiveReal(value: Complex) -> Complex {
+        if (value.real < 0) {
+            return Complex(real: 0, imaginary: value.imaginary)
+        } else {
+            return value
+        }
+    }
+    
     var referenceImpedance: Complex {
         get {
             switch (activeRefRep) {
@@ -88,11 +96,8 @@ class ViewModel: ObservableObject {
             }
         }
         set {
-            let impedance = ensureNoNaN(value: newValue)
-            if (impedance.real >= 0) {
-                rep = impedance
-                activeRep = .impedance
-            }
+            rep = ensurePositiveReal(value: ensureNoNaN(value: newValue))
+            activeRep = .impedance
         }
     }
     
@@ -106,11 +111,8 @@ class ViewModel: ObservableObject {
             }
         }
         set {
-            let admittance = ensureNoNaN(value: newValue)
-            if (admittance.real >= 0) {
-                rep = admittance
-                activeRep = .admittance
-            }
+            rep = ensurePositiveReal(value: ensureNoNaN(value: newValue))
+            activeRep = .admittance
         }
     }
     
