@@ -9,6 +9,21 @@ struct SmithChartView: View {
     
     @State var constraintKind: ConstraintKind = .unset
     @State var constraintValue: Double = 0
+    @State private var modeInterpolator: Double = 1
+    
+    @State private var animationTimer: Timer?
+
+    func startAnimating(up: Bool) {
+        animationTimer?.invalidate()
+        animationTimer = Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { _ in
+            let change = up ? 0.15 : -0.15
+            modeInterpolator = (modeInterpolator + change) / 1.15
+            if abs(modeInterpolator) >= 0.999 {
+                animationTimer?.invalidate()
+                modeInterpolator = up ? 1 : -1
+            }
+        }
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -39,7 +54,7 @@ struct SmithChartView: View {
                     // Draw circles of constant resistance
                     let resistances: [Double] = [0.2, 0.5, 1, 2, 5]
                     for R in resistances {
-                        drawResistanceCircle(context: context, center: center, radius: radius, R: R, color: gridColor, style: dashedLineStyle)
+                        drawResistanceCircle(context: context, center: center, radius: radius, R: R, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
                     }
                     
                     context.clip(to: outerCircle)
@@ -47,11 +62,11 @@ struct SmithChartView: View {
                     // Draw arcs of constant reactance
                     let reactances: [Double] = [0.2, 0.5, 1, 2, 5]
                     for X in reactances {
-                        drawReactanceArc(context: context, center: center, radius: radius, X: X, color: gridColor, style: dashedLineStyle)
-                        drawReactanceArc(context: context, center: center, radius: radius, X: -X, color: gridColor, style: dashedLineStyle)
+                        drawReactanceArc(context: context, center: center, radius: radius, X: X, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
+                        drawReactanceArc(context: context, center: center, radius: radius, X: -X, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
                     }
                     
-                    drawReactanceArc(context: context, center: center, radius: radius, X: 0, color: gridColor, style: dashedLineStyle)
+                    drawReactanceArc(context: context, center: center, radius: radius, X: 0, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
                     
                     // Plotting the center point
                     let centerPoint = CGPoint(
@@ -64,14 +79,16 @@ struct SmithChartView: View {
                     context.fill(centerPointPath, with: .color(gridColor))
                     
                     if (constraintKind == .resistance || constraintKind == .conductance) {
-                        drawResistanceCircle(context: context, center: center, radius: radius, R: constraintKind == .resistance ? constraintValue / viewModel.referenceImpedance.real : constraintValue * viewModel.referenceImpedance.real, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                        drawResistanceCircle(context: context, center: center, radius: radius, R: constraintKind == .resistance ? constraintValue / viewModel.referenceImpedance.real : constraintValue * viewModel.referenceImpedance.real, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
                     }
                     
                     if (constraintKind == .reactance || constraintKind == .susceptance) {
-                        drawReactanceArc(context: context, center: center, radius: radius, X: constraintKind == .reactance ? constraintValue / viewModel.referenceImpedance.real : -constraintValue * viewModel.referenceImpedance.real, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                        drawReactanceArc(context: context, center: center, radius: radius, X: constraintKind == .reactance ? constraintValue / viewModel.referenceImpedance.real : -constraintValue * viewModel.referenceImpedance.real, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
                     }
                 }
-                .scaleEffect(x: viewModel.displayMode == .admittance ? -1 : 1, y: 1, anchor: .center)
+                .onChange(of: viewModel.displayMode) { _ in
+                    startAnimating(up: viewModel.displayMode != .admittance)
+                }
                 
                 Canvas { context, size in
                     
@@ -125,16 +142,16 @@ struct SmithChartView: View {
         .padding([.bottom], 10)
     }
     
-    private func drawResistanceCircle(context: GraphicsContext, center: CGPoint, radius: CGFloat, R: Double, color: Color, style: StrokeStyle) {
+    private func drawResistanceCircle(context: GraphicsContext, center: CGPoint, radius: CGFloat, R: Double, color: Color, style: StrokeStyle, modeInterpolator: Double) {
         let circleRadius = radius / (R + 1)
-        let circleCenter = CGPoint(x: center.x + radius * R / (R + 1), y: center.y)
+        let circleCenter = CGPoint(x: center.x + modeInterpolator * radius * R / (R + 1), y: center.y)
         let resistanceCircle = Path { path in
             path.addEllipse(in: CGRect(x: circleCenter.x - circleRadius, y: circleCenter.y - circleRadius, width: 2 * circleRadius, height: 2 * circleRadius))
         }
         context.stroke(resistanceCircle, with: .color(color), style: style)
     }
     
-    private func drawReactanceArc(context: GraphicsContext, center: CGPoint, radius: CGFloat, X: Double, color: Color, style: StrokeStyle) {
+    private func drawReactanceArc(context: GraphicsContext, center: CGPoint, radius: CGFloat, X: Double, color: Color, style: StrokeStyle, modeInterpolator: Double) {
         if (X == 0) {
             let horizontalLine = Path { path in
                 path.move(to: CGPoint(x: center.x - radius, y: center.y))
@@ -143,7 +160,7 @@ struct SmithChartView: View {
             context.stroke(horizontalLine, with: .color(color), style: style)
         } else {
             let arcRadius = radius / X
-            let arcCenter = CGPoint(x: center.x + radius, y: center.y - arcRadius)
+            let arcCenter = CGPoint(x: center.x + modeInterpolator*radius, y: center.y - arcRadius)
             let reactanceArc = Path { path in
                 path.addEllipse(in: CGRect(x: arcCenter.x - arcRadius, y: arcCenter.y - arcRadius, width: 2 * arcRadius, height: 2 * arcRadius))
             }
