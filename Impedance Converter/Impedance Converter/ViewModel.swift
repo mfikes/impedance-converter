@@ -88,8 +88,11 @@ class ViewModel: ObservableObject {
             }
         }
         set {
-            rep = ensureNoNaN(value: newValue)
-            activeRep = .impedance
+            let impedance = ensureNoNaN(value: newValue)
+            if (impedance.real >= 0) {
+                rep = impedance
+                activeRep = .impedance
+            }
         }
     }
     
@@ -103,8 +106,11 @@ class ViewModel: ObservableObject {
             }
         }
         set {
-            rep = ensureNoNaN(value: newValue)
-            activeRep = .admittance
+            let admittance = ensureNoNaN(value: newValue)
+            if (admittance.real >= 0) {
+                rep = admittance
+                activeRep = .admittance
+            }
         }
     }
     
