@@ -40,7 +40,7 @@ enum ConductanceUnit: String, UnitWithPowerOfTen {
 }
 
 enum ReflectionCoefficientUnit: String, UnitWithPowerOfTen {
-    case µ, m, Γ, k, M
+    case µ, m, Γ
     var id: Self { self }
     var basePower: Int { -6 }
     var shouldRender: Bool {
