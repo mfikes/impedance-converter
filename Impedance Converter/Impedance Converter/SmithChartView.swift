@@ -16,8 +16,8 @@ struct SmithChartView: View {
     func startAnimating(up: Bool) {
         animationTimer?.invalidate()
         animationTimer = Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { _ in
-            let change = up ? 0.15 : -0.15
-            modeInterpolator = (modeInterpolator + change) / 1.15
+            let change = up ? 0.2 : -0.2
+            modeInterpolator = (modeInterpolator + change) / 1.2
             if abs(modeInterpolator) >= 0.999 {
                 animationTimer?.invalidate()
                 modeInterpolator = up ? 1 : -1
