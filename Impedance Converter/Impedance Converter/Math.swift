@@ -56,11 +56,19 @@ struct Complex {
     }
     
     var angle: Angle {
-        return Angle.init(radians: atan2(imaginary, real))
+        if (magnitude == 0) {
+            return Angle.init(radians: Double.nan)
+        } else {
+            return Angle.init(radians: atan2(imaginary, real))
+        }
     }
     
     static func fromPolar(magnitude: Double, angle: Angle) -> Complex {
-        return Complex(real: magnitude * cos(angle: angle), imaginary: magnitude * sin(angle: angle))
+        if (angle.radians.isNaN) {
+            return Complex(real: magnitude, imaginary: 0)
+        } else {
+            return Complex(real: magnitude * cos(angle: angle), imaginary: magnitude * sin(angle: angle))
+        }
     }
     
     var reciprocal: Complex {

@@ -125,6 +125,10 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
         }
     }
     
+    private func disabled() -> Bool {
+        value.isNaN
+    }
+    
     var body: some View {
         VStack(alignment: .trailing, spacing: -5) {
             HStack(alignment: .center) {
@@ -152,8 +156,9 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                             .kerning(3)
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
-                            .foregroundColor(Color.basePrimaryOrange.adjusted(brightness: 1.6))
+                            .foregroundColor(Color.basePrimaryOrange.adjusted(brightness: disabled() ? 0.5 : 1.6))
                             .blur(radius: 4)
+                            .disabled(true)
                             .overlay(
                                 ZStack {
                                     TextField("", text: $displayedValue)
@@ -162,61 +167,62 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                         .kerning(3)
                                         .lineLimit(1)
                                         .minimumScaleFactor(0.5)
-                                        .foregroundColor(Color.basePrimaryOrange.adjusted(brightness: 1.5))
+                                        .foregroundColor(Color.basePrimaryOrange.adjusted(brightness: disabled() ? 0.5 : 1.5))
                                         .tint(Color.basePrimaryOrange.adjusted(brightness: 1.5))
+                                        .disabled(disabled())
                                         .onTapGesture {
                                             if SpecialRepresentation.isSpecialRepresentation(displayedValue) {
                                                 displayedValue = ""
                                             }
                                         }
+                                        .keyboardType(.decimalPad)
+                                        .focused($isFocused)
+                                        .onAppear {
+                                            convertToEngineeringNotation(value:value)
+                                        }
+                                        .onChange(of: value) { newValue in
+                                            convertToEngineeringNotation(value:value)
+                                        }
+                                        .onChange(of: isFocused) { focused in
+                                            if !focused {
+                                                value = convertFromEngineeringNotation()
+                                                convertToEngineeringNotation(value:value)
+                                            }
+                                        }
+                                        .toolbar {
+                                            ToolbarItemGroup(placement: .keyboard) {
+                                                if isFocused {
+                                                    if showNegationDecorator {
+                                                        Spacer()
+                                                        Button(action: toggleNegation) {
+                                                            Text("-")
+                                                                .font(.custom("Segment7Standard", size: 30))
+                                                                .foregroundColor(.black)
+                                                        }
+                                                    }
+                                                    Spacer()
+                                                    ForEach(unitCases, id: \.self) { unitCase in
+                                                        Button(action: {
+                                                            selectUnit(unitCase)
+                                                        }) {
+                                                            Text(unitCase.shouldRender ? unitCase.rawValue : "_")
+                                                                .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.5))
+                                                        }
+                                                        Spacer()
+                                                    }
+                                                }
+                                            }
+                                        }
                                 }
                             )
-                            .keyboardType(.decimalPad)
-                            .focused($isFocused)
-                            .onAppear {
-                                convertToEngineeringNotation(value:value)
-                            }
-                            .onChange(of: value) { newValue in
-                                convertToEngineeringNotation(value:value)
-                            }
-                            .onChange(of: isFocused) { focused in
-                                if !focused {
-                                    value = convertFromEngineeringNotation()
-                                    convertToEngineeringNotation(value:value)
-                                }
-                            }
-                            .toolbar {
-                                ToolbarItemGroup(placement: .keyboard) {
-                                    if isFocused {
-                                        if showNegationDecorator {
-                                            Spacer()
-                                            Button(action: toggleNegation) {
-                                                Text("-")
-                                                    .font(.custom("Segment7Standard", size: 30))
-                                                    .foregroundColor(.black)
-                                            }
-                                        }
-                                        Spacer()
-                                        ForEach(unitCases, id: \.self) { unitCase in
-                                            Button(action: {
-                                                selectUnit(unitCase)
-                                            }) {
-                                                Text(unitCase.shouldRender ? unitCase.rawValue : "_")
-                                                    .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.5))
-                                            }
-                                            Spacer()
-                                        }
-                                    }
-                                }
-                            }
                         Spacer()
                     }
-                    Text(unit.shouldRender ? unit.rawValue : "")
+                    Text(unit.shouldRender && !disabled() ? unit.rawValue : "")
                         .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.5))
                         .multilineTextAlignment(.trailing)
                         .frame(width: 36)
                         .overlay(ZStack {
-                            Text(unit.shouldRender ? unit.rawValue : "")
+                            Text(unit.shouldRender && !disabled() ? unit.rawValue : "")
                                 .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.7))
                                 .blur(radius: 4)
                                 .multilineTextAlignment(.trailing)
