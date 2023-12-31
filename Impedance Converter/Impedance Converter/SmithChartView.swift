@@ -15,19 +15,12 @@ struct SmithChartView: View {
 
     func startAnimating(up: Bool) {
         animationTimer?.invalidate()
-        animationTimer = Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { [self] _ in
-            if (up) {
-                self.modeInterpolator = (self.modeInterpolator + 0.15)/1.15
-                if self.modeInterpolator >= 0.99 {
-                    self.animationTimer?.invalidate()
-                    self.modeInterpolator = 1
-                }
-            } else {
-                self.modeInterpolator = (self.modeInterpolator - 0.15)/1.15
-                if self.modeInterpolator <= -0.99 {
-                    self.animationTimer?.invalidate()
-                    self.modeInterpolator = -1
-                }
+        animationTimer = Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { _ in
+            let change = up ? 0.15 : -0.15
+            modeInterpolator = (modeInterpolator + change) / 1.15
+            if abs(modeInterpolator) >= 0.999 {
+                animationTimer?.invalidate()
+                modeInterpolator = up ? 1 : -1
             }
         }
     }
