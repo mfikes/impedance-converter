@@ -285,14 +285,6 @@ class ViewModel: ObservableObject {
         }
     }
     
-    @Published var complexDisplayMode: DisplayMode = .impedance {
-        didSet {
-            if complexDisplayMode != .reflectionCoefficient {
-                displayMode = complexDisplayMode
-            }
-        }
-    }
-    
     @Published var circuitMode: CircuitMode = .series
     
     @Published var displayMode: DisplayMode = .impedance
