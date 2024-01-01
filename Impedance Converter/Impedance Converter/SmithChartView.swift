@@ -9,6 +9,7 @@ struct SmithChartView: View {
     
     @State var constraintKind: ConstraintKind = .unset
     @State var constraintValue: Double = 0
+    @State private var modeInterpolatorKernel: Double = 1
     @State private var modeInterpolator: Double = 1
     
     @State private var animationTimer: Timer?
@@ -16,12 +17,12 @@ struct SmithChartView: View {
     func startAnimating(up: Bool) {
         animationTimer?.invalidate()
         animationTimer = Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { _ in
-            let change = up ? 0.2 : -0.2
-            modeInterpolator = (modeInterpolator + change) / 1.2
-            if abs(modeInterpolator) >= 0.999 {
+            modeInterpolatorKernel += up ? 0.13 : -0.13
+            if abs(modeInterpolatorKernel) >= 0.999 {
                 animationTimer?.invalidate()
-                modeInterpolator = up ? 1 : -1
+                modeInterpolatorKernel = up ? 1 : -1
             }
+            modeInterpolator = sin(modeInterpolatorKernel * Double.pi/2.0)
         }
     }
     
