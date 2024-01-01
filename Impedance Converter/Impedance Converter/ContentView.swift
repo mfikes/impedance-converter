@@ -22,28 +22,48 @@ struct ContentView: View {
     
     @StateObject var viewModel = ViewModel()
     
-    init() {
-        UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(Color.baseSegmentControlTintColor.adjusted(brightness: 1.2)
-        )
-    }
-    
     var body: some View {
-        ZStack {
-            Color.baseAppBackgroundColor.edgesIgnoringSafeArea(.all)
-            ScrollView {
-                VStack {
-                    VStack {
-                        ComplexImpedanceView(viewModel: viewModel)
-                        ParametersView(viewModel: viewModel)
-                        CircuitView(viewModel: viewModel)
+        GeometryReader { geometry in
+            ZStack {
+                Color.baseAppBackgroundColor.edgesIgnoringSafeArea(.all)
+                if geometry.size.width > geometry.size.height {
+                    HStack(spacing: 10) {
+                        LeftColumnView(viewModel: viewModel)
+                        RightColumnView(viewModel: viewModel)
                     }
-                    SmithChartView(viewModel: viewModel)
-                    CharacterizationView(viewModel:viewModel)
+                    .padding(10)
+                } else {
+                    ScrollView {
+                        VStack {
+                            LeftColumnView(viewModel: viewModel)
+                            RightColumnView(viewModel: viewModel)
+                        }
+                        .frame(maxWidth: 500)
+                    }
                 }
             }
-            .frame(maxWidth: 500)
-            .padding(.top, 1)
             .dynamicTypeSize(.medium)
+        }
+    }
+}
+
+struct LeftColumnView: View {
+    var viewModel: ViewModel
+    var body: some View {
+        VStack {
+            ComplexImpedanceView(viewModel: viewModel)
+            ParametersView(viewModel: viewModel)
+            CircuitView(viewModel: viewModel)
+        }
+    }
+}
+
+struct RightColumnView: View {
+    var viewModel: ViewModel
+    var body: some View {
+        VStack {
+            SmithChartView(viewModel: viewModel)
+            CharacterizationView(viewModel: viewModel)
         }
     }
 }
