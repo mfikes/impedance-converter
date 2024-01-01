@@ -28,18 +28,21 @@ struct ContentView: View {
                 Color.baseAppBackgroundColor.edgesIgnoringSafeArea(.all)
                 if geometry.size.width > geometry.size.height {
                     HStack(alignment: .top, spacing: 10) {
-                        LeftColumnView(viewModel: viewModel)
-                        RightColumnView(viewModel: viewModel)
+                        ImpedanceColumnView(viewModel: viewModel)
+                        SmithChartColumnView(viewModel: viewModel)
                     }
                     .padding(10)
                 } else {
                     ScrollView {
                         VStack {
-                            LeftColumnView(viewModel: viewModel)
-                            RightColumnView(viewModel: viewModel)
+                            Spacer(minLength: 0)
+                            ImpedanceColumnView(viewModel: viewModel)
+                            SmithChartColumnView(viewModel: viewModel)
+                            Spacer(minLength: 0)
                         }
-                        .frame(maxWidth: 500)
+                        .frame(minHeight: geometry.size.height)
                     }
+                    .frame(maxWidth: 500)
                 }
             }
             .dynamicTypeSize(.medium)
@@ -47,7 +50,8 @@ struct ContentView: View {
     }
 }
 
-struct LeftColumnView: View {
+
+struct ImpedanceColumnView: View {
     var viewModel: ViewModel
     var body: some View {
         VStack {
@@ -58,7 +62,7 @@ struct LeftColumnView: View {
     }
 }
 
-struct RightColumnView: View {
+struct SmithChartColumnView: View {
     var viewModel: ViewModel
     var body: some View {
         VStack {
