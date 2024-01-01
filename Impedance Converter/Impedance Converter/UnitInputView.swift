@@ -189,6 +189,9 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                                 convertToEngineeringNotation(value:value)
                                             }
                                         }
+                                        .onDisappear {
+                                            self.value = convertFromEngineeringNotation()
+                                        }
                                         .toolbar {
                                             ToolbarItemGroup(placement: .keyboard) {
                                                 if isFocused {
