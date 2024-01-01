@@ -195,7 +195,6 @@ struct SmithChartView: View {
         }
         .aspectRatio(1, contentMode: .fit)
         .padding([.horizontal], 10)
-        .padding([.bottom], 10)
     }
     
     private func drawResistanceCircle(context: GraphicsContext, center: CGPoint, radius: CGFloat, R: Double, color: Color, style: StrokeStyle, modeInterpolator: Double) {

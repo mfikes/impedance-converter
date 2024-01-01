@@ -48,6 +48,30 @@ enum ReflectionCoefficientUnit: String, UnitWithPowerOfTen {
     }
 }
 
+enum StandingWaveRatioUnit: String, UnitWithPowerOfTen {
+    case SWR
+    var id: Self { self }
+    var basePower: Int { 0 }
+}
+
+enum ReturnLossUnit: String, UnitWithPowerOfTen {
+    case dB
+    var id: Self { self }
+    var basePower: Int { 0 }
+}
+
+enum TransmissionCoefficientUnit: String, UnitWithPowerOfTen {
+    case T
+    var id: Self { self }
+    var basePower: Int { 0 }
+}
+
+enum TransmissionLossUnit: String, UnitWithPowerOfTen {
+    case dB
+    var id: Self { self }
+    var basePower: Int { 0 }
+}
+
 enum CapacitanceUnit: String, UnitWithPowerOfTen {
     case fF, pF, nF, µF, mF, F
     var id: Self { self }

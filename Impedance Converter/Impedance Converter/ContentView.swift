@@ -38,6 +38,7 @@ struct ContentView: View {
                         CircuitView(viewModel: viewModel)
                     }
                     SmithChartView(viewModel: viewModel)
+                    CharacterizationView(viewModel:viewModel)
                 }
             }
             .frame(maxWidth: 500)
