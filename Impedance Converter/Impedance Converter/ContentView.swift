@@ -27,7 +27,7 @@ struct ContentView: View {
             ZStack {
                 Color.baseAppBackgroundColor.edgesIgnoringSafeArea(.all)
                 if geometry.size.width > geometry.size.height {
-                    HStack(spacing: 10) {
+                    HStack(alignment: .top, spacing: 10) {
                         LeftColumnView(viewModel: viewModel)
                         RightColumnView(viewModel: viewModel)
                     }
