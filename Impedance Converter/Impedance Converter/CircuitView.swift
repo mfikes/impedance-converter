@@ -34,8 +34,6 @@ struct CircuitView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        InductanceView(viewModel: viewModel)
-        CapacitanceView(viewModel: viewModel)
         Picker("Mode", selection: $viewModel.circuitMode) {
             Image("Series").tag(CircuitMode.series)
             Image("Parallel").tag(CircuitMode.parallel)
@@ -43,5 +41,7 @@ struct CircuitView: View {
         .pickerStyle(SegmentedPickerStyle())
         .padding([.horizontal], 10)
         .frame(maxWidth: 200)
+        InductanceView(viewModel: viewModel)
+        CapacitanceView(viewModel: viewModel)
     }
 }

@@ -57,8 +57,8 @@ struct ImpedanceColumnView: View {
     var body: some View {
         VStack {
             ComplexImpedanceView(viewModel: viewModel)
-            ParametersView(viewModel: viewModel)
             CircuitView(viewModel: viewModel)
+            ParametersView(viewModel: viewModel)
         }
     }
 }
