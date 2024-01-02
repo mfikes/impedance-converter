@@ -21,6 +21,7 @@
 		ED737AB62B3F57F400926575 /* CircuitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB52B3F57F400926575 /* CircuitView.swift */; };
 		ED737AB82B3F589600926575 /* ParametersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB72B3F589600926575 /* ParametersView.swift */; };
 		ED737ABA2B3F593E00926575 /* ImpedanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB92B3F593E00926575 /* ImpedanceView.swift */; };
+		EDB2C5952B42FDDE009362F2 /* CharacterizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		ED737AB52B3F57F400926575 /* CircuitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircuitView.swift; sourceTree = "<group>"; };
 		ED737AB72B3F589600926575 /* ParametersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametersView.swift; sourceTree = "<group>"; };
 		ED737AB92B3F593E00926575 /* ImpedanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpedanceView.swift; sourceTree = "<group>"; };
+		EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterizationView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +84,7 @@
 				ED737AB52B3F57F400926575 /* CircuitView.swift */,
 				ED737AB72B3F589600926575 /* ParametersView.swift */,
 				ED737AAF2B3F568200926575 /* SmithChartView.swift */,
+				EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */,
 				ED737AAB2B3F4C6100926575 /* Colors.swift */,
 				ED737AA92B3F4B8100926575 /* Math.swift */,
 				ED737AB12B3F570900926575 /* Units.swift */,
@@ -181,6 +184,7 @@
 				ED737AB82B3F589600926575 /* ParametersView.swift in Sources */,
 				ED737ABA2B3F593E00926575 /* ImpedanceView.swift in Sources */,
 				ED737AAA2B3F4B8100926575 /* Math.swift in Sources */,
+				EDB2C5952B42FDDE009362F2 /* CharacterizationView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
