@@ -1,31 +1,50 @@
 import SwiftUI
 
 enum ConstraintKind {
-    case unset, resistance, reactance, conductance, susceptance, none
+    case unset, resistance, reactance, conductance, susceptance, magnitude, angle, none
 }
 
 struct SmithChartView: View {
     @ObservedObject var viewModel: ViewModel
     
     @State var constraintKind: ConstraintKind = .unset
+    
     @State var constraintValue: Double = 0
+    
     @State private var modeInterpolatorKernel: Double = 1
     @State private var modeInterpolator: Double = 1
-    
+
     @State private var animationTimer: Timer?
-    
-    func startAnimating(up: Bool) {
+
+    func startAnimating(target: Double) {
         animationTimer?.invalidate()
-        animationTimer = Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { _ in
-            modeInterpolatorKernel += up ? 0.13 : -0.13
-            if abs(modeInterpolatorKernel) >= 0.999 {
+        let startValue = modeInterpolatorKernel
+
+        let totalDistance = abs(target - startValue)
+        let totalAnimationTime = 0.25
+        let timerInterval = 0.016
+        let numberOfSteps = totalAnimationTime / timerInterval
+        let step = totalDistance / numberOfSteps
+
+        animationTimer = Timer.scheduledTimer(withTimeInterval: timerInterval, repeats: true) { _ in
+            if abs(modeInterpolatorKernel - target) <= step {
                 animationTimer?.invalidate()
-                modeInterpolatorKernel = up ? 1 : -1
+                modeInterpolatorKernel = target
+            } else {
+                modeInterpolatorKernel += (modeInterpolatorKernel < target) ? step : -step
             }
-            modeInterpolator = sin(modeInterpolatorKernel * Double.pi/2.0)
+
+            let angle = modeInterpolatorKernel * Double.pi / 2
+            if target == 0 {
+                modeInterpolator = (startValue < 0) ? -(1 - cos(angle)) : (1 - cos(angle))
+            } else {
+                modeInterpolator = sin(angle)
+            }
         }
     }
-    
+
+
+
     func createCenterAndRadius(size: CGSize) -> (CGPoint, CGFloat) {
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
         let radius = min(size.width, size.height) / 2 - 20
@@ -51,6 +70,17 @@ struct SmithChartView: View {
     
     func calculateGridColor() -> Color {
         return constraintKind == .unset || constraintKind == .none ? .gray : Color(hex:"#FFFFFF").adjusted(brightness:0.4)
+    }
+    
+    func animationTarget(for mode: DisplayMode) -> Double {
+        switch mode {
+        case .impedance:
+            return 1
+        case .admittance:
+            return -1
+        case .reflectionCoefficient:
+            return 0
+        }
     }
     
     var body: some View {
@@ -104,7 +134,7 @@ struct SmithChartView: View {
                     }
                 }
                 .onChange(of: viewModel.displayMode) { _ in
-                    startAnimating(up: viewModel.displayMode != .admittance)
+                    startAnimating(target:animationTarget(for: viewModel.displayMode))
                 }
                 
                 Canvas { context, size in
@@ -134,7 +164,7 @@ struct SmithChartView: View {
                     }
                 }
                 .onChange(of: viewModel.displayMode) { _ in
-                    startAnimating(up: viewModel.displayMode != .admittance)
+                    startAnimating(target:animationTarget(for: viewModel.displayMode))
                 }
                 
                 Canvas { context, size in
@@ -149,8 +179,16 @@ struct SmithChartView: View {
                         drawResistanceCircle(context: context, center: center, radius: radius, R: constraintKind == .resistance ? constraintValue / viewModel.referenceImpedance.real : constraintValue / viewModel.referenceAdmittance.real, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
                     }
                     
+                    if (constraintKind == .magnitude) {
+                        drawCircle(context: context, center: center, radius: radius, circleRadius: viewModel.reflectionCoefficient.magnitude * radius, circleCenter: center, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                    }
+                    
                     if (constraintKind == .reactance || constraintKind == .susceptance) {
                         drawReactanceArc(context: context, center: center, radius: radius, X: constraintKind == .reactance ? constraintValue / viewModel.referenceImpedance.real : -viewModel.referenceAdmittance.real / constraintValue, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                    }
+                    
+                    if (constraintKind == .angle) {
+                        drawRadius(context: context, center: center, radius: radius, angle: Angle(degrees: constraintValue), color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
                     }
                     
                 }
@@ -200,18 +238,16 @@ struct SmithChartView: View {
     private func drawResistanceCircle(context: GraphicsContext, center: CGPoint, radius: CGFloat, R: Double, color: Color, style: StrokeStyle, modeInterpolator: Double) {
         let circleRadius = radius / (R + 1)
         let circleCenter = CGPoint(x: center.x + modeInterpolator * radius * R / (R + 1), y: center.y)
-        let resistanceCircle = Path { path in
-            path.addEllipse(in: CGRect(x: circleCenter.x - circleRadius, y: circleCenter.y - circleRadius, width: 2 * circleRadius, height: 2 * circleRadius))
-        }
-        context.stroke(resistanceCircle, with: .color(color), style: style)
+        drawCircle(context: context, center: center, radius: radius, circleRadius: circleRadius, circleCenter: circleCenter, color: color, style: style)
     }
     
     private func drawReactanceArc(context: GraphicsContext, center: CGPoint, radius: CGFloat, X: Double, color: Color, style: StrokeStyle, modeInterpolator: Double) {
         if X == 0 {
             drawHorizontalLine(context: context, center: center, radius: radius, color: color, style: style)
         } else {
+            
             let f = modeInterpolator / 2 + 0.5
-            let arcRadius = min((f * (radius / X) + (1 - f) * (X * radius)) / modeInterpolator, 5000)
+            let arcRadius = min(abs((f * (radius / X) + (1 - f) * (X * radius)) / modeInterpolator), 10*radius)
             let anchor = calculateAnchor(X: X, radius: radius)
             let arcCenter = calculateArcCenter(center: center, anchor: anchor, modeInterpolator: modeInterpolator, radius: radius, arcRadius: arcRadius)
             
@@ -222,6 +258,30 @@ struct SmithChartView: View {
             context.stroke(reactanceArc, with: .color(color), style: style)
         }
     }
+    
+    private func drawCircle(context: GraphicsContext, center: CGPoint, radius: CGFloat, circleRadius: Double, circleCenter:CGPoint, color: Color, style: StrokeStyle) {
+        let circle = Path { path in
+            path.addEllipse(in: CGRect(x: circleCenter.x - circleRadius, y: circleCenter.y - circleRadius, width: 2 * circleRadius, height: 2 * circleRadius))
+        }
+        context.stroke(circle, with: .color(color), style: style)
+    }
+    
+    private func drawRadius(context: GraphicsContext, center: CGPoint, radius: CGFloat, angle: Angle, color: Color, style: StrokeStyle, modeInterpolator: Double) {
+        let angleRadians = angle.radians
+        
+        let endPoint = CGPoint(
+            x: center.x + radius * CGFloat(cos(angleRadians)),
+            y: center.y - radius * CGFloat(sin(angleRadians))
+        )
+
+        let line = Path { path in
+            path.move(to: center)
+            path.addLine(to: endPoint)
+        }
+
+        context.stroke(line, with: .color(color), style: style)
+    }
+
     
     private func drawHorizontalLine(context: GraphicsContext, center: CGPoint, radius: CGFloat, color: Color, style: StrokeStyle) {
         let horizontalLine = Path { path in
@@ -275,6 +335,15 @@ struct SmithChartView: View {
         let reactance = viewModel.reactance
         let conductance = viewModel.conductance
         let susceptance = viewModel.susceptance
+        let magnitude = viewModel.reflectionCoefficient.magnitude
+        let angle = viewModel.reflectionCoefficient.angle
+        
+        if (constraintKind != .unset && constraintKind != .none) {
+            if (reflectionCoefficient - viewModel.reflectionCoefficient).magnitude > 0.2 {
+                constraintKind = .none
+                playHapticsFor(constraintEnabled: false);
+            }
+        }
         
         if (reflectionCoefficient.magnitude > 1) {
             reflectionCoefficient = Complex.fromPolar(magnitude: 1, angle: reflectionCoefficient.angle)
@@ -286,31 +355,50 @@ struct SmithChartView: View {
         
         switch constraintKind {
         case .unset:
-            if (viewModel.displayMode == .admittance) {
-                if abs((viewModel.conductance - conductance)/conductance) < 0.2 {
-                    constraintKind = .conductance
-                    constraintValue = conductance
-                    viewModel.conductance = conductance
-                } else if abs((viewModel.susceptance - susceptance)/susceptance) < 0.2 ||
-                            abs(susceptance) < 0.1 * viewModel.referenceAdmittance.real &&
-                            abs(viewModel.susceptance) < 0.1 * viewModel.referenceAdmittance.real {
-                    constraintKind = .susceptance
-                    constraintValue = susceptance
-                    viewModel.susceptance = susceptance
-                } else {
-                    constraintKind = .none
-                }
-            } else {
+            switch viewModel.displayMode {
+            case .impedance:
                 if abs((viewModel.resistance - resistance)/resistance) < 0.2 {
                     constraintKind = .resistance
+                    playHapticsFor(constraintEnabled: true);
                     constraintValue = resistance
                     viewModel.resistance = resistance
                 } else if abs((viewModel.reactance - reactance)/reactance) < 0.2 ||
                             abs(reactance) < 0.1 * viewModel.referenceImpedance.real &&
                             abs(viewModel.reactance) < 0.1 * viewModel.referenceImpedance.real {
                     constraintKind = .reactance
+                    playHapticsFor(constraintEnabled: true);
                     constraintValue = reactance
                     viewModel.reactance = reactance
+                } else {
+                    constraintKind = .none
+                }
+            case .admittance:
+                if abs((viewModel.conductance - conductance)/conductance) < 0.2 {
+                    constraintKind = .conductance
+                    playHapticsFor(constraintEnabled: true);
+                    constraintValue = conductance
+                    viewModel.conductance = conductance
+                } else if abs((viewModel.susceptance - susceptance)/susceptance) < 0.2 ||
+                            abs(susceptance) < 0.1 * viewModel.referenceAdmittance.real &&
+                            abs(viewModel.susceptance) < 0.1 * viewModel.referenceAdmittance.real {
+                    constraintKind = .susceptance
+                    playHapticsFor(constraintEnabled: true);
+                    constraintValue = susceptance
+                    viewModel.susceptance = susceptance
+                } else {
+                    constraintKind = .none
+                }
+            case .reflectionCoefficient:
+                if magnitude < 0.9999999 && abs(viewModel.reflectionCoefficient.magnitude - magnitude)/magnitude < 0.2 {
+                    constraintKind = .magnitude
+                    playHapticsFor(constraintEnabled: true);
+                    constraintValue = magnitude
+                    viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: magnitude, angle: viewModel.reflectionCoefficient.angle)
+                } else if abs(viewModel.reflectionCoefficient.angle.degrees - angle.degrees) < 5 {
+                    constraintKind = .angle
+                    playHapticsFor(constraintEnabled: true);
+                    constraintValue = angle.degrees
+                    viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: viewModel.reflectionCoefficient.magnitude, angle:angle)
                 } else {
                     constraintKind = .none
                 }
@@ -323,6 +411,10 @@ struct SmithChartView: View {
             viewModel.conductance = constraintValue
         case .susceptance:
             viewModel.susceptance = constraintValue
+        case .magnitude:
+            viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: constraintValue, angle: viewModel.reflectionCoefficient.angle)
+        case .angle:
+            viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: viewModel.reflectionCoefficient.magnitude, angle:Angle(degrees:constraintValue))
         case .none:
             break
         }
@@ -330,5 +422,9 @@ struct SmithChartView: View {
     
     private func handleDragEnd() {
         constraintKind = .unset
+    }
+    
+    private func playHapticsFor(constraintEnabled: Bool) {
+        Haptics.shared.playHapticFeedback(for: constraintEnabled)
     }
 }

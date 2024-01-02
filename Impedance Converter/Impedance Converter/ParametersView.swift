@@ -15,7 +15,7 @@ struct ReferenceView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        if (viewModel.displayMode == .impedance) {
+        if (viewModel.displayMode != .admittance) {
             UnitInputView(value: Binding(
                 get: { viewModel.referenceImpedance.real },
                 set: { viewModel.referenceImpedance = Complex(real: $0, imaginary: 0)}
