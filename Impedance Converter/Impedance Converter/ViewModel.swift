@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 enum DisplayMode {
     case impedance, admittance, reflectionCoefficient
@@ -6,6 +6,10 @@ enum DisplayMode {
 
 enum CircuitMode {
     case series, parallel
+}
+
+enum AngleOrientation {
+    case counterclockwise, clockwise
 }
 
 enum ActiveRepresentation {
@@ -36,6 +40,10 @@ class ViewModel: ObservableObject {
     
     @Published var activeRep: ActiveRepresentation = .impedance
     
+    @Published var refAngle: Angle = Angle(radians: 0)
+    
+    @Published var angleOrientation: AngleOrientation = .counterclockwise
+        
     private func ensureNoNaN(value: Complex) -> Complex {
         if (value.real.isNaN && value.imaginary.isNaN) {
             return Complex(real: 0, imaginary: 0)
@@ -333,6 +341,41 @@ class ViewModel: ObservableObject {
         }
     }
 
+    var wavelength: Double {
+        return 3e8 / omega
+    }
+    
+    var angleSign: Double {
+        switch angleOrientation {
+        case .counterclockwise:
+            return 1
+        case .clockwise:
+            return -1
+        }
+    }
+    
+    var wavelengths: Double {
+        get {
+            return angleSign * (reflectionCoefficient.angle.radians - refAngle.radians) / (2 * Double.pi)
+        }
+        set {
+            reflectionCoefficient = Complex.fromPolar(magnitude: reflectionCoefficient.magnitude, angle: Angle(radians:angleSign * (2 * Double.pi) * newValue + refAngle.radians))
+        }
+    }
+    
+    var distance: Double {
+        get {
+            return wavelengths * wavelength
+        }
+        set {
+            wavelengths = newValue / wavelength
+        }
+    }
+    
+    func zeroLength() {
+        refAngle = reflectionCoefficient.angle
+    }
+    
     @Published var complexDisplayMode: DisplayMode = .impedance {
         didSet {
             if complexDisplayMode != .reflectionCoefficient {
@@ -344,4 +387,5 @@ class ViewModel: ObservableObject {
     @Published var circuitMode: CircuitMode = .series
     
     @Published var displayMode: DisplayMode = .impedance
+    
 }

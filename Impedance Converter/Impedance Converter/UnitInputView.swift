@@ -21,6 +21,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
     let label: String
     let description: String
     var showNegationDecorator: Bool = false
+    var precision: Int = 4
     @FocusState private var isFocused: Bool
     
     private var unitCases: [UnitType] {
@@ -69,7 +70,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                 displaySpecialRepresentation(engineeringValue < 0 ? .negativeOverflow : .overflow)
             } else {
                 if (abs(engineeringValue) >= 1) {
-                    let candidate = String(format: "%.4g", engineeringValue)
+                    let candidate = String(format: "%.\(precision)g", engineeringValue)
                     if (abs(Double(candidate)!) >= 1000) {
                         // Rounded up to next unit
                         if (targetUnit.isGreatest) {
@@ -82,7 +83,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                         displayedValue = candidate
                     }
                 } else {
-                    var trimmedValue = String(format: "%.4f", engineeringValue)
+                    var trimmedValue = String(format: "%.\(precision)f", engineeringValue)
                     while trimmedValue.last == "0" {
                         trimmedValue = String(trimmedValue.dropLast())
                     }
@@ -223,13 +224,13 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                     Text(unit.shouldRender && !disabled() ? unit.rawValue : "")
                         .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.5))
                         .multilineTextAlignment(.trailing)
-                        .frame(width: 36)
+                        .frame(width: 34)
                         .overlay(ZStack {
                             Text(unit.shouldRender && !disabled() ? unit.rawValue : "")
                                 .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.7))
                                 .blur(radius: 4)
                                 .multilineTextAlignment(.trailing)
-                                .frame(width: 36)
+                                .frame(width: 34)
                         })
                     Spacer()
                 }

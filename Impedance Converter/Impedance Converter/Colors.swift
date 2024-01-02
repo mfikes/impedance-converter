@@ -38,5 +38,5 @@ extension Color {
     static let basePrimaryOrange = Color(hex: "#EF8046")
     static let baseSecondaryRed = Color(hex: "#D33533")
     static let baseAppBackgroundColor = Color(hex: "#A1BB9B")
-    static let baseSegmentControlTintColor = Color(hex: "#D9CDAD")
+    static let baseSegmentControlTintColor = Color(hex: "#D9CDAD").adjusted(brightness: 1.2)
 }
