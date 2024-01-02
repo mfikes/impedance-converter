@@ -208,14 +208,12 @@ struct SmithChartView: View {
                     context.fill(pointPath, with: .color(Color.basePrimaryOrange.adjusted(brightness: 1.6)))
                 }
                 
-                if let reflectionCoefficient = viewModel.reflectionCoefficient {
-                    let transformedPoint = transform(reflectionCoefficient: reflectionCoefficient, size: geometry.size)
-                    Circle()
-                        .fill(Color.basePrimaryOrange.adjusted(brightness: 1.6))
-                        .frame(width: 2*dotRadius, height: 2*dotRadius)
-                        .position(transformedPoint)
-                        .blur(radius: 1.5*dotRadius)
-                }
+                let transformedPoint = transform(reflectionCoefficient: viewModel.reflectionCoefficient, size: geometry.size)
+                Circle()
+                    .fill(Color.basePrimaryOrange.adjusted(brightness: 1.6))
+                    .frame(width: 2*dotRadius, height: 2*dotRadius)
+                    .position(transformedPoint)
+                    .blur(radius: 1.5*dotRadius)
                 
                 Color.clear
                     .contentShape(Circle())
