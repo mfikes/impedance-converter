@@ -217,19 +217,21 @@ struct SmithChartView: View {
                         .blur(radius: 1.5*dotRadius)
                 }
                 
+                Color.clear
+                    .contentShape(Circle())
+                    .gesture(
+                        DragGesture(minimumDistance: 0)
+                            .onChanged { value in
+                                let tapLocation = value.location
+                                handleDrag(at: tapLocation, in: geometry.size)
+                            }
+                            .onEnded { _ in
+                                handleDragEnd()
+                            }
+                    )
             }
             .background(Color(hex: "#3A0C08").adjusted(brightness: 0.6))
             .cornerRadius(8)
-            .gesture(
-                DragGesture(minimumDistance: 0)
-                    .onChanged { value in
-                        let tapLocation = value.location
-                        handleDrag(at: tapLocation, in: geometry.size)
-                    }
-                    .onEnded { _ in
-                        handleDragEnd()
-                    }
-            )
         }
         .aspectRatio(1, contentMode: .fit)
         .padding([.horizontal], 10)
@@ -339,7 +341,7 @@ struct SmithChartView: View {
         )
         
         var reflectionCoefficient = Complex(real: tapPoint.x, imaginary: -tapPoint.y)
-        
+                
         let resistance = viewModel.resistance
         let reactance = viewModel.reactance
         let conductance = viewModel.conductance
