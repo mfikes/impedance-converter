@@ -245,17 +245,26 @@ struct SmithChartView: View {
         if X == 0 {
             drawHorizontalLine(context: context, center: center, radius: radius, color: color, style: style)
         } else {
-            
             let f = modeInterpolator / 2 + 0.5
-            let arcRadius = min(abs((f * (radius / X) + (1 - f) * (X * radius)) / modeInterpolator), 10*radius)
+            let arcRadius = abs((f * (radius / X) + (1 - f) * (X * radius)) / modeInterpolator)
             let anchor = calculateAnchor(X: X, radius: radius)
-            let arcCenter = calculateArcCenter(center: center, anchor: anchor, modeInterpolator: modeInterpolator, radius: radius, arcRadius: arcRadius)
             
-            let reactanceArc = Path { path in
+            if arcRadius > 20 * radius {
+                let startPoint = CGPoint(x: center.x + radius * modeInterpolator, y: center.y)
+                let endPoint = CGPoint(x: center.x + radius * anchor.real, y: center.y - radius * anchor.imaginary)
+                let line = Path { path in
+                    path.move(to: startPoint)
+                    path.addLine(to: endPoint)
+                }
+                context.stroke(line, with: .color(color), style: style)
+            } else {
+                let arcCenter = calculateArcCenter(center: center, anchor: anchor, modeInterpolator: modeInterpolator, radius: radius, arcRadius: arcRadius)
                 let rect = CGRect(x: arcCenter.x - arcRadius, y: arcCenter.y - arcRadius, width: 2 * arcRadius, height: 2 * arcRadius)
-                path.addEllipse(in: rect)
+                let reactanceArc = Path { path in
+                    path.addEllipse(in: rect)
+                }
+                context.stroke(reactanceArc, with: .color(color), style: style)
             }
-            context.stroke(reactanceArc, with: .color(color), style: style)
         }
     }
     
