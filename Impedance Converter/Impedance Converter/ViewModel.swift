@@ -285,6 +285,62 @@ class ViewModel: ObservableObject {
         }
     }
     
+    var swr: Double {
+        get {
+            let reflectionCoefficientMagnitude = reflectionCoefficient.magnitude
+            return (1 + reflectionCoefficientMagnitude) / (1 - reflectionCoefficientMagnitude)
+        }
+        set {
+            guard newValue >= 1 else { return }
+            let reflectionCoefficientMagnitude = (newValue - 1) / (newValue + 1)
+            reflectionCoefficient = Complex.fromPolar(magnitude: reflectionCoefficientMagnitude, angle: reflectionCoefficient.angle)
+        }
+    }
+    
+    var returnLoss: Double {
+        get {
+            let reflectionCoefficientMagnitude = reflectionCoefficient.magnitude
+            return -20 * log10(reflectionCoefficientMagnitude)
+        }
+        set {
+            guard newValue >= 0 else { return }
+            let reflectionCoefficientMagnitude = pow(10, -newValue / 20)
+            reflectionCoefficient = Complex.fromPolar(magnitude: reflectionCoefficientMagnitude, angle: reflectionCoefficient.angle)
+        }
+    }
+
+    var transmissionCoefficient: Double {
+        get {
+            let reflectionCoefficientMagnitude = reflectionCoefficient.magnitude
+            return 1 - pow(reflectionCoefficientMagnitude, 2)
+        }
+        set {
+            guard newValue >= 0 && newValue <= 1 else { return }
+            let reflectionCoefficientMagnitude = sqrt(1 - newValue)
+            reflectionCoefficient = Complex.fromPolar(magnitude: reflectionCoefficientMagnitude, angle: reflectionCoefficient.angle)
+        }
+    }
+
+    var transmissionLoss: Double {
+        get {
+            let transmissionCoefficientValue = transmissionCoefficient
+            return -10 * log10(transmissionCoefficientValue)
+        }
+        set {
+            guard newValue >= 0 else { return }
+            let transmissionCoefficientValue = pow(10, -newValue / 10)
+            transmissionCoefficient = transmissionCoefficientValue
+        }
+    }
+
+    @Published var complexDisplayMode: DisplayMode = .impedance {
+        didSet {
+            if complexDisplayMode != .reflectionCoefficient {
+                displayMode = complexDisplayMode
+            }
+        }
+    }
+    
     @Published var circuitMode: CircuitMode = .series
     
     @Published var displayMode: DisplayMode = .impedance
