@@ -43,6 +43,7 @@ struct ContentView: View {
                         .frame(minHeight: geometry.size.height)
                     }
                     .frame(maxWidth: 500)
+                    .padding(.top, 1)
                 }
             }
             .dynamicTypeSize(.medium)
