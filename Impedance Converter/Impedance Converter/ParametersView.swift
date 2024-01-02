@@ -32,8 +32,8 @@ struct ParametersView: View {
     var body: some View {
         DisplayView {
             HStack {
-                FrequencyView(viewModel: viewModel)
                 ReferenceView(viewModel: viewModel)
+                FrequencyView(viewModel: viewModel)
             }
         }
     }
