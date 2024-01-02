@@ -4,10 +4,7 @@ struct FrequencyView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        UnitInputView(value: Binding(
-            get: { viewModel.frequency },
-            set: { viewModel.frequency = $0 }
-        ), unit: FrequencyUnit.Hz, label: "F", description: "frequency")
+        UnitInputView(value: $viewModel.frequency, unit: FrequencyUnit.Hz, label: "F", description: "frequency")
     }
 }
 
