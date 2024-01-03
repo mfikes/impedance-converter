@@ -18,6 +18,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
     @Binding var value: Double
     @State var unit: UnitType
     @State private var displayedValue: String = ""
+    @State private var pristineDisplayedValue: String = ""
     let label: String
     let description: String
     var showNegationDecorator: Bool = false
@@ -94,6 +95,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                 }
             }
         }
+        pristineDisplayedValue = displayedValue
     }
     
     private func determineAppropriateUnit(for value: Double) -> UnitType {
@@ -186,12 +188,16 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                         }
                                         .onChange(of: isFocused) { focused in
                                             if !focused {
-                                                value = convertFromEngineeringNotation()
-                                                convertToEngineeringNotation(value:value)
+                                                if displayedValue != pristineDisplayedValue {
+                                                    value = convertFromEngineeringNotation()
+                                                    convertToEngineeringNotation(value:value)
+                                                }
                                             }
                                         }
                                         .onDisappear {
-                                            self.value = convertFromEngineeringNotation()
+                                            if displayedValue != pristineDisplayedValue {
+                                                self.value = convertFromEngineeringNotation()
+                                            }
                                         }
                                         .toolbar {
                                             ToolbarItemGroup(placement: .keyboard) {
