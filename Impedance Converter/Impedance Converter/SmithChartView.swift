@@ -4,6 +4,18 @@ enum ConstraintKind {
     case unset, resistance, reactance, conductance, susceptance, magnitude, angle, none
 }
 
+extension Double {
+    func signum() -> Double {
+        if self > 0 {
+            return 1.0
+        } else if self < 0 {
+            return -1.0
+        } else {
+            return 0.0
+        }
+    }
+}
+
 struct SmithChartView: View {
     @ObservedObject var viewModel: ViewModel
     
@@ -273,7 +285,7 @@ struct SmithChartView: View {
         } else {
             let f = modeInterpolator / 2 + 0.5
             let arcRadius = abs((f * (radius / X) + (1 - f) * (X * radius)) / modeInterpolator)
-            let anchor = calculateAnchor(X: X, radius: radius)
+            let anchor = calculateAnchor(X: X, radius: radius, modeInterpolator: modeInterpolator)
             
             if arcRadius > 20 * radius {
                 let startPoint = CGPoint(x: center.x + radius * modeInterpolator, y: center.y)
@@ -326,8 +338,27 @@ struct SmithChartView: View {
         context.stroke(horizontalLine, with: .color(color), style: style)
     }
     
-    private func calculateAnchor(X: Double, radius: CGFloat) -> Complex {
-        return Complex(real: -1, imaginary: X) / Complex(real: 1, imaginary: X)
+    private func polarAngleFor(X: Double) -> Angle {
+        switch (abs(X)) {
+        case 5.0:
+            return Angle(degrees: 30*X.signum())
+        case 2.0:
+            return Angle(degrees: 60*X.signum())
+        case 1.0:
+            return Angle(degrees: 90*X.signum())
+        case 0.5:
+            return Angle(degrees: 120*X.signum())
+        case 0.2:
+            return Angle(degrees: 150*X.signum())
+        default:
+            return Angle(degrees: 45*X.signum())
+        }
+    }
+    
+    private func calculateAnchor(X: Double, radius: CGFloat, modeInterpolator: Double) -> Complex {
+        let smith = Complex(real: -1, imaginary: X) / Complex(real: 1, imaginary: X)
+        let polar = Complex.fromPolar(magnitude: 1, angle: polarAngleFor(X:X))
+        return Complex.fromPolar(magnitude: 1.0, angle: Angle(degrees:abs(modeInterpolator) * smith.angle.degrees + (1.0 - abs(modeInterpolator)) * polar.angle.degrees))
     }
     
     private func calculateArcCenter(center: CGPoint, anchor: Complex, modeInterpolator: Double, radius: CGFloat, arcRadius: CGFloat) -> CGPoint {
