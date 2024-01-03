@@ -225,12 +225,16 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                         .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.5))
                         .multilineTextAlignment(.trailing)
                         .frame(width: 34)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                         .overlay(ZStack {
                             Text(unit.shouldRender && !disabled() ? unit.rawValue : "")
                                 .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.7))
                                 .blur(radius: 4)
                                 .multilineTextAlignment(.trailing)
                                 .frame(width: 34)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
                         })
                     Spacer()
                 }
