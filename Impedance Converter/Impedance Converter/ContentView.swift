@@ -32,20 +32,26 @@ struct ContentView: View {
             ZStack {
                 Color.baseAppBackgroundColor.edgesIgnoringSafeArea(.all)
                 if geometry.size.width > geometry.size.height {
-                    HStack(alignment: .top, spacing: 10) {
-                        ImpedanceColumnView(viewModel: viewModel)
-                        SmithChartColumnView(viewModel: viewModel)
+                    VStack {
+                        ModePickerView(viewModel: viewModel)
+                        HStack(alignment: .top, spacing: 10) {
+                            ImpedanceColumnView(viewModel: viewModel)
+                            SmithChartColumnView(viewModel: viewModel)
+                        }
                     }
                     .padding(10)
                 } else {
-                    ScrollView {
-                        VStack {
-                            Spacer(minLength: 0)
-                            ImpedanceColumnView(viewModel: viewModel)
-                            SmithChartColumnView(viewModel: viewModel)
-                            Spacer(minLength: 0)
+                    VStack {
+                        ModePickerView(viewModel: viewModel)
+                        ScrollView {
+                            VStack {
+                                Spacer(minLength: 0)
+                                ImpedanceColumnView(viewModel: viewModel)
+                                SmithChartColumnView(viewModel: viewModel)
+                                Spacer(minLength: 0)
+                            }
+                            .frame(minHeight: geometry.size.height)
                         }
-                        .frame(minHeight: geometry.size.height)
                     }
                     .frame(maxWidth: 500)
                     .padding(.top, 1)
@@ -56,6 +62,20 @@ struct ContentView: View {
     }
 }
 
+struct ModePickerView: View {
+    @ObservedObject var viewModel: ViewModel
+    var body: some View {
+        Picker("Mode", selection: $viewModel.displayMode) {
+            Text("Impedance Z").tag(DisplayMode.impedance)
+            Text("Admittance Y").tag(DisplayMode.admittance)
+            Text("Refl. Coeff. Γ").tag(DisplayMode.reflectionCoefficient)
+        }
+        .pickerStyle(SegmentedPickerStyle())
+        .padding([.horizontal], 10)
+        .padding([.top], 10)
+        .frame(maxWidth: 500)
+    }
+}
 
 struct ImpedanceColumnView: View {
     var viewModel: ViewModel

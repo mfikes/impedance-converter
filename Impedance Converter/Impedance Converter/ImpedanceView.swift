@@ -166,15 +166,6 @@ struct ComplexImpedanceView: View {
     
     var body: some View {
         VStack {
-            Picker("Mode", selection: $viewModel.displayMode) {
-                Text("Impedance Z").tag(DisplayMode.impedance)
-                Text("Admittance Y").tag(DisplayMode.admittance)
-                Text("Refl. Coeff. Γ").tag(DisplayMode.reflectionCoefficient)
-            }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding([.horizontal], 10)
-            .padding([.top], 10)
-            
             DisplayView {
                 switch viewModel.displayMode {
                 case .impedance:
