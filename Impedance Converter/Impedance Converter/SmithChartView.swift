@@ -11,40 +11,23 @@ struct SmithChartView: View {
     
     @State var constraintValue: Double = 0
     
-    @State private var modeInterpolatorKernel: Double = 1
     @State private var modeInterpolator: Double = 1
 
-    @State private var animationTimer: Timer?
-
-    func startAnimating(target: Double) {
-        animationTimer?.invalidate()
-        let startValue = modeInterpolatorKernel
-
-        let totalDistance = abs(target - startValue)
-        let totalAnimationTime = 0.25
-        let timerInterval = 0.016
-        let numberOfSteps = totalAnimationTime / timerInterval
-        let step = totalDistance / numberOfSteps
-
-        animationTimer = Timer.scheduledTimer(withTimeInterval: timerInterval, repeats: true) { _ in
-            if abs(modeInterpolatorKernel - target) <= step {
-                animationTimer?.invalidate()
-                modeInterpolatorKernel = target
-            } else {
-                modeInterpolatorKernel += (modeInterpolatorKernel < target) ? step : -step
-            }
-
-            let angle = modeInterpolatorKernel * Double.pi / 2
-            if target == 0 {
-                modeInterpolator = (startValue < 0) ? -(1 - cos(angle)) : (1 - cos(angle))
-            } else {
-                modeInterpolator = sin(angle)
-            }
+    var modeAnimationManager = SmoothAnimation(initialValue: 1)
+    
+    func startAnimatingModeChange(target: Double) {
+        modeAnimationManager.startAnimating(target: target) { interpolatorValue in
+            modeInterpolator = interpolatorValue
         }
     }
-
-
-
+    
+    @State private var refAngleInterpolator = Angle(radians: 0)
+    @State private var oldRefAngle = Angle(radians: 0)
+    
+    var refAngleAnimationManager = SmoothAnimation(initialValue: 0)
+    
+    
+    
     func createCenterAndRadius(size: CGSize) -> (CGPoint, CGFloat) {
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
         let radius = min(size.width, size.height) / 2 - 20
@@ -115,6 +98,8 @@ struct SmithChartView: View {
                     context.stroke(centerPointPath, with: .color(gridColor))
                     context.fill(centerPointPath, with: .color(gridColor))
                     
+                    drawReferenceAngleIndicator(context: context, center: center, radius: radius, angle: refAngleInterpolator, color:gridColor)
+                    
                     context.clip(to: outerCircle)
                     
                     let topHalfRect = CGRect(x: 0, y: 0, width: size.width, height: size.height / 2)
@@ -134,8 +119,19 @@ struct SmithChartView: View {
                     }
                 }
                 .onChange(of: viewModel.displayMode) { _ in
-                    startAnimating(target:animationTarget(for: viewModel.displayMode))
+                    startAnimatingModeChange(target: animationTarget(for: viewModel.displayMode))
                 }
+                .onChange(of: viewModel.refAngle) { _ in
+                    let start = oldRefAngle.radians
+                    oldRefAngle = viewModel.refAngle
+                    let end = viewModel.refAngle.radians
+                    let difference = (end - start).truncatingRemainder(dividingBy: 2 * .pi)
+                    let shortestDifference = (2 * difference).truncatingRemainder(dividingBy: 2 * .pi) - difference
+                    refAngleAnimationManager.startAnimating(from: 0, target: 1) { interpolatorValue in
+                        refAngleInterpolator = Angle(radians: start + shortestDifference * interpolatorValue)
+                    }
+                }
+
                 
                 Canvas { context, size in
                     
@@ -164,7 +160,7 @@ struct SmithChartView: View {
                     }
                 }
                 .onChange(of: viewModel.displayMode) { _ in
-                    startAnimating(target:animationTarget(for: viewModel.displayMode))
+                    startAnimatingModeChange(target:animationTarget(for: viewModel.displayMode))
                 }
                 
                 Canvas { context, size in
@@ -233,6 +229,36 @@ struct SmithChartView: View {
         }
         .aspectRatio(1, contentMode: .fit)
         .padding([.horizontal], 10)
+    }
+    
+    private func drawReferenceAngleIndicator(context: GraphicsContext, center: CGPoint, radius: CGFloat, angle: Angle, color: Color) {
+        let angleRadians = angle.radians
+
+        let startPoint = CGPoint(
+            x: center.x + 1.05*radius * CGFloat(cos(angleRadians - 0.03)),
+            y: center.y - 1.05*radius * CGFloat(sin(angleRadians - 0.03))
+        )
+        
+        let midPoint = CGPoint(
+            x: center.x + 1.01*radius * CGFloat(cos(angleRadians)),
+            y: center.y - 1.01*radius * CGFloat(sin(angleRadians))
+        )
+        
+        let endPoint = CGPoint(
+            x: center.x + 1.05*radius * CGFloat(cos(angleRadians + 0.03)),
+            y: center.y - 1.05*radius * CGFloat(sin(angleRadians + 0.03))
+        )
+        
+
+        let line = Path { path in
+            path.move(to: startPoint)
+            path.addLine(to: midPoint)
+            path.addLine(to: endPoint)
+            path.addLine(to: startPoint)
+        }
+
+        context.stroke(line, with: .color(color), style: StrokeStyle(lineWidth: 1))
+        context.fill(line, with: .color(color))
     }
     
     private func drawResistanceCircle(context: GraphicsContext, center: CGPoint, radius: CGFloat, R: Double, color: Color, style: StrokeStyle, modeInterpolator: Double) {

@@ -72,6 +72,18 @@ enum TransmissionLossUnit: String, UnitWithPowerOfTen {
     var basePower: Int { 0 }
 }
 
+enum WavelengthsUnit: String, UnitWithPowerOfTen {
+    case λ
+    var id: Self { self }
+    var basePower: Int { 0 }
+}
+
+enum DistanceUnit: String, UnitWithPowerOfTen {
+    case nm, µm, mm, m, km
+    var id: Self { self }
+    var basePower: Int { -9 }
+}
+
 enum CapacitanceUnit: String, UnitWithPowerOfTen {
     case fF, pF, nF, µF, mF, F
     var id: Self { self }

@@ -21,6 +21,11 @@ struct DisplayView<Content: View>: View {
 struct ContentView: View {
     
     @StateObject var viewModel = ViewModel()
+
+    init() {
+        UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(Color.baseSegmentControlTintColor)
+        UIButton.appearance().backgroundColor = UIColor(Color.baseSegmentControlTintColor)
+    }
     
     var body: some View {
         GeometryReader { geometry in
@@ -69,6 +74,7 @@ struct SmithChartColumnView: View {
         VStack {
             SmithChartView(viewModel: viewModel)
             CharacterizationView(viewModel: viewModel)
+            LengthView(viewModel: viewModel)
         }
     }
 }
