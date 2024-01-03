@@ -32,11 +32,7 @@ class Haptics {
     }
     
     func stopHapticEngine() {
-        do {
-            try hapticEngine?.stop()
-        } catch {
-            print("Error stopping haptic engine: \(error)")
-        }
+        hapticEngine?.stop()
     }
     
     func restartHapticEngine() {
