@@ -73,9 +73,13 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                 if (abs(engineeringValue) >= 1) {
                     let candidate = String(format: "%.\(precision)g", engineeringValue)
                     if (abs(Double(candidate)!) >= 1000) {
-                        // Rounded up to next unit
+                        // Rounded up to a higher unit
                         if (targetUnit.isGreatest) {
-                            displaySpecialRepresentation(engineeringValue < 0 ? .negativeOverflow : .overflow)
+                            if (abs(Double(candidate)!) < 10000) {
+                                displayedValue = candidate
+                            } else {
+                                displaySpecialRepresentation(engineeringValue < 0 ? .negativeOverflow : .overflow)
+                            }
                         } else {
                             // Try again
                             convertToEngineeringNotation(value: Double(candidate)!*pow(10, Double(targetUnit.powerOfTen)))
