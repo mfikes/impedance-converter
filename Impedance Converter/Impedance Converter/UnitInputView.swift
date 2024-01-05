@@ -221,6 +221,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                                         }) {
                                                             Text(unitCase.shouldRender ? unitCase.rawValue : "_")
                                                                 .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.5))
+                                                                .fontWeight(unitCase == unit ? .bold : .regular)
                                                         }
                                                         Spacer()
                                                     }
