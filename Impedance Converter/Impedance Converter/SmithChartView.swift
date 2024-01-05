@@ -386,6 +386,7 @@ struct SmithChartView: View {
     }
     
     private func handleDrag(at location: CGPoint, in size: CGSize) {
+        viewModel.isUndoCheckpointEnabled = false
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
         let radius = min(size.width, size.height) / 2 - 20
         
@@ -488,6 +489,8 @@ struct SmithChartView: View {
     
     private func handleDragEnd() {
         constraintKind = .unset
+        viewModel.isUndoCheckpointEnabled = true
+        viewModel.addCheckpoint()
     }
     
     private func playHapticsFor(constraintEnabled: Bool) {

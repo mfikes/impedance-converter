@@ -23,6 +23,9 @@ class ViewModel: ObservableObject, Codable {
             if frequency <= 0 {
                 frequency = oldValue
             }
+            if (frequency != oldValue) {
+                addCheckpoint()
+            }
         }
     }
     
@@ -42,7 +45,13 @@ class ViewModel: ObservableObject, Codable {
     
     @Published var refAngle: Angle = Angle(radians: 0)
     
-    @Published var angleOrientation: AngleOrientation = .counterclockwise
+    @Published var angleOrientation: AngleOrientation = .counterclockwise {
+        didSet {
+            if angleOrientation != oldValue {
+                addCheckpoint()
+            }
+        }
+    }
         
     private func ensureNoNaN(value: Complex) -> Complex {
         if (value.real.isNaN && value.imaginary.isNaN) {
@@ -74,8 +83,13 @@ class ViewModel: ObservableObject, Codable {
             }
         }
         set {
+            let prevousRefRep = refRep
+            let previousActiveRefRep = activeRefRep
             refRep = newValue
             activeRefRep = .impedance
+            if (refRep != prevousRefRep || activeRefRep != previousActiveRefRep) {
+                addCheckpoint()
+            }
         }
     }
     
@@ -89,8 +103,13 @@ class ViewModel: ObservableObject, Codable {
             }
         }
         set {
+            let previousRefRep = refRep
+            let previousActiveRefRep = activeRefRep
             refRep = newValue
             activeRefRep = .admittance
+            if (refRep != previousRefRep || activeRefRep != previousActiveRefRep) {
+                addCheckpoint()
+            }
         }
     }
     
@@ -104,8 +123,13 @@ class ViewModel: ObservableObject, Codable {
             }
         }
         set {
+            let previousRep = rep
+            let previousActiveRep = activeRep
             rep = ensurePositiveReal(value: ensureNoNaN(value: newValue))
             activeRep = .impedance
+            if (rep != previousRep || activeRep != previousActiveRep) {
+                addCheckpoint()
+            }
         }
     }
     
@@ -119,8 +143,13 @@ class ViewModel: ObservableObject, Codable {
             }
         }
         set {
+            let previousRep = rep
+            let previousActiveRep = activeRep
             rep = ensurePositiveReal(value: ensureNoNaN(value: newValue))
             activeRep = .admittance
+            if (rep != previousRep || activeRep != previousActiveRep) {
+                addCheckpoint()
+            }
         }
     }
     
@@ -373,7 +402,11 @@ class ViewModel: ObservableObject, Codable {
     }
     
     func zeroLength() {
+        let previous = refAngle
         refAngle = reflectionCoefficient.angle
+        if (refAngle != previous) {
+            addCheckpoint()
+        }
     }
     
     @Published var complexDisplayMode: DisplayMode = .impedance {
@@ -461,5 +494,32 @@ class ViewModel: ObservableObject, Codable {
             }
         }
         return nil
+    }
+    
+    @Published var isUndoCheckpointEnabled = true
+    
+    private var checkpoints: [String] = []
+    
+    func addCheckpoint() {
+        if isUndoCheckpointEnabled, let json = encodeToJSON() {
+            if checkpoints.count >= 32 {
+                checkpoints.removeFirst()
+            }
+            checkpoints.append(json)
+        }
+    }
+
+    func undo() {
+        // Ensure there's more than one checkpoint
+        guard checkpoints.count > 1 else { return }
+
+        // Remove the last checkpoint (current state)
+        checkpoints.removeLast()
+
+        // Now, use the new last checkpoint for undo
+        if let previousCheckpoint = checkpoints.last,
+           let restoredViewModel = ViewModel.decodeFromJSON(previousCheckpoint) {
+            update(from: restoredViewModel)
+        }
     }
 }

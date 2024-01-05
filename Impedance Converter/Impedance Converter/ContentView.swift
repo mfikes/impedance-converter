@@ -24,6 +24,8 @@ struct ContentView: View {
 
     @SceneStorage("ContentView.viewModel") var storedViewModel: String?
     
+    @State private var showUndoConfirmation = false
+    
     init() {
         UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(Color.baseSegmentControlTintColor)
         UIButton.appearance().backgroundColor = UIColor(Color.baseSegmentControlTintColor)
@@ -59,6 +61,10 @@ struct ContentView: View {
                     .frame(maxWidth: 500)
                     .padding(.top, 1)
                 }
+                ShakeDetectorView() {
+                    showUndoConfirmation = true
+                }
+                .frame(width: 0, height: 0)
             }
             .dynamicTypeSize(.medium)
         }
@@ -68,6 +74,7 @@ struct ContentView: View {
                let restoredViewModel = ViewModel.decodeFromJSON(storedViewModel) {
                 viewModel.update(from: restoredViewModel)
             }
+            viewModel.addCheckpoint()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 SmoothAnimation.isAnimationDisabled = false
             }
@@ -76,6 +83,15 @@ struct ContentView: View {
             if let jsonString = viewModel.encodeToJSON() {
                 storedViewModel = jsonString
             }
+        }
+        .alert(isPresented: $showUndoConfirmation) {
+            Alert(
+                title: Text("Undo Action"),
+                primaryButton: .destructive(Text("Undo")) {
+                    viewModel.undo()
+                },
+                secondaryButton: .cancel()
+            )
         }
     }
 }

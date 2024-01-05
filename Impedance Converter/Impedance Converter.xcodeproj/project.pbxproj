@@ -24,6 +24,7 @@
 		ED737ABA2B3F593E00926575 /* ImpedanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB92B3F593E00926575 /* ImpedanceView.swift */; };
 		EDB2C5952B42FDDE009362F2 /* CharacterizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */; };
 		EDB2C5992B4376A6009362F2 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2C5982B4376A6009362F2 /* Haptics.swift */; };
+		EDBBC7612B48ACC1004B844C /* ShakeDetectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */; };
 		EDD36F182B443CB00032B9BC /* LengthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD36F172B443CB00032B9BC /* LengthView.swift */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +48,7 @@
 		ED737AB92B3F593E00926575 /* ImpedanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpedanceView.swift; sourceTree = "<group>"; };
 		EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterizationView.swift; sourceTree = "<group>"; };
 		EDB2C5982B4376A6009362F2 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeDetectorView.swift; sourceTree = "<group>"; };
 		EDD36F172B443CB00032B9BC /* LengthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -97,6 +99,7 @@
 				EDB2C5982B4376A6009362F2 /* Haptics.swift */,
 				ED737AB12B3F570900926575 /* Units.swift */,
 				ED16E7702B44C8FC00F1A9BC /* SmoothAnimation.swift */,
+				EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */,
 				ED24868C2B3727B0008820C5 /* Assets.xcassets */,
 				ED24868E2B3727B0008820C5 /* Preview Content */,
 			);
@@ -185,6 +188,7 @@
 				EDB2C5992B4376A6009362F2 /* Haptics.swift in Sources */,
 				ED737AAE2B3F562A00926575 /* ViewModel.swift in Sources */,
 				ED737AB42B3F578400926575 /* UnitInputView.swift in Sources */,
+				EDBBC7612B48ACC1004B844C /* ShakeDetectorView.swift in Sources */,
 				ED24868B2B3727AE008820C5 /* ContentView.swift in Sources */,
 				EDD36F182B443CB00032B9BC /* LengthView.swift in Sources */,
 				ED737AAC2B3F4C6100926575 /* Colors.swift in Sources */,
