@@ -35,7 +35,7 @@ func sin(angle: Angle) -> Double {
 
 // MARK: - Complex Number Implementation
 
-struct Complex {
+struct Complex: Codable {
     let real: Double
     let imaginary: Double
     

@@ -22,12 +22,15 @@ struct ContentView: View {
     
     @StateObject var viewModel = ViewModel()
 
+    @SceneStorage("ContentView.viewModel") var storedViewModel: String?
+    
     init() {
         UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(Color.baseSegmentControlTintColor)
         UIButton.appearance().backgroundColor = UIColor(Color.baseSegmentControlTintColor)
     }
     
     var body: some View {
+                
         GeometryReader { geometry in
             ZStack {
                 Color.baseAppBackgroundColor.edgesIgnoringSafeArea(.all)
@@ -58,6 +61,21 @@ struct ContentView: View {
                 }
             }
             .dynamicTypeSize(.medium)
+        }
+        .onAppear {
+            SmoothAnimation.isAnimationDisabled = true
+            if let storedViewModel = storedViewModel,
+               let restoredViewModel = ViewModel.decodeFromJSON(storedViewModel) {
+                viewModel.update(from: restoredViewModel)
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                SmoothAnimation.isAnimationDisabled = false
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in
+            if let jsonString = viewModel.encodeToJSON() {
+                storedViewModel = jsonString
+            }
         }
     }
 }

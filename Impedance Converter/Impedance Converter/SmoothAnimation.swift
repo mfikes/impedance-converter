@@ -1,6 +1,8 @@
 import Foundation
 
 class SmoothAnimation {
+    static var isAnimationDisabled: Bool = false
+    
     private var animationTimer: Timer?
     private var currentInterpolator: Double
     private var updateAction: ((Double) -> Void)?
@@ -11,6 +13,13 @@ class SmoothAnimation {
     
     
     func startAnimating(target: Double, updateAction: @escaping (Double) -> Void) {
+        
+        if SmoothAnimation.isAnimationDisabled {
+            self.currentInterpolator = target
+            updateAction(target)
+            return
+        }
+        
         self.updateAction = updateAction
         animationTimer?.invalidate()
         let startValue = currentInterpolator
