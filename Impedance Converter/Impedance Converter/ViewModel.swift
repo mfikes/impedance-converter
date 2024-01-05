@@ -1,22 +1,22 @@
 import SwiftUI
 
-enum DisplayMode {
+enum DisplayMode: Codable {
     case impedance, admittance, reflectionCoefficient
 }
 
-enum CircuitMode {
+enum CircuitMode: Codable {
     case series, parallel
 }
 
-enum AngleOrientation {
+enum AngleOrientation: Codable {
     case counterclockwise, clockwise
 }
 
-enum ActiveRepresentation {
+enum ActiveRepresentation: Codable {
     case impedance, admittance
 }
 
-class ViewModel: ObservableObject {
+class ViewModel: ObservableObject, Codable {
         
     @Published var frequency: Double = 100000 {
         didSet {
@@ -388,4 +388,78 @@ class ViewModel: ObservableObject {
     
     @Published var displayMode: DisplayMode = .impedance
     
+    enum CodingKeys: CodingKey {
+        case displayMode, circuitMode,
+             representation, representationMode,
+             refRepresentation, refRepresentationMode,
+             frequency,
+             refAngle, measureOrientation
+    }
+    
+    init() {
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        displayMode = try container.decode(DisplayMode.self, forKey: .displayMode)
+        circuitMode = try container.decode(CircuitMode.self, forKey: .circuitMode)
+        rep = try container.decode(Complex.self, forKey: .representation)
+        activeRep = try container.decode(ActiveRepresentation.self, forKey: .representationMode)
+        refRep = try container.decode(Complex.self, forKey: .refRepresentation)
+        activeRefRep = try container.decode(ActiveRepresentation.self, forKey: .refRepresentationMode)
+        frequency = try container.decode(Double.self, forKey: .frequency)
+        let angleRadians = try container.decode(Double.self, forKey: .refAngle)
+        refAngle = Angle(radians:angleRadians)
+        angleOrientation = try container.decode(AngleOrientation.self, forKey: .measureOrientation)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(displayMode, forKey: .displayMode)
+        try container.encode(circuitMode, forKey: .circuitMode)
+        try container.encode(rep, forKey: .representation)
+        try container.encode(activeRep, forKey: .representationMode)
+        try container.encode(refRep, forKey: .refRepresentation)
+        try container.encode(activeRefRep, forKey: .refRepresentationMode)
+        try container.encode(frequency, forKey: .frequency)
+        try container.encode(refAngle.radians, forKey: .refAngle)
+        try container.encode(angleOrientation, forKey: .measureOrientation)
+    }
+    
+    func update(from other: ViewModel) {
+        self.displayMode = other.displayMode
+        self.circuitMode = other.circuitMode
+        self.rep = other.rep
+        self.activeRep = other.activeRep
+        self.refRep = other.refRep
+        self.activeRefRep = other.activeRefRep
+        self.frequency = other.frequency
+        self.refAngle = other.refAngle
+        self.angleOrientation = other.angleOrientation
+    }
+    
+    func encodeToJSON() -> String? {
+        let encoder = JSONEncoder()
+        do {
+            let data = try encoder.encode(self)
+            return String(data: data, encoding: .utf8)
+        } catch {
+            print("Error encoding ViewModel: \(error)")
+            return nil
+        }
+    }
+    
+    static func decodeFromJSON(_ jsonString: String) -> ViewModel? {
+        let decoder = JSONDecoder()
+        if let data = jsonString.data(using: .utf8) {
+            do {
+                let viewModel = try decoder.decode(ViewModel.self, from: data)
+                return viewModel
+            } catch {
+                print("Error decoding ViewModel: \(error)")
+                return nil
+            }
+        }
+        return nil
+    }
 }
