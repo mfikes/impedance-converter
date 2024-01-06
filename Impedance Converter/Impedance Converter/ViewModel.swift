@@ -16,6 +16,45 @@ enum ImmittanceType: Codable {
     case impedance, admittance
 }
 
+struct Immittance: Codable, Equatable {
+    
+    public let type: ImmittanceType
+    private let value: Complex
+    
+    public init(impedance: Complex) {
+        value = impedance
+        type = .impedance
+    }
+    
+    public init(admittance: Complex) {
+        value = admittance
+        type = .admittance
+    }
+    
+    public var impedance: Complex {
+        get {
+            switch (type) {
+            case .impedance:
+                return value
+            case .admittance:
+                return value.reciprocal
+            }
+        }
+    }
+    
+    public var admittance: Complex {
+        get {
+            switch (type) {
+            case .impedance:
+                return value.reciprocal
+            case .admittance:
+                return value
+            }
+        }
+    }
+    
+}
+
 class ViewModel: ObservableObject, Codable {
         
     @Published var frequency: Double = 100000 {
@@ -34,15 +73,11 @@ class ViewModel: ObservableObject, Codable {
             return 2 * Double.pi * frequency
         }
     }
+        
+    @Published var referenceImmittance: Immittance = Immittance(impedance: Complex(real: 50, imaginary: 0))
     
-    @Published var referenceImmittanceType: ImmittanceType = .impedance
-    
-    @Published var referenceImmittance: Complex = Complex(real: 50, imaginary: 0)
-    
-    @Published var immittance: Complex = Complex(real: 50, imaginary: 0)
-    
-    @Published var immittanceType: ImmittanceType = .impedance
-    
+    @Published var immittance: Immittance = Immittance(impedance: Complex(real: 50, imaginary: 0))
+        
     @Published var refAngle: Angle = Angle(radians: 0)
     
     @Published var angleOrientation: AngleOrientation = .counterclockwise {
@@ -75,19 +110,12 @@ class ViewModel: ObservableObject, Codable {
     
     var referenceImpedance: Complex {
         get {
-            switch (referenceImmittanceType) {
-            case .impedance:
-                return referenceImmittance
-            case .admittance:
-                return referenceImmittance.reciprocal;
-            }
+            return referenceImmittance.impedance
         }
         set {
             let previousReferenceImmittance = referenceImmittance
-            let previousReferenceImmittanceType = referenceImmittanceType
-            referenceImmittance = newValue
-            referenceImmittanceType = .impedance
-            if (referenceImmittance != previousReferenceImmittance || referenceImmittanceType != previousReferenceImmittanceType) {
+            referenceImmittance = Immittance(impedance: newValue)
+            if (referenceImmittance != previousReferenceImmittance) {
                 addCheckpoint()
             }
         }
@@ -95,19 +123,12 @@ class ViewModel: ObservableObject, Codable {
     
     var referenceAdmittance: Complex {
         get {
-            switch (referenceImmittanceType) {
-            case .impedance:
-                return referenceImmittance.reciprocal
-            case .admittance:
-                return referenceImmittance;
-            }
+            return referenceImmittance.admittance
         }
         set {
             let previousReferenceImmittance = referenceImmittance
-            let previousReferenceImmittanceType = referenceImmittanceType
-            referenceImmittance = newValue
-            referenceImmittanceType = .admittance
-            if (referenceImmittance != previousReferenceImmittance || referenceImmittanceType != previousReferenceImmittanceType) {
+            referenceImmittance = Immittance(admittance: newValue)
+            if (referenceImmittance != previousReferenceImmittance) {
                 addCheckpoint()
             }
         }
@@ -115,19 +136,12 @@ class ViewModel: ObservableObject, Codable {
     
     var impedance: Complex {
         get {
-            switch (immittanceType) {
-            case .impedance:
-                return immittance
-            case .admittance:
-                return immittance.reciprocal;
-            }
+            return immittance.impedance
         }
         set {
             let previousImmittance = immittance
-            let previousImmittanceType = immittanceType
-            immittance = newValue
-            immittanceType = .impedance
-            if (immittance != previousImmittance || immittanceType != previousImmittanceType) {
+            immittance = Immittance(impedance: newValue)
+            if (immittance != previousImmittance) {
                 addCheckpoint()
             }
         }
@@ -135,19 +149,12 @@ class ViewModel: ObservableObject, Codable {
     
     var admittance: Complex {
         get {
-            switch (immittanceType) {
-            case .impedance:
-                return immittance.reciprocal
-            case .admittance:
-                return immittance;
-            }
+            return immittance.admittance
         }
         set {
             let previousImmittance = immittance
-            let previousImmittanceType = immittanceType
-            immittance = newValue
-            immittanceType = .admittance
-            if (immittance != previousImmittance || immittanceType != previousImmittanceType) {
+            immittance = Immittance(admittance: newValue)
+            if (immittance != previousImmittance) {
                 addCheckpoint()
             }
         }
@@ -229,7 +236,7 @@ class ViewModel: ObservableObject, Codable {
     
     var dissipationFactor: Double {
         get {
-            switch immittanceType {
+            switch immittance.type {
             case .impedance:
                 return resistance / abs(reactance)
             case .admittance:
@@ -259,7 +266,7 @@ class ViewModel: ObservableObject, Codable {
     
     var qualityFactor: Double {
         get {
-            switch immittanceType {
+            switch immittance.type {
             case .impedance:
                 return abs(reactance) / resistance
             case .admittance:
@@ -297,7 +304,7 @@ class ViewModel: ObservableObject, Codable {
     
     var reflectionCoefficient: Complex {
         get {
-            switch (immittanceType) {
+            switch (immittance.type) {
             case .impedance:
                 if (impedance.magnitude.isInfinite) {
                     return Complex.one
@@ -313,7 +320,7 @@ class ViewModel: ObservableObject, Codable {
             }
         }
         set {
-            switch (immittanceType) {
+            switch (immittance.type) {
             case .impedance:
                 impedance = referenceImpedance * (Complex.one + newValue) / (Complex.one - newValue)
             case .admittance:
@@ -436,10 +443,8 @@ class ViewModel: ObservableObject, Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         displayMode = try container.decode(DisplayMode.self, forKey: .displayMode)
         circuitMode = try container.decode(CircuitMode.self, forKey: .circuitMode)
-        immittance = try container.decode(Complex.self, forKey: .immittance)
-        immittanceType = try container.decode(ImmittanceType.self, forKey: .immittanceType)
-        referenceImmittance = try container.decode(Complex.self, forKey: .referenceImmittance)
-        referenceImmittanceType = try container.decode(ImmittanceType.self, forKey: .referenceImmittanceType)
+        immittance = try container.decode(Immittance.self, forKey: .immittance)
+        referenceImmittance = try container.decode(Immittance.self, forKey: .referenceImmittance)
         frequency = try container.decode(Double.self, forKey: .frequency)
         let angleRadians = try container.decode(Double.self, forKey: .refAngle)
         refAngle = Angle(radians:angleRadians)
@@ -451,9 +456,7 @@ class ViewModel: ObservableObject, Codable {
         try container.encode(displayMode, forKey: .displayMode)
         try container.encode(circuitMode, forKey: .circuitMode)
         try container.encode(immittance, forKey: .immittance)
-        try container.encode(immittanceType, forKey: .immittanceType)
         try container.encode(referenceImmittance, forKey: .referenceImmittance)
-        try container.encode(referenceImmittanceType, forKey: .referenceImmittanceType)
         try container.encode(frequency, forKey: .frequency)
         try container.encode(refAngle.radians, forKey: .refAngle)
         try container.encode(angleOrientation, forKey: .measureOrientation)
@@ -463,9 +466,7 @@ class ViewModel: ObservableObject, Codable {
         self.displayMode = other.displayMode
         self.circuitMode = other.circuitMode
         self.immittance = other.immittance
-        self.immittanceType = other.immittanceType
         self.referenceImmittance = other.referenceImmittance
-        self.referenceImmittanceType = other.referenceImmittanceType
         self.frequency = other.frequency
         self.refAngle = other.refAngle
         self.angleOrientation = other.angleOrientation
