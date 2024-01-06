@@ -16,6 +16,10 @@ enum ImmittanceType: Codable {
     case impedance, admittance
 }
 
+enum Hold {
+    case none, inductance, capacitance
+}
+
 struct Immittance: Codable, Equatable {
     
     public let type: ImmittanceType
@@ -56,14 +60,48 @@ struct Immittance: Codable, Equatable {
 }
 
 class ViewModel: ObservableObject, Codable {
-        
-    @Published var frequency: Double = 100000 {
-        didSet {
-            if frequency <= 0 {
-                frequency = oldValue
-            }
-            if (frequency != oldValue) {
-                addCheckpoint()
+    
+    @Published var hold: Hold = .none
+    
+    func prepareHold() -> (type: Hold, value: Double) {
+        switch hold {
+        case .none:
+            return (.none, 0)
+        case .inductance:
+            return (.inductance, inductance)
+        case .capacitance:
+            return (.capacitance, capacitance)
+        }
+    }
+
+    func performHold(held: (type: Hold, value: Double)) {
+        isUndoCheckpointEnabled = false
+        switch held.type {
+        case .none:
+            break
+        case .inductance:
+            inductance = held.value
+        case .capacitance:
+            capacitance = held.value
+        }
+        isUndoCheckpointEnabled = true
+        hold = held.type
+    }
+
+
+    @Published private var _frequency: Double = 100000
+    var frequency: Double {
+        get {
+            return _frequency
+        }
+        set {
+            if newValue > 0 {
+                if _frequency != newValue {
+                    let value = prepareHold()
+                    _frequency = newValue
+                    performHold(held: value)
+                    addCheckpoint()
+                }
             }
         }
     }
@@ -143,6 +181,7 @@ class ViewModel: ObservableObject, Codable {
             immittance = Immittance(impedance: newValue)
             if (immittance != previousImmittance) {
                 addCheckpoint()
+                hold = .none
             }
         }
     }
@@ -156,6 +195,7 @@ class ViewModel: ObservableObject, Codable {
             immittance = Immittance(admittance: newValue)
             if (immittance != previousImmittance) {
                 addCheckpoint()
+                hold = .none
             }
         }
     }
@@ -212,6 +252,7 @@ class ViewModel: ObservableObject, Codable {
             case .parallel:
                 susceptance = omega * newValue
             }
+            hold = .capacitance
         }
     }
     
@@ -231,6 +272,27 @@ class ViewModel: ObservableObject, Codable {
             case .parallel:
                 susceptance = -1 / (newValue * omega)
             }
+            hold = .inductance
+        }
+    }
+    
+    private func factorTransform() -> ImmittanceType {
+        if hold == .capacitance || hold == .inductance {
+            switch circuitMode {
+            case .series:
+                return .impedance
+            case .parallel:
+                return .admittance
+            }
+        } else {
+            switch displayMode {
+            case .impedance:
+                return .impedance
+            case .admittance:
+                return .admittance
+            default:
+                return .impedance
+            }
         }
     }
     
@@ -244,7 +306,9 @@ class ViewModel: ObservableObject, Codable {
             }
         }
         set {
-            if displayMode == .impedance {
+            let value = prepareHold()
+            switch factorTransform() {
+            case .impedance:
                 if reactance == 0 || abs(reactance).isInfinite {
                     if resistance != 0 {
                         reactance = resistance / newValue
@@ -252,7 +316,7 @@ class ViewModel: ObservableObject, Codable {
                 } else {
                     resistance =  abs(reactance) * newValue
                 }
-            } else {
+            case .admittance:
                 if susceptance == 0 || abs(susceptance).isInfinite {
                     if conductance != 0 {
                         susceptance = conductance / newValue
@@ -261,6 +325,7 @@ class ViewModel: ObservableObject, Codable {
                     conductance = abs(susceptance) * newValue
                 }
             }
+            performHold(held: value)
         }
     }
     
@@ -274,7 +339,9 @@ class ViewModel: ObservableObject, Codable {
             }
         }
         set {
-            if displayMode == .impedance {
+            let value = prepareHold()
+            switch factorTransform() {
+            case .impedance:
                 if reactance == 0 || abs(reactance).isInfinite {
                     if resistance != 0 {
                         reactance = resistance * newValue
@@ -286,7 +353,7 @@ class ViewModel: ObservableObject, Codable {
                         resistance = abs(reactance) / newValue
                     }
                 }
-            } else {
+            case .admittance:
                 if susceptance == 0 || abs(susceptance).isInfinite {
                     if conductance != 0 {
                         susceptance = conductance * newValue
@@ -299,6 +366,7 @@ class ViewModel: ObservableObject, Codable {
                     }
                 }
             }
+            performHold(held: value)
         }
     }
     
