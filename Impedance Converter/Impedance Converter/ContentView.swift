@@ -55,7 +55,6 @@ struct ContentView: View {
                                 SmithChartColumnView(viewModel: viewModel)
                                 Spacer(minLength: 0)
                             }
-                            .frame(minHeight: geometry.size.height)
                         }
                     }
                     .frame(maxWidth: 500)
