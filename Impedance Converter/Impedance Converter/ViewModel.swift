@@ -356,10 +356,10 @@ class ViewModel: ObservableObject, Codable {
     
     var wavelengths: Double {
         get {
-            return angleSign * (reflectionCoefficient.angle.radians - refAngle.radians) / (2 * Double.pi)
+            return angleSign * (reflectionCoefficient.angle.radians - refAngle.radians) / (4 * Double.pi)
         }
         set {
-            reflectionCoefficient = Complex.fromPolar(magnitude: reflectionCoefficient.magnitude, angle: Angle(radians:angleSign * (2 * Double.pi) * newValue + refAngle.radians))
+            reflectionCoefficient = Complex.fromPolar(magnitude: reflectionCoefficient.magnitude, angle: Angle(radians:angleSign * (4 * Double.pi) * newValue + refAngle.radians))
         }
     }
     
