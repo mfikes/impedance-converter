@@ -35,9 +35,13 @@ func sin(angle: Angle) -> Double {
 
 // MARK: - Complex Number Implementation
 
-struct Complex: Codable {
+struct Complex: Codable, Equatable {
     let real: Double
     let imaginary: Double
+    
+    static func == (lhs: Complex, rhs: Complex) -> Bool {
+        return lhs.real == rhs.real && lhs.imaginary == rhs.imaginary
+    }
     
     static var zero: Complex {
         return Complex(real: 0, imaginary: 0)
