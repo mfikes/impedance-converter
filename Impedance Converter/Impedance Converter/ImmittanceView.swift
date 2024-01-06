@@ -161,7 +161,7 @@ struct RectangularReflectionCoefficientView: View {
     }
 }
 
-struct ComplexImpedanceView: View {
+struct ImmittanceView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {

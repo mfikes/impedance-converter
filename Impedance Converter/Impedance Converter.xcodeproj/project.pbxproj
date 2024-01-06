@@ -21,10 +21,10 @@
 		ED737AB42B3F578400926575 /* UnitInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB32B3F578400926575 /* UnitInputView.swift */; };
 		ED737AB62B3F57F400926575 /* CircuitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB52B3F57F400926575 /* CircuitView.swift */; };
 		ED737AB82B3F589600926575 /* ParametersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB72B3F589600926575 /* ParametersView.swift */; };
-		ED737ABA2B3F593E00926575 /* ImpedanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB92B3F593E00926575 /* ImpedanceView.swift */; };
 		EDB2C5952B42FDDE009362F2 /* CharacterizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */; };
 		EDB2C5992B4376A6009362F2 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2C5982B4376A6009362F2 /* Haptics.swift */; };
 		EDBBC7612B48ACC1004B844C /* ShakeDetectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */; };
+		EDBBC7632B48FE76004B844C /* ImmittanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDBBC7622B48FE76004B844C /* ImmittanceView.swift */; };
 		EDD36F182B443CB00032B9BC /* LengthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD36F172B443CB00032B9BC /* LengthView.swift */; };
 /* End PBXBuildFile section */
 
@@ -45,10 +45,10 @@
 		ED737AB32B3F578400926575 /* UnitInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitInputView.swift; sourceTree = "<group>"; };
 		ED737AB52B3F57F400926575 /* CircuitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircuitView.swift; sourceTree = "<group>"; };
 		ED737AB72B3F589600926575 /* ParametersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametersView.swift; sourceTree = "<group>"; };
-		ED737AB92B3F593E00926575 /* ImpedanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImpedanceView.swift; sourceTree = "<group>"; };
 		EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterizationView.swift; sourceTree = "<group>"; };
 		EDB2C5982B4376A6009362F2 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeDetectorView.swift; sourceTree = "<group>"; };
+		EDBBC7622B48FE76004B844C /* ImmittanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmittanceView.swift; sourceTree = "<group>"; };
 		EDD36F172B443CB00032B9BC /* LengthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -88,7 +88,7 @@
 				ED737AAD2B3F562A00926575 /* ViewModel.swift */,
 				ED24868A2B3727AE008820C5 /* ContentView.swift */,
 				ED737AB32B3F578400926575 /* UnitInputView.swift */,
-				ED737AB92B3F593E00926575 /* ImpedanceView.swift */,
+				EDBBC7622B48FE76004B844C /* ImmittanceView.swift */,
 				ED737AB52B3F57F400926575 /* CircuitView.swift */,
 				ED737AB72B3F589600926575 /* ParametersView.swift */,
 				ED737AAF2B3F568200926575 /* SmithChartView.swift */,
@@ -187,6 +187,7 @@
 			files = (
 				EDB2C5992B4376A6009362F2 /* Haptics.swift in Sources */,
 				ED737AAE2B3F562A00926575 /* ViewModel.swift in Sources */,
+				EDBBC7632B48FE76004B844C /* ImmittanceView.swift in Sources */,
 				ED737AB42B3F578400926575 /* UnitInputView.swift in Sources */,
 				EDBBC7612B48ACC1004B844C /* ShakeDetectorView.swift in Sources */,
 				ED24868B2B3727AE008820C5 /* ContentView.swift in Sources */,
@@ -197,7 +198,6 @@
 				ED737AB62B3F57F400926575 /* CircuitView.swift in Sources */,
 				ED2486892B3727AE008820C5 /* Impedance_ConverterApp.swift in Sources */,
 				ED737AB82B3F589600926575 /* ParametersView.swift in Sources */,
-				ED737ABA2B3F593E00926575 /* ImpedanceView.swift in Sources */,
 				ED737AAA2B3F4B8100926575 /* Math.swift in Sources */,
 				ED16E7712B44C8FC00F1A9BC /* SmoothAnimation.swift in Sources */,
 				EDB2C5952B42FDDE009362F2 /* CharacterizationView.swift in Sources */,

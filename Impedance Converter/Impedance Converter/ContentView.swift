@@ -40,7 +40,7 @@ struct ContentView: View {
                     VStack {
                         ModePickerView(viewModel: viewModel)
                         HStack(alignment: .top, spacing: 10) {
-                            ImpedanceColumnView(viewModel: viewModel)
+                            ImmittanceColumnView(viewModel: viewModel)
                             SmithChartColumnView(viewModel: viewModel)
                         }
                     }
@@ -51,7 +51,7 @@ struct ContentView: View {
                         ScrollView {
                             VStack {
                                 Spacer(minLength: 0)
-                                ImpedanceColumnView(viewModel: viewModel)
+                                ImmittanceColumnView(viewModel: viewModel)
                                 SmithChartColumnView(viewModel: viewModel)
                                 Spacer(minLength: 0)
                             }
@@ -111,11 +111,11 @@ struct ModePickerView: View {
     }
 }
 
-struct ImpedanceColumnView: View {
+struct ImmittanceColumnView: View {
     var viewModel: ViewModel
     var body: some View {
         VStack {
-            ComplexImpedanceView(viewModel: viewModel)
+            ImmittanceView(viewModel: viewModel)
             CircuitView(viewModel: viewModel)
             ParametersView(viewModel: viewModel)
         }
