@@ -35,21 +35,17 @@ class ShakeResponderView: UIView {
     }
 }
 
-
 struct ShakeDetectorView: UIViewRepresentable {
     var onShake: () -> Void
-
-    func makeUIView(context: Context) -> UIView {
+    
+    func makeUIView(context: Context) -> ShakeResponderView {
         let view = ShakeResponderView(onShake: onShake)
-        view.backgroundColor = .clear
+        DispatchQueue.main.async {
+            view.becomeFirstResponder()
+        }
         return view
     }
-
-    func updateUIView(_ uiView: UIView, context: Context) {
-        // Reinforce first responder status when the view updates
-        DispatchQueue.main.async {
-            uiView.becomeFirstResponder()
-        }
+    
+    func updateUIView(_ uiView: ShakeResponderView, context: Context) {
     }
 }
-
