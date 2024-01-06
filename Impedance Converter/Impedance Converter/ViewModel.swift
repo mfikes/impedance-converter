@@ -342,7 +342,7 @@ class ViewModel: ObservableObject, Codable {
     }
 
     var wavelength: Double {
-        return 3e8 / omega
+        return 3e8 / frequency
     }
     
     var angleSign: Double {
