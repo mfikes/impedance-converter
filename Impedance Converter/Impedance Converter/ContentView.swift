@@ -92,6 +92,9 @@ struct ContentView: View {
                 secondaryButton: .cancel()
             )
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            viewModel.appDidBecomeActive()
+        }
     }
 }
 

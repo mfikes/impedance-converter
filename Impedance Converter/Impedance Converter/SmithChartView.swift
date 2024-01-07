@@ -17,6 +17,9 @@ extension Double {
 }
 
 struct SmithChartView: View {
+    
+    @AppStorage("scale") private var scalePreference = "1/3-1-3"
+    
     @ObservedObject var viewModel: ViewModel
     
     @State var constraintKind: ConstraintKind = .unset
@@ -78,6 +81,14 @@ struct SmithChartView: View {
         }
     }
     
+    func scale() -> [Double] {
+        if (scalePreference == "1-2-5") {
+            return [0.2, 0.5, 1, 2, 5]
+        } else {
+            return [1/3, 1, 3]
+        }
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
@@ -95,7 +106,7 @@ struct SmithChartView: View {
                     let gridColor = calculateGridColor()
                     
                     // Draw circles of constant resistance
-                    let resistances: [Double] = [0.2, 0.5, 1, 2, 5]
+                    let resistances: [Double] = scale()
                     for R in resistances {
                         drawResistanceCircle(context: context, center: center, radius: radius, R: R, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
                     }
@@ -125,7 +136,7 @@ struct SmithChartView: View {
                     context.clip(to: topHalfPath)
                     
                     // Draw arcs of constant reactance
-                    let reactances: [Double] = [0.2, 0.5, 1, 2, 5]
+                    let reactances: [Double] = scale()
                     for X in reactances {
                         drawReactanceArc(context: context, center: center, radius: radius, X: X, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
                     }
@@ -166,7 +177,7 @@ struct SmithChartView: View {
                     context.clip(to: bottomHalfPath)
                     
                     // Draw arcs of constant reactance
-                    let reactances: [Double] = [0.2, 0.5, 1, 2, 5]
+                    let reactances: [Double] = scale()
                     for X in reactances {
                         drawReactanceArc(context: context, center: center, radius: radius, X: -X, color: gridColor, style: dashedLineStyle, modeInterpolator: modeInterpolator)
                     }
@@ -342,12 +353,16 @@ struct SmithChartView: View {
         switch (abs(X)) {
         case 5.0:
             return Angle(degrees: 30*X.signum())
+        case 3.0:
+            return Angle(degrees: 45*X.signum())
         case 2.0:
             return Angle(degrees: 60*X.signum())
         case 1.0:
             return Angle(degrees: 90*X.signum())
         case 0.5:
             return Angle(degrees: 120*X.signum())
+        case 1.0/3.0:
+            return Angle(degrees: 135*X.signum())
         case 0.2:
             return Angle(degrees: 150*X.signum())
         default:
