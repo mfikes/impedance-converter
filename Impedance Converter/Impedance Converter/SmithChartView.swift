@@ -146,6 +146,7 @@ struct SmithChartContentView: View {
                 }
                 .onChange(of: viewModel.refAngle) { _ in
                     let start = oldRefAngle.radians
+                    oldRefAngle = viewModel.refAngle
                     let end = viewModel.refAngle.radians
                     let difference = (end - start).truncatingRemainder(dividingBy: 2 * .pi)
                     let shortestDifference = (2 * difference).truncatingRemainder(dividingBy: 2 * .pi) - difference
