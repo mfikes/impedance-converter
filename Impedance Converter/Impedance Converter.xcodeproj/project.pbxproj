@@ -23,6 +23,7 @@
 		ED737AB82B3F589600926575 /* ParametersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB72B3F589600926575 /* ParametersView.swift */; };
 		EDA1DB3C2B4B25230072F83C /* Impedance_ConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA1DB3B2B4B25230072F83C /* Impedance_ConverterTests.swift */; };
 		EDA1DB432B4B34C20072F83C /* MathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA1DB422B4B34C20072F83C /* MathTests.swift */; };
+		EDA1DB452B4B442E0072F83C /* ViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA1DB442B4B442E0072F83C /* ViewModelTests.swift */; };
 		EDB2C5952B42FDDE009362F2 /* CharacterizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */; };
 		EDB2C5992B4376A6009362F2 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2C5982B4376A6009362F2 /* Haptics.swift */; };
 		EDBBC7612B48ACC1004B844C /* ShakeDetectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */; };
@@ -61,6 +62,7 @@
 		EDA1DB392B4B25230072F83C /* Impedance ConverterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Impedance ConverterTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EDA1DB3B2B4B25230072F83C /* Impedance_ConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Impedance_ConverterTests.swift; sourceTree = "<group>"; };
 		EDA1DB422B4B34C20072F83C /* MathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathTests.swift; sourceTree = "<group>"; };
+		EDA1DB442B4B442E0072F83C /* ViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelTests.swift; sourceTree = "<group>"; };
 		EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterizationView.swift; sourceTree = "<group>"; };
 		EDB2C5982B4376A6009362F2 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeDetectorView.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 			children = (
 				EDA1DB3B2B4B25230072F83C /* Impedance_ConverterTests.swift */,
 				EDA1DB422B4B34C20072F83C /* MathTests.swift */,
+				EDA1DB442B4B442E0072F83C /* ViewModelTests.swift */,
 			);
 			path = "Impedance ConverterTests";
 			sourceTree = "<group>";
@@ -277,6 +280,7 @@
 			files = (
 				EDA1DB3C2B4B25230072F83C /* Impedance_ConverterTests.swift in Sources */,
 				EDA1DB432B4B34C20072F83C /* MathTests.swift in Sources */,
+				EDA1DB452B4B442E0072F83C /* ViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
