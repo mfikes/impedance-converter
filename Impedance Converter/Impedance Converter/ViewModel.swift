@@ -466,7 +466,9 @@ class ViewModel: ObservableObject, Codable {
     
     var wavelengths: Double {
         get {
-            return angleSign * symmetricRemainder(dividend: reflectionCoefficient.angle.radians - refAngle.radians, divisor: 2 * Double.pi) / (4 * Double.pi)
+            let originalRemainder = symmetricRemainder(dividend: angleSign * (reflectionCoefficient.angle.radians - refAngle.radians), divisor: 2 * Double.pi)
+            let adjustedRemainder = (originalRemainder + 2 * Double.pi).truncatingRemainder(dividingBy: 2 * Double.pi)
+            return adjustedRemainder / (4 * Double.pi)
         }
         set {
             reflectionCoefficient = Complex.fromPolar(magnitude: reflectionCoefficient.magnitude, angle: Angle(radians:angleSign * (4 * Double.pi) * newValue + refAngle.radians))

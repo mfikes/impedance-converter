@@ -4,7 +4,7 @@ struct WavelengthsView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        UnitInputView(value: $viewModel.wavelengths, unit: WavelengthsUnit.λ, label: "×λ", description: "wavelengths", showNegationDecorator: true, precision: 3)
+        UnitInputView(value: $viewModel.wavelengths, unit: WavelengthsUnit.λ, label: "×λ", description: "wavelengths")
     }
 }
 
@@ -12,7 +12,7 @@ struct DistanceView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        UnitInputView(value: $viewModel.distance, unit: DistanceUnit.m, label: "D", description: "distance", showNegationDecorator: true)
+        UnitInputView(value: $viewModel.distance, unit: DistanceUnit.m, label: "D", description: "distance")
     }
 }
 
