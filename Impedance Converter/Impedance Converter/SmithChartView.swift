@@ -16,7 +16,7 @@ extension Double {
     }
 }
 
-struct SmithChartView: View {
+struct SmithChartViewProper: View {
     
     @AppStorage("scale") private var scalePreference = "1/3-1-3"
     
@@ -510,5 +510,42 @@ struct SmithChartView: View {
     
     private func playHapticsFor(constraintEnabled: Bool) {
         Haptics.shared.playHapticFeedback(for: constraintEnabled)
+    }
+}
+
+struct ScanLinesEffect: View {
+    let lineSpacing: CGFloat = 2
+
+    var body: some View {
+        GeometryReader { geometry in
+            Path { path in
+                let height = geometry.size.height
+                let lineCount = Int(height / lineSpacing)
+
+                for i in 0..<lineCount {
+                    let y = CGFloat(i) * lineSpacing
+                    path.move(to: CGPoint(x: 0, y: y))
+                    path.addLine(to: CGPoint(x: geometry.size.width, y: y))
+                }
+            }
+            .stroke(Color.black.opacity(0.7), lineWidth: 0.3) // scan lines color and opacity
+        }
+    }
+}
+
+struct SmithChartView: View {
+    
+    var viewModel: ViewModel
+    
+    var body: some View {
+        // Use a ZStack to overlay the CRT effect on top of the content
+        ZStack {
+            SmithChartViewProper(viewModel: viewModel)
+            
+            ScanLinesEffect()
+                .cornerRadius(8)
+                .padding(10)
+                .allowsHitTesting(false)
+        }
     }
 }
