@@ -148,13 +148,12 @@ struct SmithChartContentView: View {
                     let start = oldRefAngle.radians
                     oldRefAngle = viewModel.refAngle
                     let end = viewModel.refAngle.radians
-                    let difference = (end - start).truncatingRemainder(dividingBy: 2 * .pi)
-                    let shortestDifference = (2 * difference).truncatingRemainder(dividingBy: 2 * .pi) - difference
+                    let shortestDifference = symmetricRemainder(dividend: end - start, divisor: 2 * .pi)
+                    
                     refAngleAnimationManager.startAnimating(from: 0, target: 1) { interpolatorValue in
                         refAngleInterpolator = Angle(radians: start + shortestDifference * interpolatorValue)
                     }
                 }
-
                 
                 Canvas { context, size in
                     
