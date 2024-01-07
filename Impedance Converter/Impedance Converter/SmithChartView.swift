@@ -16,7 +16,7 @@ extension Double {
     }
 }
 
-struct SmithChartViewProper: View {
+struct SmithChartContentView: View {
     
     @AppStorage("scale") private var scalePreference = "1/3-1-3"
     
@@ -50,7 +50,7 @@ struct SmithChartViewProper: View {
     }
     
     func createDashedLineStyle() -> StrokeStyle {
-        return StrokeStyle(lineWidth: 1, dash: [1, 1])
+        return StrokeStyle(lineWidth: 1)
     }
     
     func transformPoint(center: CGPoint, radius: CGFloat, point: CGPoint) -> CGPoint {
@@ -248,7 +248,7 @@ struct SmithChartViewProper: View {
                     )
             }
             .background(Color(hex: "#3A0C08").adjusted(brightness: 0.6))
-            .cornerRadius(8)
+            .cornerRadius(20)
         }
         .aspectRatio(1, contentMode: .fit)
         .padding([.horizontal], 10)
@@ -514,7 +514,7 @@ struct SmithChartViewProper: View {
 }
 
 struct ScanLinesEffect: View {
-    let lineSpacing: CGFloat = 2
+    let lineSpacing: CGFloat = 4
 
     var body: some View {
         GeometryReader { geometry in
@@ -528,7 +528,7 @@ struct ScanLinesEffect: View {
                     path.addLine(to: CGPoint(x: geometry.size.width, y: y))
                 }
             }
-            .stroke(Color.black.opacity(0.8), lineWidth: 0.3)
+            .stroke(Color.black.opacity(0.6), lineWidth: 1)
         }
     }
 }
@@ -538,7 +538,7 @@ struct SmithChartView: View {
     
     var body: some View {
         ZStack {
-            SmithChartViewProper(viewModel: viewModel)
+            SmithChartContentView(viewModel: viewModel)
             
             ScanLinesEffect()
                 .cornerRadius(8)
