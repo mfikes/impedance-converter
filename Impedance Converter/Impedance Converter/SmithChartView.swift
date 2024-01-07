@@ -16,7 +16,7 @@ extension Double {
     }
 }
 
-struct SmithChartView: View {
+struct SmithChartContentView: View {
     
     @AppStorage("scale") private var scalePreference = "1/3-1-3"
     
@@ -50,7 +50,7 @@ struct SmithChartView: View {
     }
     
     func createDashedLineStyle() -> StrokeStyle {
-        return StrokeStyle(lineWidth: 1, dash: [1, 1])
+        return StrokeStyle(lineWidth: 1)
     }
     
     func transformPoint(center: CGPoint, radius: CGFloat, point: CGPoint) -> CGPoint {
@@ -248,7 +248,7 @@ struct SmithChartView: View {
                     )
             }
             .background(Color(hex: "#3A0C08").adjusted(brightness: 0.6))
-            .cornerRadius(8)
+            .cornerRadius(20)
         }
         .aspectRatio(1, contentMode: .fit)
         .padding([.horizontal], 10)
@@ -512,3 +512,55 @@ struct SmithChartView: View {
         Haptics.shared.playHapticFeedback(for: constraintEnabled)
     }
 }
+
+struct ScanLinesEffect: View {
+    let lineSpacing: CGFloat = 4
+
+    var body: some View {
+        GeometryReader { geometry in
+            Path { path in
+                let height = geometry.size.height
+                let lineCount = Int(height / lineSpacing)
+
+                for i in 0..<lineCount {
+                    let y = CGFloat(i) * lineSpacing
+                    path.move(to: CGPoint(x: 0, y: y))
+                    path.addLine(to: CGPoint(x: geometry.size.width, y: y))
+                }
+            }
+            .stroke(Color.black.opacity(0.6), lineWidth: 1)
+        }
+    }
+}
+
+struct SmithChartView: View {
+    var viewModel: ViewModel
+    
+    var body: some View {
+        ZStack {
+            SmithChartContentView(viewModel: viewModel)
+            
+            ScanLinesEffect()
+                .cornerRadius(8)
+                .padding(10)
+                .allowsHitTesting(false)
+            
+            // First radial gradient for central brightness
+            RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.8), Color.white.opacity(0)]),
+                           center: .center, startRadius: 10, endRadius: 200)
+                .blendMode(.overlay)
+                .allowsHitTesting(false)
+
+            // Second radial gradient for specular light reflection
+            GeometryReader { geometry in
+                let upperLeft = UnitPoint(x: 0.1, y: 0.1)
+                RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.1), Color.white.opacity(0)]),
+                               center: upperLeft,
+                               startRadius: 10, endRadius: 80)
+                .blendMode(.normal)
+                .allowsHitTesting(false)
+            }
+        }
+    }
+}
+
