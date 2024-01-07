@@ -25,6 +25,7 @@
 		EDB2C5992B4376A6009362F2 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2C5982B4376A6009362F2 /* Haptics.swift */; };
 		EDBBC7612B48ACC1004B844C /* ShakeDetectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */; };
 		EDBBC7632B48FE76004B844C /* ImmittanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDBBC7622B48FE76004B844C /* ImmittanceView.swift */; };
+		EDBBC7652B4A24B4004B844C /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EDBBC7642B4A24B3004B844C /* Settings.bundle */; };
 		EDD36F182B443CB00032B9BC /* LengthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD36F172B443CB00032B9BC /* LengthView.swift */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		EDB2C5982B4376A6009362F2 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeDetectorView.swift; sourceTree = "<group>"; };
 		EDBBC7622B48FE76004B844C /* ImmittanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmittanceView.swift; sourceTree = "<group>"; };
+		EDBBC7642B4A24B3004B844C /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		EDD36F172B443CB00032B9BC /* LengthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -101,6 +103,7 @@
 				ED16E7702B44C8FC00F1A9BC /* SmoothAnimation.swift */,
 				EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */,
 				ED24868C2B3727B0008820C5 /* Assets.xcassets */,
+				EDBBC7642B4A24B3004B844C /* Settings.bundle */,
 				ED24868E2B3727B0008820C5 /* Preview Content */,
 			);
 			path = "Impedance Converter";
@@ -172,6 +175,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDBBC7652B4A24B4004B844C /* Settings.bundle in Resources */,
 				ED2486902B3727B0008820C5 /* Preview Assets.xcassets in Resources */,
 				ED246DDF2B39D49A008ECD6D /* Segment7Standard.otf in Resources */,
 				ED24868D2B3727B0008820C5 /* Assets.xcassets in Resources */,

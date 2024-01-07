@@ -61,6 +61,12 @@ struct Immittance: Codable, Equatable {
 
 class ViewModel: ObservableObject, Codable {
     
+    @Published var updateTrigger = false
+    
+    func appDidBecomeActive() {
+        updateTrigger.toggle()
+    }
+    
     @Published var hold: Hold = .none
     
     func prepareHold() -> (type: Hold, value: Double) {
