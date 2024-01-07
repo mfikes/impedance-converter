@@ -528,7 +528,7 @@ struct ScanLinesEffect: View {
                     path.addLine(to: CGPoint(x: geometry.size.width, y: y))
                 }
             }
-            .stroke(Color.black.opacity(0.7), lineWidth: 0.3) // scan lines color and opacity
+            .stroke(Color.black.opacity(0.5), lineWidth: 0.3) // scan lines color and opacity
         }
     }
 }
