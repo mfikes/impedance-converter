@@ -157,6 +157,12 @@ class ViewModel: ObservableObject, Codable {
             return referenceImmittance.impedance
         }
         set {
+            // Guard against negative real part
+            guard newValue.real > 0 && newValue.imaginary == 0 else {
+                print("Attempted to set reference impedance that is not positive real")
+                return
+            }
+            
             let previousReferenceImmittance = referenceImmittance
             referenceImmittance = Immittance(impedance: newValue)
             if (referenceImmittance != previousReferenceImmittance) {
@@ -170,6 +176,12 @@ class ViewModel: ObservableObject, Codable {
             return referenceImmittance.admittance
         }
         set {
+            // Guard to ensure the real part of the admittance is positive
+            guard newValue.real > 0 && newValue.imaginary == 0 else {
+                print("Attempted to set reference admittance that is not positive real")
+                return
+            }
+            
             let previousReferenceImmittance = referenceImmittance
             referenceImmittance = Immittance(admittance: newValue)
             if (referenceImmittance != previousReferenceImmittance) {
