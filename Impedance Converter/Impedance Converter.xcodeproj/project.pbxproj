@@ -21,6 +21,7 @@
 		ED737AB42B3F578400926575 /* UnitInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB32B3F578400926575 /* UnitInputView.swift */; };
 		ED737AB62B3F57F400926575 /* CircuitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB52B3F57F400926575 /* CircuitView.swift */; };
 		ED737AB82B3F589600926575 /* ParametersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB72B3F589600926575 /* ParametersView.swift */; };
+		EDA1DB3C2B4B25230072F83C /* Impedance_ConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA1DB3B2B4B25230072F83C /* Impedance_ConverterTests.swift */; };
 		EDB2C5952B42FDDE009362F2 /* CharacterizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */; };
 		EDB2C5992B4376A6009362F2 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2C5982B4376A6009362F2 /* Haptics.swift */; };
 		EDBBC7612B48ACC1004B844C /* ShakeDetectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */; };
@@ -28,6 +29,16 @@
 		EDBBC7652B4A24B4004B844C /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EDBBC7642B4A24B3004B844C /* Settings.bundle */; };
 		EDD36F182B443CB00032B9BC /* LengthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD36F172B443CB00032B9BC /* LengthView.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		EDA1DB3D2B4B25230072F83C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = ED24867D2B3727AE008820C5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = ED2486842B3727AE008820C5;
+			remoteInfo = "Impedance Converter";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		ED16E7702B44C8FC00F1A9BC /* SmoothAnimation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmoothAnimation.swift; sourceTree = "<group>"; };
@@ -46,6 +57,8 @@
 		ED737AB32B3F578400926575 /* UnitInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitInputView.swift; sourceTree = "<group>"; };
 		ED737AB52B3F57F400926575 /* CircuitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircuitView.swift; sourceTree = "<group>"; };
 		ED737AB72B3F589600926575 /* ParametersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametersView.swift; sourceTree = "<group>"; };
+		EDA1DB392B4B25230072F83C /* Impedance ConverterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Impedance ConverterTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EDA1DB3B2B4B25230072F83C /* Impedance_ConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Impedance_ConverterTests.swift; sourceTree = "<group>"; };
 		EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterizationView.swift; sourceTree = "<group>"; };
 		EDB2C5982B4376A6009362F2 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
 		EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeDetectorView.swift; sourceTree = "<group>"; };
@@ -62,6 +75,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EDA1DB362B4B25230072F83C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -69,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				ED2486872B3727AE008820C5 /* Impedance Converter */,
+				EDA1DB3A2B4B25230072F83C /* Impedance ConverterTests */,
 				ED2486862B3727AE008820C5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -77,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				ED2486852B3727AE008820C5 /* Impedance Converter.app */,
+				EDA1DB392B4B25230072F83C /* Impedance ConverterTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -117,6 +139,14 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		EDA1DB3A2B4B25230072F83C /* Impedance ConverterTests */ = {
+			isa = PBXGroup;
+			children = (
+				EDA1DB3B2B4B25230072F83C /* Impedance_ConverterTests.swift */,
+			);
+			path = "Impedance ConverterTests";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -137,6 +167,24 @@
 			productReference = ED2486852B3727AE008820C5 /* Impedance Converter.app */;
 			productType = "com.apple.product-type.application";
 		};
+		EDA1DB382B4B25230072F83C /* Impedance ConverterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = EDA1DB412B4B25230072F83C /* Build configuration list for PBXNativeTarget "Impedance ConverterTests" */;
+			buildPhases = (
+				EDA1DB352B4B25230072F83C /* Sources */,
+				EDA1DB362B4B25230072F83C /* Frameworks */,
+				EDA1DB372B4B25230072F83C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EDA1DB3E2B4B25230072F83C /* PBXTargetDependency */,
+			);
+			name = "Impedance ConverterTests";
+			productName = "Impedance ConverterTests";
+			productReference = EDA1DB392B4B25230072F83C /* Impedance ConverterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -149,6 +197,10 @@
 				TargetAttributes = {
 					ED2486842B3727AE008820C5 = {
 						CreatedOnToolsVersion = 14.2;
+					};
+					EDA1DB382B4B25230072F83C = {
+						CreatedOnToolsVersion = 14.2;
+						TestTargetID = ED2486842B3727AE008820C5;
 					};
 				};
 			};
@@ -166,6 +218,7 @@
 			projectRoot = "";
 			targets = (
 				ED2486842B3727AE008820C5 /* Impedance Converter */,
+				EDA1DB382B4B25230072F83C /* Impedance ConverterTests */,
 			);
 		};
 /* End PBXProject section */
@@ -179,6 +232,13 @@
 				ED2486902B3727B0008820C5 /* Preview Assets.xcassets in Resources */,
 				ED246DDF2B39D49A008ECD6D /* Segment7Standard.otf in Resources */,
 				ED24868D2B3727B0008820C5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EDA1DB372B4B25230072F83C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,7 +268,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		EDA1DB352B4B25230072F83C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EDA1DB3C2B4B25230072F83C /* Impedance_ConverterTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EDA1DB3E2B4B25230072F83C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = ED2486842B3727AE008820C5 /* Impedance Converter */;
+			targetProxy = EDA1DB3D2B4B25230072F83C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		ED2486912B3727B0008820C5 /* Debug */ = {
@@ -387,6 +463,42 @@
 			};
 			name = Release;
 		};
+		EDA1DB3F2B4B25230072F83C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FMH366978P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.fikesfarm.Impedance-ConverterTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Impedance Converter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Impedance Converter";
+			};
+			name = Debug;
+		};
+		EDA1DB402B4B25230072F83C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FMH366978P;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.fikesfarm.Impedance-ConverterTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Impedance Converter.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Impedance Converter";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -404,6 +516,15 @@
 			buildConfigurations = (
 				ED2486942B3727B0008820C5 /* Debug */,
 				ED2486952B3727B0008820C5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		EDA1DB412B4B25230072F83C /* Build configuration list for PBXNativeTarget "Impedance ConverterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EDA1DB3F2B4B25230072F83C /* Debug */,
+				EDA1DB402B4B25230072F83C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
