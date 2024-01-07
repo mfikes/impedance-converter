@@ -528,17 +528,15 @@ struct ScanLinesEffect: View {
                     path.addLine(to: CGPoint(x: geometry.size.width, y: y))
                 }
             }
-            .stroke(Color.black.opacity(0.5), lineWidth: 0.3) // scan lines color and opacity
+            .stroke(Color.black.opacity(0.8), lineWidth: 0.3)
         }
     }
 }
 
 struct SmithChartView: View {
-    
     var viewModel: ViewModel
     
     var body: some View {
-        // Use a ZStack to overlay the CRT effect on top of the content
         ZStack {
             SmithChartViewProper(viewModel: viewModel)
             
@@ -546,6 +544,23 @@ struct SmithChartView: View {
                 .cornerRadius(8)
                 .padding(10)
                 .allowsHitTesting(false)
+            
+            // First radial gradient for central brightness
+            RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.8), Color.white.opacity(0)]),
+                           center: .center, startRadius: 10, endRadius: 200)
+                .blendMode(.overlay)
+                .allowsHitTesting(false)
+
+            // Second radial gradient for specular light reflection
+            GeometryReader { geometry in
+                let upperLeft = UnitPoint(x: 0.1, y: 0.1)
+                RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.1), Color.white.opacity(0)]),
+                               center: upperLeft,
+                               startRadius: 10, endRadius: 80)
+                .blendMode(.normal)
+                .allowsHitTesting(false)
+            }
         }
     }
 }
+
