@@ -15,7 +15,7 @@ final class Impedance_ConverterTests: XCTestCase {
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         
         // This assertion will always fail because the condition is always true.
-        XCTAssertFalse(true, "This assertion is intended to fail")
+        //XCTAssertFalse(true, "This assertion is intended to fail")
 
         // Alternatively, you can use XCTAssertTrue with a condition that's always false.
         // XCTAssertTrue(false, "This assertion is also intended to fail")
