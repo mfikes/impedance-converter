@@ -118,9 +118,9 @@ class ViewModel: ObservableObject, Codable {
         }
     }
         
-    @Published var referenceImmittance: Immittance = Immittance(impedance: Complex(real: 50, imaginary: 0))
+    @Published private var referenceImmittance: Immittance = Immittance(impedance: Complex(real: 50, imaginary: 0))
     
-    @Published var immittance: Immittance = Immittance(impedance: Complex(real: 50, imaginary: 0))
+    @Published private var immittance: Immittance = Immittance(impedance: Complex(real: 50, imaginary: 0))
         
     @Published var refAngle: Angle = Angle(radians: 0)
     
