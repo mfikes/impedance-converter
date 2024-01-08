@@ -15,6 +15,37 @@ class ViewModelTestBase: XCTestCase {
     }
 }
 
+class FrequencyTests: ViewModelTestBase {
+    
+    func testFrequencySettingAndGeting() {
+        // Test setting and getting a valid frequency
+        viewModel.frequency = 200000 // 200 kHz
+        XCTAssertEqual(viewModel.frequency, 200000)
+        
+        // Test that frequency cannot be set to a non-positive value
+        viewModel.frequency = -1
+        XCTAssertNotEqual(viewModel.frequency, -1)
+        XCTAssertTrue(viewModel.frequency > 0)
+        
+        // Test setting frequency to zero
+        let previousFrequency = viewModel.frequency
+        viewModel.frequency = 0
+        XCTAssertEqual(viewModel.frequency, previousFrequency) // Should remain unchanged
+    }
+    
+    func testOmegaCalculation() {
+        // Set frequency and test omega
+        viewModel.frequency = 200000 // 200 kHz
+        let expectedOmega = 2 * Double.pi * 200000
+        XCTAssertEqual(viewModel.omega, expectedOmega)
+        
+        // Test with another frequency
+        viewModel.frequency = 300000 // 300 kHz
+        let newExpectedOmega = 2 * Double.pi * 300000
+        XCTAssertEqual(viewModel.omega, newExpectedOmega)
+    }
+}
+
 class ReferenceImmittanceTests: ViewModelTestBase {
     
     func testReferenceImmittancePropertyForImpedance() {
