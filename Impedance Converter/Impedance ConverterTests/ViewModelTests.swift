@@ -1,4 +1,5 @@
 import XCTest
+import SwiftUI
 @testable import Impedance_Converter
 
 class ViewModelTestBase: XCTestCase {
@@ -548,5 +549,64 @@ class TransmissionParametersTests: ViewModelTestBase {
         viewModel.transmissionLoss = newTransmissionLoss
         let expectedTransmissionCoefficientValue = pow(10, -newTransmissionLoss / 10)
         XCTAssertEqual(viewModel.transmissionCoefficient, expectedTransmissionCoefficientValue, accuracy: 1e-6)
+    }
+}
+
+class ElectricalLengthTests: ViewModelTestBase {
+
+    // Testing Wavelength
+    func testWavelength() {
+        // Set a frequency and verify the wavelength calculation
+        viewModel.frequency = 300e6 // 300 MHz
+        let expectedWavelength = 3e8 / 300e6
+        XCTAssertEqual(viewModel.wavelength, expectedWavelength)
+    }
+
+    // Testing Wavelengths (Electrical Length in terms of Wavelength)
+    func testWavelengths() {
+        // Set frequency, reflection coefficient angle, and reference angle
+        viewModel.frequency = 300e6 // 300 MHz
+        viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: 0.7, angle: Angle(radians: .pi / 4))
+        viewModel.refAngle = Angle(radians: .pi / 6)
+        viewModel.angleOrientation = .counterclockwise
+
+        // Calculate expected wavelengths
+        let originalRemainder = symmetricRemainder(dividend: viewModel.angleSign * (viewModel.reflectionCoefficient.angle.radians - viewModel.refAngle.radians), divisor: 2 * Double.pi)
+        let adjustedRemainder = (originalRemainder + 2 * Double.pi).truncatingRemainder(dividingBy: 2 * Double.pi)
+        let expectedWavelengths = adjustedRemainder / (4 * Double.pi)
+        XCTAssertEqual(viewModel.wavelengths, expectedWavelengths)
+
+        // Set wavelengths and verify the change in reflection coefficient angle
+        let newWavelengths = 0.3 // Example value
+        viewModel.wavelengths = newWavelengths
+        let expectedNewAngle = Angle(radians: viewModel.angleSign * (4 * Double.pi) * newWavelengths + viewModel.refAngle.radians - 2 * Double.pi)
+        XCTAssertEqual(viewModel.reflectionCoefficient.angle.radians, expectedNewAngle.radians, accuracy: 1e-6)
+    }
+
+    // Testing Distance
+    func testDistance() {
+        // Set frequency and wavelengths
+        viewModel.reactance = 30 // ohms
+        viewModel.frequency = 300e6 // 300 MHz
+        viewModel.wavelengths = 0.3 // Example value
+
+        // Calculate and verify distance
+        let expectedDistance = viewModel.wavelengths * viewModel.wavelength
+        XCTAssertEqual(viewModel.distance, expectedDistance)
+
+        // Set distance and verify wavelengths
+        let newDistance = 0.250 // meters
+        viewModel.distance = newDistance
+        XCTAssertEqual(viewModel.wavelengths, newDistance / viewModel.wavelength, accuracy: 1e-6)
+    }
+
+    // Testing Zero Length Function
+    func testZeroLength() {
+        // Set reflection coefficient angle
+        viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: 1, angle: Angle(radians: .pi / 4))
+
+        // Call zeroLength() and verify that refAngle is set to reflection coefficient angle
+        viewModel.zeroLength()
+        XCTAssertEqual(viewModel.refAngle.radians, viewModel.reflectionCoefficient.angle.radians)
     }
 }
