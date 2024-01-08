@@ -268,3 +268,172 @@ class ElectricalParametersTests: ViewModelTestBase {
     }
     
 }
+
+class ReactiveParametersTests: ViewModelTestBase {
+
+    // Testing Inductance
+    func testInductance() {
+        // Example: Series mode, positive reactance
+        viewModel.circuitMode = .series
+        viewModel.reactance = 50
+        viewModel.frequency = 100000 // 100 kHz
+        XCTAssertEqual(viewModel.inductance, viewModel.reactance / viewModel.omega)
+
+        // Set inductance and verify reactance
+        let newInductance = 1e-6 // 1 µH
+        viewModel.inductance = newInductance
+        XCTAssertEqual(viewModel.reactance, newInductance * viewModel.omega)
+    }
+
+    // Testing Capacitance
+    func testCapacitance() {
+        // Example: Parallel mode, positive susceptance
+        viewModel.circuitMode = .parallel
+        viewModel.susceptance = 0.01 // S
+        viewModel.frequency = 100000 // 100 kHz
+        XCTAssertEqual(viewModel.capacitance, viewModel.susceptance / viewModel.omega)
+
+        // Set capacitance and verify susceptance
+        let newCapacitance = 1e-6 // 1 µF
+        viewModel.capacitance = newCapacitance
+        XCTAssertEqual(viewModel.susceptance, newCapacitance * viewModel.omega)
+    }
+
+    // Testing Dissipation Factor (D)
+    func testDissipationFactor() {
+        viewModel.resistance = 100 // Ohms
+        viewModel.reactance = 50 // Ohms
+
+        // Normal case
+        let expectedD = viewModel.resistance / abs(viewModel.reactance)
+        XCTAssertEqual(viewModel.dissipationFactor, expectedD)
+
+        // Edge cases
+        viewModel.reactance = 0
+        XCTAssertEqual(viewModel.dissipationFactor, Double.infinity)
+
+        viewModel.reactance = Double.infinity
+        XCTAssertEqual(viewModel.dissipationFactor, 0)
+    }
+
+    // Testing Quality Factor (Q)
+    func testQualityFactor() {
+        viewModel.resistance = 100 // Ohms
+        viewModel.reactance = 50 // Ohms
+        
+        // Normal case
+        let expectedQ = abs(viewModel.reactance) / viewModel.resistance
+        XCTAssertEqual(viewModel.qualityFactor, expectedQ)
+        
+        // Edge cases
+        viewModel.reactance = 0
+        XCTAssertEqual(viewModel.qualityFactor, 0)
+        
+        viewModel.resistance = 0
+        XCTAssertTrue(viewModel.qualityFactor.isNaN)
+    }
+    
+    func testDissipationAndQualityFactorReciprocalAndExtremes() {
+        // Set initial values for resistance and reactance
+        viewModel.resistance = 100 // Ohms
+        viewModel.reactance = 50 // Ohms
+        
+        // Calculate expected D and Q
+        let expectedD = viewModel.resistance / abs(viewModel.reactance)
+        let expectedQ = abs(viewModel.reactance) / viewModel.resistance
+        
+        // Check if D and Q are reciprocals of each other
+        XCTAssertEqual(viewModel.dissipationFactor, expectedD)
+        XCTAssertEqual(viewModel.qualityFactor, expectedQ)
+        XCTAssertEqual(viewModel.dissipationFactor * viewModel.qualityFactor, 1, accuracy: 1e-6)
+    }
+    
+    func testDissipationAndQualityFactorReciprocalAndExtremes2() {
+        // Set D to zero and check if Q is infinity
+        viewModel.dissipationFactor = 0
+        XCTAssertTrue(viewModel.qualityFactor.isInfinite)
+    }
+    
+    func testDissipationAndQualityFactorReciprocalAndExtremes3() {
+        // Set Q to zero and check if D is infinity
+        viewModel.qualityFactor = 0
+        XCTAssertTrue(viewModel.dissipationFactor.isInfinite)
+    }
+    
+    func testDissipationAndQualityFactorReciprocalAndExtremes4() {
+        // Set D to infinity and check if Q is zero
+        viewModel.dissipationFactor = Double.infinity
+        XCTAssertEqual(viewModel.qualityFactor, 0)
+    }
+     
+    func testDissipationAndQualityFactorReciprocalAndExtremes5() {
+        // Set Q to infinity and check if D is zero
+        viewModel.qualityFactor = Double.infinity
+        XCTAssertEqual(viewModel.dissipationFactor, 0)
+    }
+}
+
+class ReactiveParametersModeSwitchTests: ViewModelTestBase {
+
+    func testInductanceWithModeSwitch() {
+        // Set base values
+        viewModel.frequency = 100000 // 100 kHz
+        let baseReactance = 50.0 // Ohms
+
+        // Set D near unity in series mode
+        viewModel.circuitMode = .series
+        viewModel.resistance = baseReactance // D = 1 when resistance = reactance
+        viewModel.reactance = baseReactance
+        let seriesInductance = viewModel.inductance
+
+        // Switch to parallel mode
+        viewModel.circuitMode = .parallel
+        let parallelInductance = viewModel.inductance
+
+        // Assert inductances are different
+        XCTAssertNotEqual(seriesInductance, parallelInductance)
+
+        // Set D very small (Q very large) in series mode
+        viewModel.circuitMode = .series
+        viewModel.resistance = 0.001 // Very small resistance
+        let smallD_SeriesInductance = viewModel.inductance
+
+        // Switch to parallel mode
+        viewModel.circuitMode = .parallel
+        let smallD_ParallelInductance = viewModel.inductance
+
+        // Assert inductances are approximately equal
+        XCTAssertEqual(smallD_SeriesInductance, smallD_ParallelInductance, accuracy: 1e-8)
+    }
+
+    func testCapacitanceWithModeSwitch() {
+        // Set base values
+        viewModel.frequency = 100000 // 100 kHz
+        let baseSusceptance = 0.0002 // Siemens
+
+        // Set D near unity in parallel mode
+        viewModel.circuitMode = .parallel
+        viewModel.conductance = baseSusceptance // D = 1 when conductance = susceptance
+        viewModel.susceptance = baseSusceptance
+        let parallelCapacitance = viewModel.capacitance
+
+        // Switch to series mode
+        viewModel.circuitMode = .series
+        let seriesCapacitance = viewModel.capacitance
+
+        // Assert capacitances are different
+        XCTAssertNotEqual(seriesCapacitance, parallelCapacitance)
+
+        // Set D very small (Q very large) in parallel mode
+        viewModel.circuitMode = .parallel
+        viewModel.conductance = 0.001 // Very small conductance
+        let smallD_ParallelCapacitance = viewModel.capacitance
+
+        // Switch to series mode
+        viewModel.circuitMode = .series
+        let smallD_SeriesCapacitance = viewModel.capacitance
+
+        // Assert capacitances are approximately equal
+        XCTAssertEqual(smallD_ParallelCapacitance, smallD_SeriesCapacitance, accuracy: 1e-8)
+    }
+}
