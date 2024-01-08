@@ -21,7 +21,6 @@
 		ED737AB42B3F578400926575 /* UnitInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB32B3F578400926575 /* UnitInputView.swift */; };
 		ED737AB62B3F57F400926575 /* CircuitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB52B3F57F400926575 /* CircuitView.swift */; };
 		ED737AB82B3F589600926575 /* ParametersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AB72B3F589600926575 /* ParametersView.swift */; };
-		EDA1DB3C2B4B25230072F83C /* Impedance_ConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA1DB3B2B4B25230072F83C /* Impedance_ConverterTests.swift */; };
 		EDA1DB432B4B34C20072F83C /* MathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA1DB422B4B34C20072F83C /* MathTests.swift */; };
 		EDA1DB452B4B442E0072F83C /* ViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA1DB442B4B442E0072F83C /* ViewModelTests.swift */; };
 		EDB2C5952B42FDDE009362F2 /* CharacterizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */; };
@@ -60,7 +59,6 @@
 		ED737AB52B3F57F400926575 /* CircuitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircuitView.swift; sourceTree = "<group>"; };
 		ED737AB72B3F589600926575 /* ParametersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametersView.swift; sourceTree = "<group>"; };
 		EDA1DB392B4B25230072F83C /* Impedance ConverterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Impedance ConverterTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		EDA1DB3B2B4B25230072F83C /* Impedance_ConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Impedance_ConverterTests.swift; sourceTree = "<group>"; };
 		EDA1DB422B4B34C20072F83C /* MathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MathTests.swift; sourceTree = "<group>"; };
 		EDA1DB442B4B442E0072F83C /* ViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelTests.swift; sourceTree = "<group>"; };
 		EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharacterizationView.swift; sourceTree = "<group>"; };
@@ -146,7 +144,6 @@
 		EDA1DB3A2B4B25230072F83C /* Impedance ConverterTests */ = {
 			isa = PBXGroup;
 			children = (
-				EDA1DB3B2B4B25230072F83C /* Impedance_ConverterTests.swift */,
 				EDA1DB422B4B34C20072F83C /* MathTests.swift */,
 				EDA1DB442B4B442E0072F83C /* ViewModelTests.swift */,
 			);
@@ -278,7 +275,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EDA1DB3C2B4B25230072F83C /* Impedance_ConverterTests.swift in Sources */,
 				EDA1DB432B4B34C20072F83C /* MathTests.swift in Sources */,
 				EDA1DB452B4B442E0072F83C /* ViewModelTests.swift in Sources */,
 			);
