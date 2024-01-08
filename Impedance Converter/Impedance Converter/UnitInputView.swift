@@ -18,7 +18,8 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
     @Binding var value: Double
     @State var unit: UnitType
     @State private var displayedValue: String = ""
-    @State private var pristineDisplayedValue: String = ""
+    @State private var lastRenderedUnit: UnitType?
+    @State private var lastRenderedValue: String = ""
     let label: String
     let description: String
     var showNegationDecorator: Bool = false
@@ -99,7 +100,8 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                 }
             }
         }
-        pristineDisplayedValue = displayedValue
+        lastRenderedValue = displayedValue
+        lastRenderedUnit = unit
     }
     
     private func determineAppropriateUnit(for value: Double) -> UnitType {
@@ -134,6 +136,10 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
     
     private func disabled() -> Bool {
         value.isNaN
+    }
+    
+    private func dirty() -> Bool {
+        lastRenderedValue != displayedValue || (lastRenderedUnit != nil && lastRenderedUnit != unit)
     }
     
     var body: some View {
@@ -192,14 +198,14 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                         }
                                         .onChange(of: isFocused) { focused in
                                             if !focused {
-                                                if displayedValue != pristineDisplayedValue {
+                                                if dirty() {
                                                     value = convertFromEngineeringNotation()
                                                     convertToEngineeringNotation(value:value)
                                                 }
                                             }
                                         }
                                         .onDisappear {
-                                            if displayedValue != pristineDisplayedValue {
+                                            if dirty() {
                                                 self.value = convertFromEngineeringNotation()
                                             }
                                         }
