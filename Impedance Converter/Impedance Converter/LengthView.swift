@@ -39,7 +39,7 @@ struct LengthView: View {
             .background(Color.baseSegmentControlTintColor)
             .foregroundColor(Color.black)
             .cornerRadius(10)
-            .disabled(viewModel.reflectionCoefficient.angle.radians.isNaN)
+            .disabled(viewModel.reflectionCoefficient.phase.isNaN)
             Spacer()
         }
         DisplayView {

@@ -1,4 +1,5 @@
 import SwiftUI
+import Numerics
 
 struct FrequencyView: View {
     @ObservedObject var viewModel: ViewModel
@@ -15,12 +16,12 @@ struct ReferenceView: View {
         if (viewModel.displayMode != .admittance) {
             UnitInputView(value: Binding(
                 get: { viewModel.referenceImpedance.real },
-                set: { viewModel.referenceImpedance = Complex(real: $0, imaginary: 0)}
+                set: { viewModel.referenceImpedance = Complex($0, 0)}
             ), unit: ResistanceUnit.Ω, label: "Z₀", description: "ref. impedance")
         } else {
             UnitInputView(value: Binding(
                 get: { viewModel.referenceAdmittance.real },
-                set: { viewModel.referenceAdmittance = Complex(real: $0, imaginary: 0)}
+                set: { viewModel.referenceAdmittance = Complex($0, 0)}
             ), unit: ConductanceUnit.S, label: "Y₀", description: "ref. admittance")
         }
     }

@@ -1,4 +1,5 @@
 import SwiftUI
+import Numerics
 
 enum DisplayMode: Codable {
     case impedance, admittance, reflectionCoefficient
@@ -23,34 +24,34 @@ enum Hold {
 struct Immittance: Codable, Equatable {
     
     public let type: ImmittanceType
-    private let value: Complex
+    private let value: Complex<Double>
     
-    public init(impedance: Complex) {
+    public init(impedance: Complex<Double>) {
         value = impedance
         type = .impedance
     }
     
-    public init(admittance: Complex) {
+    public init(admittance: Complex<Double>) {
         value = admittance
         type = .admittance
     }
     
-    public var impedance: Complex {
+    public var impedance: Complex<Double> {
         get {
             switch (type) {
             case .impedance:
                 return value
             case .admittance:
-                return value.reciprocal
+                return value.reciprocal ?? Complex.infinity
             }
         }
     }
     
-    public var admittance: Complex {
+    public var admittance: Complex<Double> {
         get {
             switch (type) {
             case .impedance:
-                return value.reciprocal
+                return value.reciprocal ?? Complex.infinity
             case .admittance:
                 return value
             }
@@ -118,9 +119,9 @@ class ViewModel: ObservableObject, Codable {
         }
     }
         
-    @Published private var referenceImmittance: Immittance = Immittance(impedance: Complex(real: 50, imaginary: 0))
+    @Published private var referenceImmittance: Immittance = Immittance(impedance: Complex(50, 0))
     
-    @Published private var immittance: Immittance = Immittance(impedance: Complex(real: 50, imaginary: 0))
+    @Published private var immittance: Immittance = Immittance(impedance: Complex(50, 0))
         
     @Published var refAngle: Angle = Angle(radians: 0)
     
@@ -131,28 +132,16 @@ class ViewModel: ObservableObject, Codable {
             }
         }
     }
-        
-    private func ensureNoNaN(value: Complex) -> Complex {
-        if (value.real.isNaN && value.imaginary.isNaN) {
-            return Complex(real: 0, imaginary: 0)
-        } else if (value.real.isNaN) {
-            return Complex(real: 0, imaginary: value.imaginary)
-        } else if (value.imaginary.isNaN) {
-            return Complex(real: value.real, imaginary: 0)
-        } else {
-            return value
-        }
-    }
-    
-    private func ensurePositiveReal(value: Complex) -> Complex {
+
+    private func ensurePositiveReal(value: Complex<Double>) -> Complex<Double> {
         if (value.real < 0) {
-            return Complex(real: 0, imaginary: value.imaginary)
+            return Complex(0, value.imaginary)
         } else {
             return value
         }
     }
     
-    var referenceImpedance: Complex {
+    var referenceImpedance: Complex<Double> {
         get {
             return referenceImmittance.impedance
         }
@@ -171,7 +160,7 @@ class ViewModel: ObservableObject, Codable {
         }
     }
     
-    var referenceAdmittance: Complex {
+    var referenceAdmittance: Complex<Double> {
         get {
             return referenceImmittance.admittance
         }
@@ -190,7 +179,7 @@ class ViewModel: ObservableObject, Codable {
         }
     }
     
-    var impedance: Complex {
+    var impedance: Complex<Double> {
         get {
             return immittance.impedance
         }
@@ -204,7 +193,7 @@ class ViewModel: ObservableObject, Codable {
         }
     }
     
-    var admittance: Complex {
+    var admittance: Complex<Double> {
         get {
             return immittance.admittance
         }
@@ -220,37 +209,37 @@ class ViewModel: ObservableObject, Codable {
     
     var resistance: Double {
         get {
-            return impedance.real
+            return impedance.canonicalizedReal
         }
         set {
-            impedance = Complex(real: newValue, imaginary: reactance)
+            impedance = Complex(newValue, reactance)
         }
     }
     
     var reactance: Double {
         get {
-            return impedance.imaginary
+            return impedance.canonicalizedImaginary
         }
         set {
-            impedance = Complex(real: resistance, imaginary: newValue)
+            impedance = Complex(resistance, newValue)
         }
     }
     
     var conductance: Double {
         get {
-            return admittance.real
+            return admittance.canonicalizedReal
         }
         set {
-            admittance = Complex(real: newValue, imaginary: susceptance)
+            admittance = Complex(newValue, susceptance)
         }
     }
     
     var susceptance: Double {
         get {
-            return admittance.imaginary
+            return admittance.canonicalizedImaginary
         }
         set {
-            admittance = Complex(real: conductance, imaginary: newValue)
+            admittance = Complex(conductance, newValue)
         }
     }
     
@@ -388,17 +377,17 @@ class ViewModel: ObservableObject, Codable {
         }
     }
     
-    var reflectionCoefficient: Complex {
+    var reflectionCoefficient: Complex<Double> {
         get {
             switch (immittance.type) {
             case .impedance:
-                if (impedance.magnitude.isInfinite) {
+                if (impedance.length.isInfinite) {
                     return Complex.one
                 } else {
                     return (impedance - referenceImpedance) / (impedance + referenceImpedance)
                 }
             case .admittance:
-                if (admittance.magnitude.isInfinite) {
+                if (admittance.length.isInfinite) {
                     return -Complex.one
                 } else {
                     return (referenceAdmittance - admittance) / (referenceAdmittance + admittance)
@@ -417,37 +406,39 @@ class ViewModel: ObservableObject, Codable {
     
     var swr: Double {
         get {
-            let reflectionCoefficientMagnitude = reflectionCoefficient.magnitude
-            return (1 + reflectionCoefficientMagnitude) / (1 - reflectionCoefficientMagnitude)
+            let reflectionCoefficientLength = reflectionCoefficient.length
+            return (1 + reflectionCoefficientLength) / (1 - reflectionCoefficientLength)
         }
         set {
             guard newValue >= 1 else { return }
-            let reflectionCoefficientMagnitude = (newValue - 1) / (newValue + 1)
-            reflectionCoefficient = Complex.fromPolar(magnitude: reflectionCoefficientMagnitude, angle: reflectionCoefficient.angle)
+            let reflectionCoefficientLength = (newValue - 1) / (newValue + 1)
+            reflectionCoefficient = Complex.init(length: reflectionCoefficientLength, phase: reflectionCoefficient.phase)
         }
     }
     
     var returnLoss: Double {
         get {
-            let reflectionCoefficientMagnitude = reflectionCoefficient.magnitude
-            return -20 * log10(reflectionCoefficientMagnitude)
+            let reflectionCoefficientLength = reflectionCoefficient.length
+            return -20 * log10(reflectionCoefficientLength)
         }
         set {
             guard newValue >= 0 else { return }
-            let reflectionCoefficientMagnitude = pow(10, -newValue / 20)
-            reflectionCoefficient = Complex.fromPolar(magnitude: reflectionCoefficientMagnitude, angle: reflectionCoefficient.angle)
+            let reflectionCoefficientLength = pow(10, -newValue / 20)
+            reflectionCoefficient = Complex.init(length: reflectionCoefficientLength, phase: reflectionCoefficient.phase)
         }
     }
 
     var transmissionCoefficient: Double {
         get {
-            let reflectionCoefficientMagnitude = reflectionCoefficient.magnitude
-            return 1 - pow(reflectionCoefficientMagnitude, 2)
+            let reflectionCoefficientLength = reflectionCoefficient.length
+            return 1 - pow(reflectionCoefficientLength, 2)
         }
         set {
             guard newValue >= 0 && newValue <= 1 else { return }
-            let reflectionCoefficientMagnitude = sqrt(1 - newValue)
-            reflectionCoefficient = Complex.fromPolar(magnitude: reflectionCoefficientMagnitude, angle: reflectionCoefficient.angle)
+            let reflectionCoefficientLength = sqrt(1 - newValue)
+            if (reflectionCoefficient.length > 0) {
+                reflectionCoefficient = Complex.init(length: reflectionCoefficientLength, phase: reflectionCoefficient.phase)
+            }
         }
     }
 
@@ -478,12 +469,12 @@ class ViewModel: ObservableObject, Codable {
     
     var wavelengths: Double {
         get {
-            let originalRemainder = symmetricRemainder(dividend: angleSign * (reflectionCoefficient.angle.radians - refAngle.radians), divisor: 2 * Double.pi)
+            let originalRemainder = symmetricRemainder(dividend: angleSign * (reflectionCoefficient.phase - refAngle.radians), divisor: 2 * Double.pi)
             let adjustedRemainder = (originalRemainder + 2 * Double.pi).truncatingRemainder(dividingBy: 2 * Double.pi)
             return adjustedRemainder / (4 * Double.pi)
         }
         set {
-            reflectionCoefficient = Complex.fromPolar(magnitude: reflectionCoefficient.magnitude, angle: Angle(radians:angleSign * (4 * Double.pi) * newValue + refAngle.radians))
+            reflectionCoefficient = Complex.init(length: reflectionCoefficient.length, phase: angleSign * (4 * Double.pi) * newValue + refAngle.radians)
         }
     }
     
@@ -498,7 +489,7 @@ class ViewModel: ObservableObject, Codable {
     
     func zeroLength() {
         let previous = refAngle
-        refAngle = reflectionCoefficient.angle
+        refAngle = Angle(radians: reflectionCoefficient.phase)
         if (refAngle != previous) {
             addCheckpoint()
         }

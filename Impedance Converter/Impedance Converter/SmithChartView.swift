@@ -1,4 +1,5 @@
 import SwiftUI
+import Numerics
 
 enum ConstraintKind {
     case unset, resistance, reactance, conductance, susceptance, magnitude, angle, none
@@ -198,7 +199,7 @@ struct SmithChartContentView: View {
                     }
                     
                     if (constraintKind == .magnitude) {
-                        drawCircle(context: context, center: center, radius: radius, circleRadius: viewModel.reflectionCoefficient.magnitude * radius, circleCenter: center, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                        drawCircle(context: context, center: center, radius: radius, circleRadius: viewModel.reflectionCoefficient.length * radius, circleCenter: center, color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
                     }
                     
                     if (constraintKind == .reactance || constraintKind == .susceptance) {
@@ -369,13 +370,13 @@ struct SmithChartContentView: View {
         }
     }
     
-    private func calculateAnchor(X: Double, radius: CGFloat, modeInterpolator: Double) -> Complex {
-        let smith = Complex(real: -1, imaginary: X) / Complex(real: 1, imaginary: X)
-        let polar = Complex.fromPolar(magnitude: 1, angle: polarAngleFor(X:X))
-        return Complex.fromPolar(magnitude: 1.0, angle: Angle(degrees:abs(modeInterpolator) * smith.angle.degrees + (1.0 - abs(modeInterpolator)) * polar.angle.degrees))
+    private func calculateAnchor(X: Double, radius: CGFloat, modeInterpolator: Double) -> Complex<Double> {
+        let smith = Complex(-1, X) / Complex(1, X)
+        let polar = Complex.init(length: 1, phase: polarAngleFor(X:X).radians)
+        return Complex.init(length: 1.0, phase: abs(modeInterpolator) * smith.phase + (1.0 - abs(modeInterpolator)) * polar.phase)
     }
     
-    private func calculateArcCenter(center: CGPoint, anchor: Complex, modeInterpolator: Double, radius: CGFloat, arcRadius: CGFloat) -> CGPoint {
+    private func calculateArcCenter(center: CGPoint, anchor: Complex<Double>, modeInterpolator: Double, radius: CGFloat, arcRadius: CGFloat) -> CGPoint {
         let anchorX = radius * anchor.real
         let anchorY = radius * anchor.imaginary
         let p = modeInterpolator >= 0 ? 1.0 : -1.0
@@ -390,7 +391,7 @@ struct SmithChartContentView: View {
     }
     
     
-    private func transform(reflectionCoefficient: Complex, size: CGSize) -> CGPoint {
+    private func transform(reflectionCoefficient: Complex<Double>, size: CGSize) -> CGPoint {
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
         let radius = min(size.width, size.height) / 2 - 20
         return CGPoint(
@@ -410,26 +411,25 @@ struct SmithChartContentView: View {
             y: (location.y - touchOffset - center.y) / radius
         )
         
-        var reflectionCoefficient = Complex(real: tapPoint.x, imaginary: -tapPoint.y)
+        var reflectionCoefficient = Complex(tapPoint.x, -tapPoint.y)
                 
         let resistance = viewModel.resistance
         let reactance = viewModel.reactance
         let conductance = viewModel.conductance
         let susceptance = viewModel.susceptance
-        let magnitude = viewModel.reflectionCoefficient.magnitude
-        let angle = viewModel.reflectionCoefficient.angle
+        let length = viewModel.reflectionCoefficient.length
+        let phase = viewModel.reflectionCoefficient.phase
         
         if (constraintKind != .unset && constraintKind != .none) {
-            if (reflectionCoefficient - viewModel.reflectionCoefficient).magnitude > 0.2 {
+            if (reflectionCoefficient - viewModel.reflectionCoefficient).length > 0.2 {
                 constraintKind = .none
                 playHapticsFor(constraintEnabled: false);
             }
         }
         
-        if (reflectionCoefficient.magnitude > 1) {
-            reflectionCoefficient = Complex.fromPolar(magnitude: 1, angle: reflectionCoefficient.angle)
+        if (reflectionCoefficient.length > 1) {
+            reflectionCoefficient = Complex.init(length: 1, phase: reflectionCoefficient.phase)
             viewModel.reflectionCoefficient = reflectionCoefficient
-            viewModel.resistance = 0
         } else {
             viewModel.reflectionCoefficient = reflectionCoefficient
         }
@@ -470,16 +470,16 @@ struct SmithChartContentView: View {
                     constraintKind = .none
                 }
             case .reflectionCoefficient:
-                if magnitude < 0.9999999 && abs(viewModel.reflectionCoefficient.magnitude - magnitude)/magnitude < 0.2 {
+                if length < 0.9999999 && abs(viewModel.reflectionCoefficient.length - length)/length < 0.2 {
                     constraintKind = .magnitude
                     playHapticsFor(constraintEnabled: true);
-                    constraintValue = magnitude
-                    viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: magnitude, angle: viewModel.reflectionCoefficient.angle)
-                } else if abs(viewModel.reflectionCoefficient.angle.degrees - angle.degrees) < 5 {
+                    constraintValue = length
+                    viewModel.reflectionCoefficient = Complex.init(length: length, phase: viewModel.reflectionCoefficient.phase)
+                } else if abs(viewModel.reflectionCoefficient.phase - phase) < (5*(2*Double.pi/360)) {
                     constraintKind = .angle
                     playHapticsFor(constraintEnabled: true);
-                    constraintValue = angle.degrees
-                    viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: viewModel.reflectionCoefficient.magnitude, angle:angle)
+                    constraintValue = phase
+                    viewModel.reflectionCoefficient = Complex.init(length: viewModel.reflectionCoefficient.length, phase: phase)
                 } else {
                     constraintKind = .none
                 }
@@ -493,9 +493,9 @@ struct SmithChartContentView: View {
         case .susceptance:
             viewModel.susceptance = constraintValue
         case .magnitude:
-            viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: constraintValue, angle: viewModel.reflectionCoefficient.angle)
+            viewModel.reflectionCoefficient = Complex.init(length: constraintValue, phase: viewModel.reflectionCoefficient.phase)
         case .angle:
-            viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: viewModel.reflectionCoefficient.magnitude, angle:Angle(degrees:constraintValue))
+            viewModel.reflectionCoefficient = Complex.init(length: viewModel.reflectionCoefficient.length, phase: constraintValue)
         case .none:
             break
         }
