@@ -1,6 +1,7 @@
 import XCTest
 import Foundation
 import SwiftUI
+import Numerics
 @testable import Impedance_Converter
 
 final class MathTests: XCTestCase {
@@ -74,104 +75,3 @@ final class MathTests: XCTestCase {
         XCTAssertEqual(sin(angle: Angle(degrees: 45)), sqrt(2)/2, accuracy: 0.0001)
     }
 }
-
-final class ComplexTests: XCTestCase {
-
-    func testInitializationAndEquality() {
-        // Test initialization
-        let complex = Complex(real: 3, imaginary: 4)
-        XCTAssertEqual(complex.real, 3)
-        XCTAssertEqual(complex.imaginary, 4)
-
-        // Test static properties
-        XCTAssertEqual(Complex.zero.real, 0)
-        XCTAssertEqual(Complex.zero.imaginary, 0)
-        XCTAssertEqual(Complex.one.real, 1)
-        XCTAssertEqual(Complex.one.imaginary, 0)
-    }
-
-    func testMagnitude() {
-        // Regular cases
-        XCTAssertEqual(Complex(real: 3, imaginary: 4).magnitude, 5)
-
-        // Infinite cases
-        XCTAssertEqual(Complex(real: Double.infinity, imaginary: 0).magnitude, Double.infinity)
-    }
-
-    func testAngle() {
-        // Regular cases
-        XCTAssertEqual(Complex(real: 1, imaginary: 1).angle.radians, .pi / 4, accuracy: 0.0001)
-
-        // Zero magnitude
-        XCTAssertTrue(Complex.zero.angle.radians.isNaN)
-
-        // Infinite cases
-        XCTAssertEqual(Complex(real: -1, imaginary: 0).angle.degrees, 180)
-    }
-
-    func testFromPolar() {
-        // Regular case
-        let result = Complex.fromPolar(magnitude: 5, angle: Angle(degrees: 53.13))
-        XCTAssertEqual(result.real, 3, accuracy: 0.01)
-        XCTAssertEqual(result.imaginary, 4, accuracy: 0.01)
-
-        // NaN angle
-        let nanResult = Complex.fromPolar(magnitude: 5, angle: Angle(radians: Double.nan))
-        XCTAssertEqual(nanResult.real, 5)
-        XCTAssertEqual(nanResult.imaginary, 0)
-    }
-
-    func testUnaryMinus() {
-        let result = -Complex(real: 3, imaginary: -4)
-        XCTAssertEqual(result.real, -3)
-        XCTAssertEqual(result.imaginary, 4)
-    }
-
-    func testAddition() {
-        let result = Complex(real: 1, imaginary: 2) + Complex(real: 3, imaginary: 4)
-        XCTAssertEqual(result.real, 4)
-        XCTAssertEqual(result.imaginary, 6)
-    }
-
-    func testSubtraction() {
-        let result = Complex(real: 3, imaginary: 4) - Complex(real: 1, imaginary: 2)
-        XCTAssertEqual(result.real, 2)
-        XCTAssertEqual(result.imaginary, 2)
-    }
-
-    func testMultiplication() {
-        let result = Complex(real: 1, imaginary: 2) * Complex(real: 3, imaginary: 4)
-        XCTAssertEqual(result.real, -5)
-        XCTAssertEqual(result.imaginary, 10)
-    }
-
-    func testDivision() {
-        // Regular case
-        let result = Complex(real: 3, imaginary: 4) / Complex(real: 1, imaginary: 2)
-        XCTAssertEqual(result.real, 2.2, accuracy: 0.1)
-        XCTAssertEqual(result.imaginary, -0.4, accuracy: 0.1)
-
-        // Division by zero
-        let zeroResult = Complex(real: 1, imaginary: 2) / Complex.zero
-        XCTAssertTrue(zeroResult.real.isNaN || zeroResult.imaginary.isNaN)
-
-        // Division by infinity
-        let infResult = Complex(real: 1, imaginary: 2) / Complex(real: Double.infinity, imaginary: 0)
-        XCTAssertEqual(infResult.real, 0)
-        XCTAssertEqual(infResult.imaginary, 0)
-        
-        // Division of infinity by infinity
-        let infComplex = Complex(real: Double.infinity, imaginary: Double.infinity)
-        let undefined = infComplex / infComplex
-        
-        XCTAssertTrue(undefined.real.isNaN)
-        XCTAssertTrue(undefined.imaginary.isNaN)
-    }
-
-    func testReciprocal() {
-        let result = Complex(real: 1, imaginary: 2).reciprocal
-        XCTAssertEqual(result.real, 0.2, accuracy: 0.1)
-        XCTAssertEqual(result.imaginary, -0.4, accuracy: 0.1)
-    }
-}
-

@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import Numerics
 
 // MARK: - Math Functions
 
@@ -48,83 +49,12 @@ func sin(angle: Angle) -> Double {
     }
 }
 
-// MARK: - Complex Number Implementation
+extension Complex where RealType: FloatingPoint {
+    var canonicalizedReal: RealType {
+        return isFinite ? real : RealType.infinity
+    }
 
-struct Complex: Codable, Equatable {
-    let real: Double
-    let imaginary: Double
-    
-    static func == (lhs: Complex, rhs: Complex) -> Bool {
-        return lhs.real == rhs.real && lhs.imaginary == rhs.imaginary
-    }
-    
-    static var zero: Complex {
-        return Complex(real: 0, imaginary: 0)
-    }
-    
-    static var one: Complex {
-        return Complex(real: 1, imaginary: 0)
-    }
-    
-    var magnitude: Double {
-        if (real.isInfinite || imaginary.isInfinite) {
-            return Double.infinity
-        } else {
-            return sqrt(real * real + imaginary * imaginary)
-        }
-    }
-    
-    var angle: Angle {
-        if (magnitude == 0) {
-            return Angle.init(radians: Double.nan)
-        } else if (imaginary == 0) {
-            return Angle.init(degrees: real < 0 ? 180 : 0)
-        } else {
-            return Angle.init(radians: atan2(imaginary, real))
-        }
-    }
-    
-    static func fromPolar(magnitude: Double, angle: Angle) -> Complex {
-        if (angle.radians.isNaN) {
-            return Complex(real: magnitude, imaginary: 0)
-        } else {
-            return Complex(real: magnitude * cos(angle: angle), imaginary: magnitude * sin(angle: angle))
-        }
-    }
-    
-    static prefix func - (value: Complex) -> Complex {
-            return Complex(real: -value.real, imaginary: -value.imaginary)
-        }
-    
-    var reciprocal: Complex {
-        return Complex.one / self
-    }
-    
-    static func + (left: Complex, right: Complex) -> Complex {
-        return Complex(real: left.real + right.real, imaginary: left.imaginary + right.imaginary)
-    }
-    
-    static func - (left: Complex, right: Complex) -> Complex {
-        return Complex(real: left.real - right.real, imaginary: left.imaginary - right.imaginary)
-    }
-    
-    static func * (left: Complex, right: Complex) -> Complex {
-        return Complex(real: left.real * right.real - left.imaginary * right.imaginary,
-                       imaginary: left.real * right.imaginary + left.imaginary * right.real)
-    }
-    
-    static func / (left: Complex, right: Complex) -> Complex {
-        if (right.magnitude.isInfinite && !left.magnitude.isInfinite) {
-            return zero
-        } else {
-            let denominator = right.real * right.real + right.imaginary * right.imaginary
-            if (denominator == 0) {
-                return Complex(real: left.real / denominator,
-                               imaginary: Double.nan)
-            } else {
-                return Complex(real: (left.real * right.real + left.imaginary * right.imaginary) / denominator,
-                               imaginary: (left.imaginary * right.real - left.real * right.imaginary) / denominator)
-            }
-        }
+    var canonicalizedImaginary: RealType {
+        return isFinite ? imaginary : RealType.nan
     }
 }

@@ -1,7 +1,8 @@
 import SwiftUI
+import Numerics
 
 struct PolarParameterView<UnitType>: View where UnitType: RawRepresentable, UnitType.RawValue == String, UnitType: UnitWithPowerOfTen {
-    @Binding var complexValue: Complex
+    @Binding var complexValue: Complex<Double>
     var magnitudeUnit: UnitType
     var angleUnit: AngleUnit
     var magnitudeLabel: String
@@ -13,16 +14,16 @@ struct PolarParameterView<UnitType>: View where UnitType: RawRepresentable, Unit
         VStack {
             HStack {
                 UnitInputView(value: Binding(
-                    get: { self.complexValue.magnitude },
+                    get: { self.complexValue.length },
                     set: {
-                        self.complexValue = Complex.fromPolar(magnitude: $0, angle: self.complexValue.angle)
+                        self.complexValue = Complex.init(length: $0, phase: self.complexValue.phase)
                     }
                 ), unit: magnitudeUnit, label: magnitudeLabel, description: magnitudeDescription)
                 
                 UnitInputView(value: Binding(
-                    get: { self.complexValue.angle.degrees },
+                    get: { Angle(radians: self.complexValue.phase).degrees },
                     set: {
-                        self.complexValue = Complex.fromPolar(magnitude: self.complexValue.magnitude, angle:Angle.init(degrees: $0))
+                        self.complexValue = Complex.init(length: self.complexValue.length, phase:Angle(degrees: $0).radians)
                     }
                 ), unit: angleUnit, label: angleLabel, description: angleDescription, showNegationDecorator: true)
             }
@@ -79,7 +80,7 @@ struct PolarReflectionCoefficientView: View {
 }
 
 struct RectangularParameterView<UnitType: UnitWithPowerOfTen>: View {
-    @Binding var complexValue: Complex
+    @Binding var complexValue: Complex<Double>
     var realPartUnit: UnitType
     var imaginaryPartUnit: UnitType
     var realPartLabel: String
@@ -93,13 +94,13 @@ struct RectangularParameterView<UnitType: UnitWithPowerOfTen>: View {
         VStack {
             HStack {
                 UnitInputView(value: Binding(
-                    get: { self.complexValue.real },
-                    set: { self.complexValue = Complex(real: $0, imaginary: self.complexValue.imaginary) }
+                    get: { self.complexValue.canonicalizedReal },
+                    set: { self.complexValue = Complex($0, self.complexValue.canonicalizedImaginary) }
                 ), unit: realPartUnit, label: realPartLabel, description: realPartDescription,
                               showNegationDecorator: realCanBeNegative)
                 UnitInputView(value: Binding(
-                    get: { self.complexValue.imaginary },
-                    set: { self.complexValue = Complex(real: self.complexValue.real, imaginary: $0) }
+                    get: { self.complexValue.canonicalizedImaginary },
+                    set: { self.complexValue = Complex(self.complexValue.canonicalizedReal, $0) }
                 ), unit: imaginaryPartUnit, label: imaginaryPartLabel, description: imaginaryPartDescription,
                               showNegationDecorator: imaginaryCanBeNegative)
             }

@@ -29,6 +29,12 @@
 		EDBBC7632B48FE76004B844C /* ImmittanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDBBC7622B48FE76004B844C /* ImmittanceView.swift */; };
 		EDBBC7652B4A24B4004B844C /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EDBBC7642B4A24B3004B844C /* Settings.bundle */; };
 		EDD36F182B443CB00032B9BC /* LengthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD36F172B443CB00032B9BC /* LengthView.swift */; };
+		EDDCB6292B4E29DC008A0E28 /* ComplexModule in Frameworks */ = {isa = PBXBuildFile; productRef = EDDCB6282B4E29DC008A0E28 /* ComplexModule */; };
+		EDDCB62B2B4E29DC008A0E28 /* Numerics in Frameworks */ = {isa = PBXBuildFile; productRef = EDDCB62A2B4E29DC008A0E28 /* Numerics */; };
+		EDDCB62D2B4E29DC008A0E28 /* RealModule in Frameworks */ = {isa = PBXBuildFile; productRef = EDDCB62C2B4E29DC008A0E28 /* RealModule */; };
+		EDDCB6302B4E2B13008A0E28 /* ComplexModule in Frameworks */ = {isa = PBXBuildFile; productRef = EDDCB62F2B4E2B13008A0E28 /* ComplexModule */; };
+		EDDCB6322B4E2B13008A0E28 /* Numerics in Frameworks */ = {isa = PBXBuildFile; productRef = EDDCB6312B4E2B13008A0E28 /* Numerics */; };
+		EDDCB6342B4E2B13008A0E28 /* RealModule in Frameworks */ = {isa = PBXBuildFile; productRef = EDDCB6332B4E2B13008A0E28 /* RealModule */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +80,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDDCB62B2B4E29DC008A0E28 /* Numerics in Frameworks */,
+				EDDCB6292B4E29DC008A0E28 /* ComplexModule in Frameworks */,
+				EDDCB62D2B4E29DC008A0E28 /* RealModule in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +90,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDDCB6322B4E2B13008A0E28 /* Numerics in Frameworks */,
+				EDDCB6302B4E2B13008A0E28 /* ComplexModule in Frameworks */,
+				EDDCB6342B4E2B13008A0E28 /* RealModule in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,6 +105,7 @@
 				ED2486872B3727AE008820C5 /* Impedance Converter */,
 				EDA1DB3A2B4B25230072F83C /* Impedance ConverterTests */,
 				ED2486862B3727AE008820C5 /* Products */,
+				EDDCB62E2B4E2B13008A0E28 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -150,6 +163,13 @@
 			path = "Impedance ConverterTests";
 			sourceTree = "<group>";
 		};
+		EDDCB62E2B4E2B13008A0E28 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -166,6 +186,11 @@
 			dependencies = (
 			);
 			name = "Impedance Converter";
+			packageProductDependencies = (
+				EDDCB6282B4E29DC008A0E28 /* ComplexModule */,
+				EDDCB62A2B4E29DC008A0E28 /* Numerics */,
+				EDDCB62C2B4E29DC008A0E28 /* RealModule */,
+			);
 			productName = "Impedance Converter";
 			productReference = ED2486852B3727AE008820C5 /* Impedance Converter.app */;
 			productType = "com.apple.product-type.application";
@@ -184,6 +209,11 @@
 				EDA1DB3E2B4B25230072F83C /* PBXTargetDependency */,
 			);
 			name = "Impedance ConverterTests";
+			packageProductDependencies = (
+				EDDCB62F2B4E2B13008A0E28 /* ComplexModule */,
+				EDDCB6312B4E2B13008A0E28 /* Numerics */,
+				EDDCB6332B4E2B13008A0E28 /* RealModule */,
+			);
 			productName = "Impedance ConverterTests";
 			productReference = EDA1DB392B4B25230072F83C /* Impedance ConverterTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -216,6 +246,9 @@
 				Base,
 			);
 			mainGroup = ED24867C2B3727AE008820C5;
+			packageReferences = (
+				EDDCB6272B4E29DC008A0E28 /* XCRemoteSwiftPackageReference "swift-numerics" */,
+			);
 			productRefGroup = ED2486862B3727AE008820C5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -534,6 +567,50 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EDDCB6272B4E29DC008A0E28 /* XCRemoteSwiftPackageReference "swift-numerics" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-numerics.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EDDCB6282B4E29DC008A0E28 /* ComplexModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EDDCB6272B4E29DC008A0E28 /* XCRemoteSwiftPackageReference "swift-numerics" */;
+			productName = ComplexModule;
+		};
+		EDDCB62A2B4E29DC008A0E28 /* Numerics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EDDCB6272B4E29DC008A0E28 /* XCRemoteSwiftPackageReference "swift-numerics" */;
+			productName = Numerics;
+		};
+		EDDCB62C2B4E29DC008A0E28 /* RealModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EDDCB6272B4E29DC008A0E28 /* XCRemoteSwiftPackageReference "swift-numerics" */;
+			productName = RealModule;
+		};
+		EDDCB62F2B4E2B13008A0E28 /* ComplexModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EDDCB6272B4E29DC008A0E28 /* XCRemoteSwiftPackageReference "swift-numerics" */;
+			productName = ComplexModule;
+		};
+		EDDCB6312B4E2B13008A0E28 /* Numerics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EDDCB6272B4E29DC008A0E28 /* XCRemoteSwiftPackageReference "swift-numerics" */;
+			productName = Numerics;
+		};
+		EDDCB6332B4E2B13008A0E28 /* RealModule */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EDDCB6272B4E29DC008A0E28 /* XCRemoteSwiftPackageReference "swift-numerics" */;
+			productName = RealModule;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = ED24867D2B3727AE008820C5 /* Project object */;
 }

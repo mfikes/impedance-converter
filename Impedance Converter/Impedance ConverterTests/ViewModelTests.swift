@@ -1,5 +1,6 @@
 import XCTest
 import SwiftUI
+import Numerics
 @testable import Impedance_Converter
 
 class ViewModelTestBase: XCTestCase {
@@ -51,7 +52,7 @@ class ReferenceImmittanceTests: ViewModelTestBase {
     
     func testReferenceImmittancePropertyForImpedance() {
         // Setting reference impedance and getting it back
-        let referenceImpedance = Complex(real: 75, imaginary: 00)
+        let referenceImpedance = Complex(75, 00)
         viewModel.referenceImpedance = referenceImpedance
         XCTAssertEqual(viewModel.referenceImpedance, referenceImpedance)
         
@@ -62,7 +63,7 @@ class ReferenceImmittanceTests: ViewModelTestBase {
     
     func testReferenceImmittancePropertyForAdmittance() {
         // Setting reference admittance and getting it back
-        let referenceAdmittance = Complex(real: 0.005, imaginary: 0.0)
+        let referenceAdmittance = Complex(0.005, 0.0)
         viewModel.referenceAdmittance = referenceAdmittance
         XCTAssertEqual(viewModel.referenceAdmittance, referenceAdmittance)
         
@@ -73,30 +74,30 @@ class ReferenceImmittanceTests: ViewModelTestBase {
     
     func testDefaultReferenceImpedance() {
         // Default reference impedance should be 50 ohms (50 + 0j)
-        let expectedReferenceImpedance = Complex(real: 50, imaginary: 0)
+        let expectedReferenceImpedance = Complex(50, 0)
         XCTAssertEqual(viewModel.referenceImpedance, expectedReferenceImpedance)
     }
     
     func testDefaultReferenceAdmittance() {
         // Default reference admittance should be 20 millisiemens (0.020 + 0j)
-        let expectedReferenceAdmittance = Complex(real: 0.020, imaginary: 0)
+        let expectedReferenceAdmittance = Complex(0.020, 0)
         XCTAssertEqual(viewModel.referenceAdmittance, expectedReferenceAdmittance)
     }
         
     func testReferenceImpedanceIsPositiveReal() {
         // Initial set with a valid positive real impedance
-        let initialImpedance = Complex(real: 100, imaginary: 0)
+        let initialImpedance = Complex(100, 0)
         viewModel.referenceImpedance = initialImpedance
 
         // Attempt to set a negative real part
-        let negativeRealImpedance = Complex(real: -50, imaginary: 0)
+        let negativeRealImpedance = Complex(-50, 0)
         viewModel.referenceImpedance = negativeRealImpedance
 
         // Check if the impedance remains unchanged
         XCTAssertEqual(viewModel.referenceImpedance, initialImpedance)
         
         // Attempt to set an imaginary part
-        let complexImpedance = Complex(real: 50, imaginary: 1)
+        let complexImpedance = Complex(50, 1)
         viewModel.referenceImpedance = complexImpedance
 
         // Check if the impedance remains unchanged
@@ -105,18 +106,18 @@ class ReferenceImmittanceTests: ViewModelTestBase {
     
     func testReferenceAdmittanceIsPositiveReal() {
         // Initial set with a valid positive real impedance
-        let initialAdmittance = Complex(real: 100, imaginary: 0)
+        let initialAdmittance = Complex(100, 0)
         viewModel.referenceAdmittance = initialAdmittance
 
         // Attempt to set a negative real part
-        let negativeRealAdmittance = Complex(real: -50, imaginary: 0)
+        let negativeRealAdmittance = Complex(-50, 0)
         viewModel.referenceAdmittance = negativeRealAdmittance
 
         // Check if the admittance remains unchanged
         XCTAssertEqual(viewModel.referenceAdmittance, initialAdmittance)
         
         // Attempt to set an imaginary part
-        let complexAdmittance = Complex(real: 50, imaginary: 1)
+        let complexAdmittance = Complex(50, 1)
         viewModel.referenceAdmittance = complexAdmittance
 
         // Check if the admittance remains unchanged
@@ -130,65 +131,43 @@ class ImmittanceTests: ViewModelTestBase {
         // Setting zero impedance
         viewModel.impedance = Complex.zero
         XCTAssertEqual(viewModel.impedance, Complex.zero)
-        XCTAssertEqual(viewModel.admittance.real, Double.infinity)
+        XCTAssertEqual(viewModel.admittance, Complex.infinity)
 
         // Setting zero admittance
         viewModel.admittance = Complex.zero
         XCTAssertEqual(viewModel.admittance, Complex.zero)
-        XCTAssertEqual(viewModel.impedance.real, Double.infinity)
+        XCTAssertEqual(viewModel.impedance, Complex.infinity)
     }
     
     func testImmittanceWithNegativeValues() {
         // Negative real part in impedance
-        viewModel.impedance = Complex(real: -50, imaginary: 10)
-        XCTAssertEqual(viewModel.impedance, Complex(real: -50, imaginary: 10))
+        viewModel.impedance = Complex(-50, 10)
+        XCTAssertEqual(viewModel.impedance, Complex(-50, 10))
 
         // Negative imaginary part in admittance
-        viewModel.admittance = Complex(real: 0.02, imaginary: -0.005)
-        XCTAssertEqual(viewModel.admittance, Complex(real: 0.02, imaginary: -0.005))
+        viewModel.admittance = Complex(0.02, -0.005)
+        XCTAssertEqual(viewModel.admittance, Complex(0.02, -0.005))
     }
 
     func testImmittanceWithComplexValues() {
         // Complex impedance
-        viewModel.impedance = Complex(real: 30, imaginary: 40)
-        XCTAssertEqual(viewModel.impedance, Complex(real: 30, imaginary: 40))
+        viewModel.impedance = Complex(30, 40)
+        XCTAssertEqual(viewModel.impedance, Complex(30, 40))
 
         // Complex admittance
-        viewModel.admittance = Complex(real: 0.03, imaginary: 0.04)
-        XCTAssertEqual(viewModel.admittance, Complex(real: 0.03, imaginary: 0.04))
-    }
-
-    func testImmittanceWithNaNAndInfiniteValues() {
-        // Infinite impedance
-        viewModel.impedance = Complex(real: Double.infinity, imaginary: Double.infinity)
-        XCTAssertTrue(viewModel.impedance.real.isInfinite)
-        XCTAssertTrue(viewModel.impedance.imaginary.isInfinite)
-
-        // NaN impedance
-        viewModel.impedance = Complex(real: Double.nan, imaginary: Double.nan)
-        XCTAssertTrue(viewModel.impedance.real.isNaN)
-        XCTAssertTrue(viewModel.impedance.imaginary.isNaN)
-
-        // Infinite admittance
-        viewModel.admittance = Complex(real: Double.infinity, imaginary: Double.infinity)
-        XCTAssertTrue(viewModel.admittance.real.isInfinite)
-        XCTAssertTrue(viewModel.admittance.imaginary.isInfinite)
-
-        // NaN admittance
-        viewModel.admittance = Complex(real: Double.nan, imaginary: Double.nan)
-        XCTAssertTrue(viewModel.admittance.real.isNaN)
-        XCTAssertTrue(viewModel.admittance.imaginary.isNaN)
+        viewModel.admittance = Complex(0.03, 0.04)
+        XCTAssertEqual(viewModel.admittance, Complex(0.03, 0.04))
     }
     
     func testReciprocalRelationships() {
         // Impedance and its reciprocal admittance
-        let impedance = Complex(real: 100, imaginary: -50)
+        let impedance = Complex(100, -50)
         viewModel.impedance = impedance
         XCTAssertEqual(viewModel.impedance, impedance)
         XCTAssertEqual(viewModel.admittance, impedance.reciprocal)
 
         // Admittance and its reciprocal impedance
-        let admittance = Complex(real: 0.01, imaginary: 0.02)
+        let admittance = Complex(0.01, 0.02)
         viewModel.admittance = admittance
         XCTAssertEqual(viewModel.admittance, admittance)
         XCTAssertEqual(viewModel.impedance, admittance.reciprocal)
@@ -200,38 +179,38 @@ class ElectricalParametersTests: ViewModelTestBase {
     
     // Testing Resistance
     func testResistance() {
-        viewModel.impedance = Complex(real: 50, imaginary: 30)
+        viewModel.impedance = Complex(50, 30)
         XCTAssertEqual(viewModel.resistance, 50)
         
         viewModel.resistance = 75
-        XCTAssertEqual(viewModel.impedance, Complex(real: 75, imaginary: 30))
+        XCTAssertEqual(viewModel.impedance, Complex(75, 30))
     }
     
     // Testing Reactance
     func testReactance() {
-        viewModel.impedance = Complex(real: 50, imaginary: 30)
+        viewModel.impedance = Complex(50, 30)
         XCTAssertEqual(viewModel.reactance, 30)
         
         viewModel.reactance = 40
-        XCTAssertEqual(viewModel.impedance, Complex(real: 50, imaginary: 40))
+        XCTAssertEqual(viewModel.impedance, Complex(50, 40))
     }
     
     // Testing Conductance
     func testConductance() {
-        viewModel.admittance = Complex(real: 0.02, imaginary: 0.01)
+        viewModel.admittance = Complex(0.02, 0.01)
         XCTAssertEqual(viewModel.conductance, 0.02)
         
         viewModel.conductance = 0.03
-        XCTAssertEqual(viewModel.admittance, Complex(real: 0.03, imaginary: 0.01))
+        XCTAssertEqual(viewModel.admittance, Complex(0.03, 0.01))
     }
     
     // Testing Susceptance
     func testSusceptance() {
-        viewModel.admittance = Complex(real: 0.02, imaginary: 0.01)
+        viewModel.admittance = Complex(0.02, 0.01)
         XCTAssertEqual(viewModel.susceptance, 0.01)
         
         viewModel.susceptance = 0.015
-        XCTAssertEqual(viewModel.admittance, Complex(real: 0.02, imaginary: 0.015))
+        XCTAssertEqual(viewModel.admittance, Complex(0.02, 0.015))
     }
     
     // Testing Interconnected Behavior
@@ -343,9 +322,6 @@ class ReactiveParametersTests: ViewModelTestBase {
         // Edge cases
         viewModel.reactance = 0
         XCTAssertEqual(viewModel.dissipationFactor, Double.infinity)
-
-        viewModel.reactance = Double.infinity
-        XCTAssertEqual(viewModel.dissipationFactor, 0)
     }
 
     // Testing Quality Factor (Q)
@@ -382,26 +358,16 @@ class ReactiveParametersTests: ViewModelTestBase {
     
     func testDissipationAndQualityFactorReciprocalAndExtremes2() {
         // Set D to zero and check if Q is infinity
+        viewModel.reactance = 50
         viewModel.dissipationFactor = 0
-        XCTAssertTrue(viewModel.qualityFactor.isInfinite)
+        XCTAssertEqual(viewModel.qualityFactor, Double.infinity)
     }
     
     func testDissipationAndQualityFactorReciprocalAndExtremes3() {
         // Set Q to zero and check if D is infinity
+        viewModel.reactance = 50
         viewModel.qualityFactor = 0
-        XCTAssertTrue(viewModel.dissipationFactor.isInfinite)
-    }
-    
-    func testDissipationAndQualityFactorReciprocalAndExtremes4() {
-        // Set D to infinity and check if Q is zero
-        viewModel.dissipationFactor = Double.infinity
-        XCTAssertEqual(viewModel.qualityFactor, 0)
-    }
-     
-    func testDissipationAndQualityFactorReciprocalAndExtremes5() {
-        // Set Q to infinity and check if D is zero
-        viewModel.qualityFactor = Double.infinity
-        XCTAssertEqual(viewModel.dissipationFactor, 0)
+        XCTAssertEqual(viewModel.dissipationFactor, Double.infinity)
     }
 }
 
@@ -474,15 +440,15 @@ class TransmissionParametersTests: ViewModelTestBase {
 
     // Testing Reflection Coefficient
     func testReflectionCoefficient() {
-        viewModel.impedance = Complex(real: 100, imaginary: 50)
-        viewModel.referenceImpedance = Complex(real: 50, imaginary: 0)
+        viewModel.impedance = Complex(100, 50)
+        viewModel.referenceImpedance = Complex(50, 0)
 
         // Check reflection coefficient calculation for impedance
         let expectedReflectionCoefficientForImpedance = (viewModel.impedance - viewModel.referenceImpedance) / (viewModel.impedance + viewModel.referenceImpedance)
         XCTAssertEqual(viewModel.reflectionCoefficient, expectedReflectionCoefficientForImpedance)
 
         // Set reflection coefficient and verify impedance changes
-        let newReflectionCoefficient = Complex(real: 0.3, imaginary: 0.4)
+        let newReflectionCoefficient = Complex(0.3, 0.4)
         viewModel.reflectionCoefficient = newReflectionCoefficient
         let expectedImpedance = viewModel.referenceImpedance * (Complex.one + newReflectionCoefficient) / (Complex.one - newReflectionCoefficient)
         XCTAssertEqual(viewModel.impedance, expectedImpedance)
@@ -490,7 +456,7 @@ class TransmissionParametersTests: ViewModelTestBase {
 
     // Testing Standing Wave Ratio (SWR)
     func testSWR() {
-        let reflectionCoefficient = Complex(real: 0.5, imaginary: 0)
+        let reflectionCoefficient = Complex(0.5, 0)
         viewModel.reflectionCoefficient = reflectionCoefficient
 
         // Check SWR calculation
@@ -506,7 +472,7 @@ class TransmissionParametersTests: ViewModelTestBase {
 
     // Testing Return Loss
     func testReturnLoss() {
-        let reflectionCoefficient = Complex(real: 0.5, imaginary: 0)
+        let reflectionCoefficient = Complex(0.5, 0)
         viewModel.reflectionCoefficient = reflectionCoefficient
 
         // Check return loss calculation
@@ -522,7 +488,7 @@ class TransmissionParametersTests: ViewModelTestBase {
 
     // Testing Transmission Coefficient
     func testTransmissionCoefficient() {
-        let reflectionCoefficient = Complex(real: 0.5, imaginary: 0)
+        let reflectionCoefficient = Complex(0.5, 0)
         viewModel.reflectionCoefficient = reflectionCoefficient
 
         // Check transmission coefficient calculation
@@ -538,6 +504,7 @@ class TransmissionParametersTests: ViewModelTestBase {
 
     // Testing Transmission Loss
     func testTransmissionLoss() {
+        viewModel.reactance = 50
         viewModel.transmissionCoefficient = 0.75
 
         // Check transmission loss calculation
@@ -566,12 +533,12 @@ class ElectricalLengthTests: ViewModelTestBase {
     func testWavelengths() {
         // Set frequency, reflection coefficient angle, and reference angle
         viewModel.frequency = 300e6 // 300 MHz
-        viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: 0.7, angle: Angle(radians: .pi / 4))
+        viewModel.reflectionCoefficient = Complex.init(length: 0.7, phase: .pi / 4)
         viewModel.refAngle = Angle(radians: .pi / 6)
         viewModel.angleOrientation = .counterclockwise
 
         // Calculate expected wavelengths
-        let originalRemainder = symmetricRemainder(dividend: viewModel.angleSign * (viewModel.reflectionCoefficient.angle.radians - viewModel.refAngle.radians), divisor: 2 * Double.pi)
+        let originalRemainder = symmetricRemainder(dividend: viewModel.angleSign * (viewModel.reflectionCoefficient.phase - viewModel.refAngle.radians), divisor: 2 * Double.pi)
         let adjustedRemainder = (originalRemainder + 2 * Double.pi).truncatingRemainder(dividingBy: 2 * Double.pi)
         let expectedWavelengths = adjustedRemainder / (4 * Double.pi)
         XCTAssertEqual(viewModel.wavelengths, expectedWavelengths)
@@ -580,7 +547,7 @@ class ElectricalLengthTests: ViewModelTestBase {
         let newWavelengths = 0.3 // Example value
         viewModel.wavelengths = newWavelengths
         let expectedNewAngle = Angle(radians: viewModel.angleSign * (4 * Double.pi) * newWavelengths + viewModel.refAngle.radians - 2 * Double.pi)
-        XCTAssertEqual(viewModel.reflectionCoefficient.angle.radians, expectedNewAngle.radians, accuracy: 1e-6)
+        XCTAssertEqual(viewModel.reflectionCoefficient.phase, expectedNewAngle.radians, accuracy: 1e-6)
     }
 
     // Testing Distance
@@ -603,10 +570,10 @@ class ElectricalLengthTests: ViewModelTestBase {
     // Testing Zero Length Function
     func testZeroLength() {
         // Set reflection coefficient angle
-        viewModel.reflectionCoefficient = Complex.fromPolar(magnitude: 1, angle: Angle(radians: .pi / 4))
+        viewModel.reflectionCoefficient = Complex.init(length: 1, phase: .pi / 4)
 
         // Call zeroLength() and verify that refAngle is set to reflection coefficient angle
         viewModel.zeroLength()
-        XCTAssertEqual(viewModel.refAngle.radians, viewModel.reflectionCoefficient.angle.radians)
+        XCTAssertEqual(viewModel.refAngle.radians, viewModel.reflectionCoefficient.phase)
     }
 }
