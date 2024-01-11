@@ -116,7 +116,7 @@ struct ModePickerView: View {
 struct ImmittanceColumnView: View {
     var viewModel: ViewModel
     var body: some View {
-        LazyVStack {
+        VStack {
             ImmittanceView(viewModel: viewModel)
             CircuitView(viewModel: viewModel)
             ParametersView(viewModel: viewModel)
@@ -127,7 +127,7 @@ struct ImmittanceColumnView: View {
 struct SmithChartColumnView: View {
     var viewModel: ViewModel
     var body: some View {
-        LazyVStack {
+        VStack {
             SmithChartView(viewModel: viewModel)
             CharacterizationView(viewModel: viewModel)
             LengthView(viewModel: viewModel)
