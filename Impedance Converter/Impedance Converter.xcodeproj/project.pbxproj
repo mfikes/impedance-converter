@@ -13,6 +13,7 @@
 		ED24868B2B3727AE008820C5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED24868A2B3727AE008820C5 /* ContentView.swift */; };
 		ED24868D2B3727B0008820C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED24868C2B3727B0008820C5 /* Assets.xcassets */; };
 		ED2486902B3727B0008820C5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED24868F2B3727B0008820C5 /* Preview Assets.xcassets */; };
+		ED42D3802B50D86300CDAD4E /* SwiftCheck in Frameworks */ = {isa = PBXBuildFile; productRef = ED42D37F2B50D86300CDAD4E /* SwiftCheck */; };
 		ED737AAA2B3F4B8100926575 /* Math.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AA92B3F4B8100926575 /* Math.swift */; };
 		ED737AAC2B3F4C6100926575 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AAB2B3F4C6100926575 /* Colors.swift */; };
 		ED737AAE2B3F562A00926575 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED737AAD2B3F562A00926575 /* ViewModel.swift */; };
@@ -91,6 +92,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EDDCB6322B4E2B13008A0E28 /* Numerics in Frameworks */,
+				ED42D3802B50D86300CDAD4E /* SwiftCheck in Frameworks */,
 				EDDCB6302B4E2B13008A0E28 /* ComplexModule in Frameworks */,
 				EDDCB6342B4E2B13008A0E28 /* RealModule in Frameworks */,
 			);
@@ -213,6 +215,7 @@
 				EDDCB62F2B4E2B13008A0E28 /* ComplexModule */,
 				EDDCB6312B4E2B13008A0E28 /* Numerics */,
 				EDDCB6332B4E2B13008A0E28 /* RealModule */,
+				ED42D37F2B50D86300CDAD4E /* SwiftCheck */,
 			);
 			productName = "Impedance ConverterTests";
 			productReference = EDA1DB392B4B25230072F83C /* Impedance ConverterTests.xctest */;
@@ -248,6 +251,7 @@
 			mainGroup = ED24867C2B3727AE008820C5;
 			packageReferences = (
 				EDDCB6272B4E29DC008A0E28 /* XCRemoteSwiftPackageReference "swift-numerics" */,
+				ED42D37C2B50D54E00CDAD4E /* XCRemoteSwiftPackageReference "SwiftCheck" */,
 			);
 			productRefGroup = ED2486862B3727AE008820C5 /* Products */;
 			projectDirPath = "";
@@ -569,6 +573,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		ED42D37C2B50D54E00CDAD4E /* XCRemoteSwiftPackageReference "SwiftCheck" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/typelift/SwiftCheck";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.1;
+			};
+		};
 		EDDCB6272B4E29DC008A0E28 /* XCRemoteSwiftPackageReference "swift-numerics" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-numerics.git";
@@ -580,6 +592,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		ED42D37F2B50D86300CDAD4E /* SwiftCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = ED42D37C2B50D54E00CDAD4E /* XCRemoteSwiftPackageReference "SwiftCheck" */;
+			productName = SwiftCheck;
+		};
 		EDDCB6282B4E29DC008A0E28 /* ComplexModule */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = EDDCB6272B4E29DC008A0E28 /* XCRemoteSwiftPackageReference "swift-numerics" */;
