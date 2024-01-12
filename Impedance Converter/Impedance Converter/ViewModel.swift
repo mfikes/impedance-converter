@@ -404,13 +404,17 @@ class ViewModel: ObservableObject, Codable {
         }
     }
     
+    private func unityReflectionCoefficient() -> Bool {
+        let epsilon = 1e-15
+        return abs(reflectionCoefficient.length - 1.0) < epsilon
+    }
+    
     var swr: Double {
         get {
-            let reflectionCoefficientLength = reflectionCoefficient.length
-            let epsilon = 1e-15
-            if abs(reflectionCoefficientLength - 1.0) < epsilon {
+            if unityReflectionCoefficient() {
                 return Double.infinity
             } else {
+                let reflectionCoefficientLength = reflectionCoefficient.length
                 return (1 + reflectionCoefficientLength) / (1 - reflectionCoefficientLength)
             }
         }
@@ -424,8 +428,11 @@ class ViewModel: ObservableObject, Codable {
     
     var returnLoss: Double {
         get {
-            let reflectionCoefficientLength = reflectionCoefficient.length
-            return -20 * log10(reflectionCoefficientLength)
+            if (unityReflectionCoefficient()) {
+                return 0
+            } else {
+                return -20 * log10(reflectionCoefficient.length)
+            }
         }
         set {
             guard newValue >= 0 else { return }
@@ -436,8 +443,11 @@ class ViewModel: ObservableObject, Codable {
 
     var transmissionCoefficient: Double {
         get {
-            let reflectionCoefficientLength = reflectionCoefficient.length
-            return 1 - pow(reflectionCoefficientLength, 2)
+            if (unityReflectionCoefficient()) {
+                return 0
+            } else {
+                return 1 - pow(reflectionCoefficient.length, 2)
+            }
         }
         set {
             guard newValue >= 0 && newValue <= 1 else { return }
