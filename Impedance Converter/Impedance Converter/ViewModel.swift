@@ -185,7 +185,7 @@ class ViewModel: ObservableObject, Codable {
         }
         set {
             let previousImmittance = immittance
-            immittance = Immittance(impedance: newValue)
+            immittance = Immittance(impedance: ensurePositiveReal(value: newValue))
             if (immittance != previousImmittance) {
                 addCheckpoint()
                 hold = .none
@@ -199,7 +199,7 @@ class ViewModel: ObservableObject, Codable {
         }
         set {
             let previousImmittance = immittance
-            immittance = Immittance(admittance: newValue)
+            immittance = Immittance(admittance: ensurePositiveReal(value: newValue))
             if (immittance != previousImmittance) {
                 addCheckpoint()
                 hold = .none
