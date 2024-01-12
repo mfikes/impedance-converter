@@ -180,6 +180,34 @@ class ImmittanceTests: ViewModelTestBase {
         XCTAssertEqual(Angle(radians: viewModel.admittance.phase).degrees, -90)
     }
     
+    func testImpedanceAngleProperty() {
+        property("Impedance real or imaginary part should be zero at multiples of 90 degrees") <- forAll { (length: Double) in
+            let positiveLength = abs(length)
+            return [0, 90, 180, 270].allSatisfy { angle in
+                self.viewModel.impedance = Complex(length: positiveLength, phase: Angle(degrees: Double(angle)).radians)
+                if angle == 0 || angle == 180 {
+                    return self.viewModel.impedance.imaginary.isZero
+                } else {
+                    return self.viewModel.impedance.real.isZero
+                }
+            }
+        }
+    }
+    
+    func testAdmittanceAngleProperty() {
+        property("Admittance real or imaginary part should be zero at multiples of 90 degrees") <- forAll { (length: Double) in
+            let positiveLength = abs(length)
+            return [0, 90, 180, 270].allSatisfy { angle in
+                self.viewModel.admittance = Complex(length: positiveLength, phase: Angle(degrees: Double(angle)).radians)
+                if angle == 0 || angle == 180 {
+                    return self.viewModel.admittance.imaginary.isZero
+                } else {
+                    return self.viewModel.admittance.real.isZero
+                }
+            }
+        }
+    }
+    
     func testReciprocalRelationships() {
         // Impedance and its reciprocal admittance
         let impedance = Complex(100, -50)
@@ -474,6 +502,20 @@ class TransmissionParametersTests: ViewModelTestBase {
         let expectedImpedance = viewModel.referenceImpedance * (Complex.one + newReflectionCoefficient) / (Complex.one - newReflectionCoefficient)
         XCTAssertEqual(viewModel.impedance, expectedImpedance)
     }
+    
+    func testReflectionCoefficientAngleProperty() {
+        property("Reflection coefficient real or imaginary part should be zero at multiples of 90 degrees") <- forAll( Gen<Double>.choose((0, 1)) ) { length in
+            return [0, 90, 180, 270].allSatisfy { angle in
+                self.viewModel.reflectionCoefficient = Complex(length: length, phase: Angle(degrees: Double(angle)).radians)
+                if angle == 0 || angle == 180 {
+                    return self.viewModel.reflectionCoefficient.imaginary.isZero
+                } else {
+                    return self.viewModel.reflectionCoefficient.real.isZero
+                }
+            }
+        }
+    }
+
 
     // Testing Standing Wave Ratio (SWR)
     func testSWR() {

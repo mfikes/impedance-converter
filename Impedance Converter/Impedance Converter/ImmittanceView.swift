@@ -23,6 +23,9 @@ struct PolarParameterView<UnitType>: View where UnitType: RawRepresentable, Unit
                 UnitInputView(value: Binding(
                     get: { Angle(radians: self.complexValue.phase).degrees },
                     set: {
+                        print("complex \(Complex.init(length: self.complexValue.length, phase:Angle(degrees: $0).radians))")
+                        print("angle \(Angle(degrees: $0).radians)")
+                        print("pi/2 \(Double.pi / 2)")
                         self.complexValue = Complex.init(length: self.complexValue.length, phase:Angle(degrees: $0).radians)
                     }
                 ), unit: angleUnit, label: angleLabel, description: angleDescription, showNegationDecorator: true)
