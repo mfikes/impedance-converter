@@ -513,6 +513,13 @@ class TransmissionParametersTests: ViewModelTestBase {
         let expectedReflectionCoefficientMagnitude = pow(10, -newReturnLoss / 20)
         XCTAssertEqual(viewModel.reflectionCoefficient.magnitude, expectedReflectionCoefficientMagnitude, accuracy: 1e-6)
     }
+    
+    func testReturnLossZero() {
+        property("Return loss should be zero for reflection coefficient length of 1 at any phase") <- forAll { (phase: Double) in
+            self.viewModel.reflectionCoefficient = Complex(length: 1.0, phase: phase)
+            return self.viewModel.returnLoss.isZero
+        }
+    }
 
     // Testing Transmission Coefficient
     func testTransmissionCoefficient() {
@@ -528,6 +535,13 @@ class TransmissionParametersTests: ViewModelTestBase {
         viewModel.transmissionCoefficient = newTransmissionCoefficient
         let expectedReflectionCoefficientMagnitude = sqrt(1 - newTransmissionCoefficient)
         XCTAssertEqual(viewModel.reflectionCoefficient.magnitude, expectedReflectionCoefficientMagnitude, accuracy: 1e-6)
+    }
+    
+    func testTransmissionCoefficientZero() {
+        property("Transmission coefficient should be zero for reflection coefficient length of 1 at any phase") <- forAll { (phase: Double) in
+            self.viewModel.reflectionCoefficient = Complex(length: 1.0, phase: phase)
+            return self.viewModel.transmissionCoefficient.isZero
+        }
     }
 
     // Testing Transmission Loss
