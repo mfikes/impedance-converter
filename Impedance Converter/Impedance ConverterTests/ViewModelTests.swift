@@ -497,6 +497,12 @@ class TransmissionParametersTests: ViewModelTestBase {
             return self.viewModel.swr.isInfinite
         }
     }
+    
+    func testSetSWRWhenPhaseUndefined() {
+        viewModel.impedance = Complex(50, 0)
+        viewModel.swr = 2
+        XCTAssertEqual(viewModel.swr, 1)
+    }
 
     // Testing Return Loss
     func testReturnLoss() {
