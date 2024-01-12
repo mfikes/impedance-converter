@@ -416,6 +416,7 @@ class ViewModel: ObservableObject, Codable {
         }
         set {
             guard newValue >= 1 else { return }
+            guard !reflectionCoefficient.phase.isNaN else { return }
             let reflectionCoefficientLength = (newValue - 1) / (newValue + 1)
             reflectionCoefficient = Complex.init(length: reflectionCoefficientLength, phase: reflectionCoefficient.phase)
         }
