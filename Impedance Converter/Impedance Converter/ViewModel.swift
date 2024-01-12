@@ -141,6 +141,19 @@ class ViewModel: ObservableObject, Codable {
         }
     }
     
+    private func zeroCorrect(value: Double) -> Double {
+        let epsilon = 1e-10
+        if abs(value) < epsilon {
+            return 0
+        } else {
+            return value
+        }
+    }
+    
+    private func zeroCorrect(value: Complex<Double>) -> Complex<Double> {
+        return Complex(zeroCorrect(value: value.real), zeroCorrect(value: value.imaginary))
+    }
+    
     var referenceImpedance: Complex<Double> {
         get {
             return referenceImmittance.impedance
@@ -181,7 +194,7 @@ class ViewModel: ObservableObject, Codable {
     
     var impedance: Complex<Double> {
         get {
-            return immittance.impedance
+            return zeroCorrect(value: immittance.impedance)
         }
         set {
             let previousImmittance = immittance
@@ -195,7 +208,7 @@ class ViewModel: ObservableObject, Codable {
     
     var admittance: Complex<Double> {
         get {
-            return immittance.admittance
+            return zeroCorrect(value: immittance.admittance)
         }
         set {
             let previousImmittance = immittance
@@ -384,13 +397,13 @@ class ViewModel: ObservableObject, Codable {
                 if (impedance.length.isInfinite) {
                     return Complex.one
                 } else {
-                    return (impedance - referenceImpedance) / (impedance + referenceImpedance)
+                    return zeroCorrect(value: (impedance - referenceImpedance) / (impedance + referenceImpedance))
                 }
             case .admittance:
                 if (admittance.length.isInfinite) {
                     return -Complex.one
                 } else {
-                    return (referenceAdmittance - admittance) / (referenceAdmittance + admittance)
+                    return zeroCorrect(value: (referenceAdmittance - admittance) / (referenceAdmittance + admittance))
                 }
             }
         }
