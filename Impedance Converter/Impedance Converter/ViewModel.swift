@@ -407,7 +407,12 @@ class ViewModel: ObservableObject, Codable {
     var swr: Double {
         get {
             let reflectionCoefficientLength = reflectionCoefficient.length
-            return (1 + reflectionCoefficientLength) / (1 - reflectionCoefficientLength)
+            let epsilon = 1e-15
+            if abs(reflectionCoefficientLength - 1.0) < epsilon {
+                return Double.infinity
+            } else {
+                return (1 + reflectionCoefficientLength) / (1 - reflectionCoefficientLength)
+            }
         }
         set {
             guard newValue >= 1 else { return }

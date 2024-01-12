@@ -1,4 +1,5 @@
 import XCTest
+import SwiftCheck
 import SwiftUI
 import Numerics
 @testable import Impedance_Converter
@@ -488,6 +489,13 @@ class TransmissionParametersTests: ViewModelTestBase {
         viewModel.swr = newSWR
         let expectedReflectionCoefficientMagnitude = (newSWR - 1) / (newSWR + 1)
         XCTAssertEqual(viewModel.reflectionCoefficient.magnitude, expectedReflectionCoefficientMagnitude, accuracy: 1e-6)
+    }
+    
+    func testSWRInfinity() {
+        property("SWR should be infinity for reflection coefficient length of 1 at any phase") <- forAll { (phase: Double) in
+            self.viewModel.reflectionCoefficient = Complex(length: 1.0, phase: phase)
+            return self.viewModel.swr.isInfinite
+        }
     }
 
     // Testing Return Loss
