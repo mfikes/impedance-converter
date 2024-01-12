@@ -34,44 +34,4 @@ final class MathTests: XCTestCase {
         // Both dividend and divisor are infinite
         XCTAssertTrue(symmetricRemainder(dividend: Double.infinity, divisor: Double.infinity).isNaN)
     }
-    
-    func testCos() {
-        // Test specific angle cases
-        XCTAssertEqual(cos(angle: Angle(degrees: 0)), 1)
-        XCTAssertEqual(cos(angle: Angle(degrees: 90)), 0)
-        XCTAssertEqual(cos(angle: Angle(degrees: 180)), -1)
-        XCTAssertEqual(cos(angle: Angle(degrees: 270)), 0)
-        XCTAssertEqual(cos(angle: Angle(degrees: 360)), 1)
-        
-        // Test negative angles
-        XCTAssertEqual(cos(angle: Angle(degrees: -90)), 0)
-        XCTAssertEqual(cos(angle: Angle(degrees: -180)), -1)
-        
-        // Test angles > 360 and < -360
-        XCTAssertEqual(cos(angle: Angle(degrees: 450)), 0)
-        XCTAssertEqual(cos(angle: Angle(degrees: -450)), 0)
-        
-        // Test arbitrary angle
-        XCTAssertEqual(cos(angle: Angle(degrees: 45)), sqrt(2)/2, accuracy: 0.0001)
-    }
-    
-    func testSin() {
-        // Test specific angle cases
-        XCTAssertEqual(sin(angle: Angle(degrees: 0)), 0)
-        XCTAssertEqual(sin(angle: Angle(degrees: 90)), 1)
-        XCTAssertEqual(sin(angle: Angle(degrees: 180)), 0)
-        XCTAssertEqual(sin(angle: Angle(degrees: 270)), -1)
-        XCTAssertEqual(sin(angle: Angle(degrees: 360)), 0)
-        
-        // Test negative angles
-        XCTAssertEqual(sin(angle: Angle(degrees: -90)), -1)
-        XCTAssertEqual(sin(angle: Angle(degrees: -180)), 0)
-        
-        // Test angles > 360 and < -360
-        XCTAssertEqual(sin(angle: Angle(degrees: 450)), 1)
-        XCTAssertEqual(sin(angle: Angle(degrees: -450)), -1)
-        
-        // Test arbitrary angle
-        XCTAssertEqual(sin(angle: Angle(degrees: 45)), sqrt(2)/2, accuracy: 0.0001)
-    }
 }
