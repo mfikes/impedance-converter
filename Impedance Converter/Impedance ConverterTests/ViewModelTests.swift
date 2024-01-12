@@ -142,7 +142,7 @@ class ImmittanceTests: ViewModelTestBase {
     func testImmittanceWithNegativeValues() {
         // Negative real part in impedance
         viewModel.impedance = Complex(-50, 10)
-        XCTAssertEqual(viewModel.impedance, Complex(-50, 10))
+        XCTAssertEqual(viewModel.impedance, Complex(0, 10))
 
         // Negative imaginary part in admittance
         viewModel.admittance = Complex(0.02, -0.005)
@@ -157,6 +157,26 @@ class ImmittanceTests: ViewModelTestBase {
         // Complex admittance
         viewModel.admittance = Complex(0.03, 0.04)
         XCTAssertEqual(viewModel.admittance, Complex(0.03, 0.04))
+    }
+    
+    func testImpedanceGreaterThanPos90() {
+        viewModel.impedance = Complex.init(length: 50, phase: Angle(degrees: 95).radians)
+        XCTAssertEqual(Angle(radians: viewModel.impedance.phase).degrees, 90)
+    }
+    
+    func testImpedanceLessThanNeg90() {
+        viewModel.impedance = Complex.init(length: 50, phase: Angle(degrees: -95).radians)
+        XCTAssertEqual(Angle(radians: viewModel.impedance.phase).degrees, -90)
+    }
+    
+    func testAdmittanceGreaterThanPos90() {
+        viewModel.admittance = Complex.init(length: 50, phase: Angle(degrees: 95).radians)
+        XCTAssertEqual(Angle(radians: viewModel.admittance.phase).degrees, 90)
+    }
+    
+    func testAdmittanceLessThanNeg90() {
+        viewModel.admittance = Complex.init(length: 50, phase: Angle(degrees: -95).radians)
+        XCTAssertEqual(Angle(radians: viewModel.admittance.phase).degrees, -90)
     }
     
     func testReciprocalRelationships() {
