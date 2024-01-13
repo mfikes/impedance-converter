@@ -4,7 +4,7 @@ struct DisplayView<Content: View>: View {
     var content: Content
     var backgroundColor: Color
     
-    init(backgroundColor: Color = Color(hex: "#232521"), @ViewBuilder content: () -> Content) {
+    init(backgroundColor: Color = .baseComponentBackgroundColor, @ViewBuilder content: () -> Content) {
         self.backgroundColor = backgroundColor
         self.content = content()
     }

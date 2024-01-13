@@ -39,4 +39,7 @@ extension Color {
     static let baseSecondaryRed = Color(hex: "#D33533")
     static let baseAppBackgroundColor = Color(hex: "#A1BB9B")
     static let baseSegmentControlTintColor = Color(hex: "#D9CDAD").adjusted(brightness: 1.2)
+    static let dimGridView = Color(hex:"#FFFFFF").adjusted(brightness:0.4)
+    static let smithOuterCircle = Color(hex: "#CCCCCC")
+    static let smithBackground = Color(hex: "#3A0C08").adjusted(brightness: 0.6)
 }
