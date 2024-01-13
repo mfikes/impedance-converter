@@ -35,17 +35,21 @@ struct TransmissionLossView: View {
 struct CharacterizationView: View {
     @ObservedObject var viewModel: ViewModel
     
+    @AppStorage("showCharacterization") private var showCharacterization = false
+    
     var body: some View {
-        DisplayView {
-            HStack {
-                SWRView(viewModel: viewModel)
-                ReturnLossView(viewModel: viewModel)
+        if (showCharacterization) {
+            DisplayView {
+                HStack {
+                    SWRView(viewModel: viewModel)
+                    ReturnLossView(viewModel: viewModel)
+                }
             }
-        }
-        DisplayView {
-            HStack {
-                TransmissionCoefficientView(viewModel: viewModel)
-                TransmissionLossView(viewModel: viewModel)
+            DisplayView {
+                HStack {
+                    TransmissionCoefficientView(viewModel: viewModel)
+                    TransmissionLossView(viewModel: viewModel)
+                }
             }
         }
     }
