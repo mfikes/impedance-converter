@@ -207,7 +207,7 @@ struct SmithChartContentView: View {
                     }
                     
                     if (constraintKind == .angle) {
-                        drawRadius(context: context, center: center, radius: radius, angle: Angle(degrees: constraintValue), color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                        drawRadius(context: context, center: center, radius: radius, angle: Angle(radians: constraintValue), color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
                     }
                     
                 }
