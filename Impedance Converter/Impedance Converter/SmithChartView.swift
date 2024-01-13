@@ -537,10 +537,11 @@ struct ScanLinesEffect: View {
 }
 
 struct SmithChartView: View {
-    var viewModel: ViewModel
     
     @AppStorage("showSmithChart") private var showSmithChart = true
     
+    var viewModel: ViewModel
+
     var body: some View {
         if (showSmithChart) {
             ZStack {

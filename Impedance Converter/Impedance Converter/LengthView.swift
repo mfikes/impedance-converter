@@ -17,10 +17,11 @@ struct DistanceView: View {
 }
 
 struct LengthView: View {
-    @ObservedObject var viewModel: ViewModel
     
     @AppStorage("showLength") private var showLength = false
     
+    @ObservedObject var viewModel: ViewModel
+
     var body: some View {
         if (showLength) {
             HStack {

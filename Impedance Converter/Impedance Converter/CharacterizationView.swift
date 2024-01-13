@@ -33,9 +33,10 @@ struct TransmissionLossView: View {
 }
 
 struct CharacterizationView: View {
-    @ObservedObject var viewModel: ViewModel
     
     @AppStorage("showCharacterization") private var showCharacterization = false
+    
+    @ObservedObject var viewModel: ViewModel
     
     var body: some View {
         if (showCharacterization) {
