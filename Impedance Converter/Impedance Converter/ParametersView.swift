@@ -28,13 +28,18 @@ struct ReferenceView: View {
 }
 
 struct ParametersView: View {
+    
+    @AppStorage("showParameters") private var showParameters = true
+    
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        DisplayView {
-            HStack {
-                ReferenceView(viewModel: viewModel)
-                FrequencyView(viewModel: viewModel)
+        if (showParameters) {
+            DisplayView {
+                HStack {
+                    ReferenceView(viewModel: viewModel)
+                    FrequencyView(viewModel: viewModel)
+                }
             }
         }
     }

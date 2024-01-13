@@ -116,15 +116,33 @@ struct ContentView: View {
 struct ModePickerView: View {
     @ObservedObject var viewModel: ViewModel
     var body: some View {
-        Picker("Mode", selection: $viewModel.displayMode) {
-            Text("Impedance Z").tag(DisplayMode.impedance)
-            Text("Admittance Y").tag(DisplayMode.admittance)
-            Text("Refl. Coeff. Γ").tag(DisplayMode.reflectionCoefficient)
+        HStack {
+            Picker("Mode", selection: $viewModel.displayMode) {
+                Text("Impedance Z").tag(DisplayMode.impedance)
+                Text("Admittance Y").tag(DisplayMode.admittance)
+                Text("Refl. Coeff. Γ").tag(DisplayMode.reflectionCoefficient)
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            SettingsButtonView()
         }
-        .pickerStyle(SegmentedPickerStyle())
         .padding([.horizontal], 10)
         .padding([.top], 10)
         .frame(maxWidth: 500)
+    }
+}
+
+struct SettingsButtonView: View {
+    var body: some View {
+        Button(action: {
+            if let url = URL(string: UIApplication.openSettingsURLString),
+               UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            }
+        }) {
+            Image(systemName: "gear")
+                .imageScale(.medium)
+                .foregroundColor(.black)
+        }
     }
 }
 

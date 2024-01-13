@@ -21,6 +21,8 @@ struct SmithChartContentView: View {
     
     @AppStorage("scale") private var scalePreference = "1/3-1-3"
     
+    @AppStorage("showLength") private var showLength = false
+    
     @ObservedObject var viewModel: ViewModel
     
     @State var constraintKind: ConstraintKind = .unset
@@ -122,7 +124,9 @@ struct SmithChartContentView: View {
                     context.stroke(centerPointPath, with: .color(gridColor))
                     context.fill(centerPointPath, with: .color(gridColor))
                     
-                    drawReferenceAngleIndicator(context: context, center: center, radius: radius, angle: refAngleInterpolator, color:gridColor)
+                    if (showLength) {
+                        drawReferenceAngleIndicator(context: context, center: center, radius: radius, angle: refAngleInterpolator, color:gridColor)
+                    }
                     
                     context.clip(to: outerCircle)
                     
@@ -533,32 +537,37 @@ struct ScanLinesEffect: View {
 }
 
 struct SmithChartView: View {
-    var viewModel: ViewModel
     
+    @AppStorage("showSmithChart") private var showSmithChart = true
+    
+    var viewModel: ViewModel
+
     var body: some View {
-        ZStack {
-            SmithChartContentView(viewModel: viewModel)
-            
-            ScanLinesEffect()
-                .cornerRadius(8)
-                .padding(10)
-                .aspectRatio(1, contentMode: .fit)
-                .allowsHitTesting(false)
-            
-            // First radial gradient for central brightness
-            RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.8), Color.white.opacity(0)]),
-                           center: .center, startRadius: 10, endRadius: 200)
+        if (showSmithChart) {
+            ZStack {
+                SmithChartContentView(viewModel: viewModel)
+                
+                ScanLinesEffect()
+                    .cornerRadius(8)
+                    .padding(10)
+                    .aspectRatio(1, contentMode: .fit)
+                    .allowsHitTesting(false)
+                
+                // First radial gradient for central brightness
+                RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.8), Color.white.opacity(0)]),
+                               center: .center, startRadius: 10, endRadius: 200)
                 .blendMode(.overlay)
                 .allowsHitTesting(false)
-
-            // Second radial gradient for specular light reflection
-            GeometryReader { geometry in
-                let upperLeft = UnitPoint(x: 0.1, y: 0.1)
-                RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.1), Color.white.opacity(0)]),
-                               center: upperLeft,
-                               startRadius: 10, endRadius: 80)
-                .blendMode(.normal)
-                .allowsHitTesting(false)
+                
+                // Second radial gradient for specular light reflection
+                GeometryReader { geometry in
+                    let upperLeft = UnitPoint(x: 0.1, y: 0.1)
+                    RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.1), Color.white.opacity(0)]),
+                                   center: upperLeft,
+                                   startRadius: 10, endRadius: 80)
+                    .blendMode(.normal)
+                    .allowsHitTesting(false)
+                }
             }
         }
     }
