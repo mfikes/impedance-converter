@@ -219,6 +219,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                                                 .font(.custom("Segment7Standard", size: 30))
                                                                 .foregroundColor(.black)
                                                         }
+                                                        .frame(minWidth: 44)
                                                     }
                                                     Spacer()
                                                     ForEach(unitCases, id: \.self) { unitCase in
@@ -229,6 +230,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                                                 .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.5))
                                                                 .fontWeight(unitCase == unit ? .bold : .regular)
                                                         }
+                                                        .frame(minWidth: 44)
                                                         Spacer()
                                                     }
                                                 }
