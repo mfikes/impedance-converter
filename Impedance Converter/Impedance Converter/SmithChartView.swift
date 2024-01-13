@@ -70,7 +70,7 @@ struct SmithChartContentView: View {
     }
     
     func calculateGridColor() -> Color {
-        return constraintKind == .unset || constraintKind == .none ? .gray : Color(hex:"#FFFFFF").adjusted(brightness:0.4)
+        return constraintKind == .unset || constraintKind == .none ? .gray : .dimGridView
     }
     
     func animationTarget(for mode: DisplayMode) -> Double {
@@ -104,7 +104,7 @@ struct SmithChartContentView: View {
                     
                     // Draw outer circle
                     let outerCircle = createOuterCircle(center: center, radius: radius)
-                    context.stroke(outerCircle, with: .color(Color(hex: "#CCCCCC")), lineWidth: 1)
+                    context.stroke(outerCircle, with: .color(.smithOuterCircle), lineWidth: 1)
                     
                     let gridColor = calculateGridColor()
                     
@@ -251,7 +251,7 @@ struct SmithChartContentView: View {
                             }
                     )
             }
-            .background(Color(hex: "#3A0C08").adjusted(brightness: 0.6))
+            .background(Color.smithBackground)
             .cornerRadius(20)
         }
         .aspectRatio(1, contentMode: .fit)

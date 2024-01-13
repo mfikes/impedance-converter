@@ -148,18 +148,18 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                 Spacer()
                 HStack {
                     Text(label)
-                        .foregroundColor(Color(hex: "#969F91"))
+                        .foregroundColor(.baseLabelTextColor)
                     Text(description)
                         .font(.caption)
-                        .foregroundColor(Color(hex: "#969F91"))
+                        .foregroundColor(.baseLabelTextColor)
                 }
                 .padding(.horizontal, 8)
-                .background(Color(hex: "#232521")) // Background for both Text views
+                .background(Color.baseComponentBackgroundColor) // Background for both Text views
                 Spacer()
             }
             .zIndex(1)
             ZStack {
-                Color(hex:"#400705").adjusted(brightness: 0.9).edgesIgnoringSafeArea(.all)
+                Color.baseDarkRed.adjusted(brightness: 0.9).edgesIgnoringSafeArea(.all)
                 HStack {
                     VStack {
                         Spacer(minLength: 12)
@@ -263,7 +263,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
             .overlay(
                 ZStack {
                     RoundedRectangle(cornerRadius: 5)
-                        .stroke(Color(hex: "#969F91"), lineWidth: 5)
+                        .stroke(Color.baseLabelTextColor, lineWidth: 5)
                         .padding(-8)
                         .offset(y: -1)
                         .mask(RoundedRectangle(cornerRadius: 4)
