@@ -29,9 +29,9 @@ struct SmithChartContentView: View {
     
     @State var constraintValue: Double = 0
     
-    @State private var modeInterpolator: Double = 1
+    @State private var modeInterpolator: Double
 
-    var modeAnimationManager = SmoothAnimation(initialValue: 1)
+    let modeAnimationManager: SmoothAnimation
     
     func startAnimatingModeChange(target: Double) {
         modeAnimationManager.startAnimating(target: target) { interpolatorValue in
@@ -44,7 +44,12 @@ struct SmithChartContentView: View {
     
     var refAngleAnimationManager = SmoothAnimation(initialValue: 0)
     
-    
+    init(viewModel: ViewModel) {
+        self.viewModel = viewModel
+        let initialModeInterpolator = SmithChartContentView.animationTarget(for: viewModel.displayMode)
+        _modeInterpolator = State(initialValue: initialModeInterpolator)
+        modeAnimationManager = SmoothAnimation(initialValue: initialModeInterpolator)
+    }
     
     func createCenterAndRadius(size: CGSize) -> (CGPoint, CGFloat) {
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
@@ -73,7 +78,7 @@ struct SmithChartContentView: View {
         return constraintKind == .unset || constraintKind == .none ? .gray : .dimGridView
     }
     
-    func animationTarget(for mode: DisplayMode) -> Double {
+    static func animationTarget(for mode: DisplayMode) -> Double {
         switch mode {
         case .impedance:
             return 1
@@ -147,7 +152,7 @@ struct SmithChartContentView: View {
                     }
                 }
                 .onChange(of: viewModel.displayMode) { _ in
-                    startAnimatingModeChange(target: animationTarget(for: viewModel.displayMode))
+                    startAnimatingModeChange(target: SmithChartContentView.animationTarget(for: viewModel.displayMode))
                 }
                 .onChange(of: viewModel.refAngle) { _ in
                     let start = oldRefAngle.radians
@@ -187,7 +192,7 @@ struct SmithChartContentView: View {
                     }
                 }
                 .onChange(of: viewModel.displayMode) { _ in
-                    startAnimatingModeChange(target:animationTarget(for: viewModel.displayMode))
+                    startAnimatingModeChange(target:SmithChartContentView.animationTarget(for: viewModel.displayMode))
                 }
                 
                 Canvas { context, size in
