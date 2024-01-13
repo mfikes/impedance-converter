@@ -31,17 +31,22 @@ struct InductanceView: View {
 }
 
 struct CircuitView: View {
+    
+    @AppStorage("showLCQD") private var showLCQD = true
+    
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        Picker("Mode", selection: $viewModel.circuitMode) {
-            Image("Series").tag(CircuitMode.series)
-            Image("Parallel").tag(CircuitMode.parallel)
+        if (showLCQD) {
+            Picker("Mode", selection: $viewModel.circuitMode) {
+                Image("Series").tag(CircuitMode.series)
+                Image("Parallel").tag(CircuitMode.parallel)
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .padding([.horizontal], 10)
+            .frame(maxWidth: 200)
+            InductanceView(viewModel: viewModel)
+            CapacitanceView(viewModel: viewModel)
         }
-        .pickerStyle(SegmentedPickerStyle())
-        .padding([.horizontal], 10)
-        .frame(maxWidth: 200)
-        InductanceView(viewModel: viewModel)
-        CapacitanceView(viewModel: viewModel)
     }
 }
