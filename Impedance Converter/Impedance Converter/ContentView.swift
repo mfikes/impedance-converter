@@ -40,8 +40,20 @@ struct ContentView: View {
                     VStack {
                         ModePickerView(viewModel: viewModel)
                         HStack(alignment: .top, spacing: 10) {
-                            ImmittanceColumnView(viewModel: viewModel)
-                            SmithChartColumnView(viewModel: viewModel)
+                            VStack {
+                                Spacer()
+                                ImmittanceView(viewModel: viewModel)
+                                CircuitView(viewModel: viewModel)
+                                ParametersView(viewModel: viewModel)
+                                CharacterizationView(viewModel: viewModel)
+                                LengthView(viewModel: viewModel)
+                                Spacer()
+                            }
+                            VStack {
+                                Spacer()
+                                SmithChartView(viewModel: viewModel)
+                                Spacer()
+                            }
                         }
                     }
                     .padding(10)
@@ -49,11 +61,14 @@ struct ContentView: View {
                     VStack {
                         ModePickerView(viewModel: viewModel)
                         ScrollView {
-                            VStack {
-                                Spacer(minLength: 0)
-                                ImmittanceColumnView(viewModel: viewModel)
-                                SmithChartColumnView(viewModel: viewModel)
-                                Spacer(minLength: 0)
+                            LazyVStack {
+                                ImmittanceView(viewModel: viewModel)
+                                CircuitView(viewModel: viewModel)
+                                ParametersView(viewModel: viewModel)
+                                SmithChartView(viewModel: viewModel)
+                                CharacterizationView(viewModel: viewModel)
+                                LengthView(viewModel: viewModel)
+                                Spacer()
                             }
                         }
                     }
@@ -110,28 +125,6 @@ struct ModePickerView: View {
         .padding([.horizontal], 10)
         .padding([.top], 10)
         .frame(maxWidth: 500)
-    }
-}
-
-struct ImmittanceColumnView: View {
-    var viewModel: ViewModel
-    var body: some View {
-        VStack {
-            ImmittanceView(viewModel: viewModel)
-            CircuitView(viewModel: viewModel)
-            ParametersView(viewModel: viewModel)
-        }
-    }
-}
-
-struct SmithChartColumnView: View {
-    var viewModel: ViewModel
-    var body: some View {
-        VStack {
-            SmithChartView(viewModel: viewModel)
-            CharacterizationView(viewModel: viewModel)
-            LengthView(viewModel: viewModel)
-        }
     }
 }
 

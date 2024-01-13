@@ -542,6 +542,7 @@ struct SmithChartView: View {
             ScanLinesEffect()
                 .cornerRadius(8)
                 .padding(10)
+                .aspectRatio(1, contentMode: .fit)
                 .allowsHitTesting(false)
             
             // First radial gradient for central brightness
