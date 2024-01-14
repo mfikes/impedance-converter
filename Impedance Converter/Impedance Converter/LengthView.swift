@@ -8,15 +8,15 @@ struct WavelengthsView: View {
     }
 }
 
-struct DistanceView: View {
+struct LengthView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        UnitInputView(value: $viewModel.distance, unit: DistanceUnit.m, label: "D", description: "distance")
+        UnitInputView(value: $viewModel.length, unit: LengthUnit.m, label: "L", description: "length")
     }
 }
 
-struct LengthView: View {
+struct ElectricalLengthView: View {
     
     @AppStorage("showLength") private var showLength = false
     
@@ -49,7 +49,7 @@ struct LengthView: View {
             DisplayView {
                 HStack {
                     WavelengthsView(viewModel: viewModel)
-                    DistanceView(viewModel: viewModel)
+                    LengthView(viewModel: viewModel)
                 }
             }
         }

@@ -117,10 +117,19 @@ enum WavelengthsUnit: String, UnitWithPowerOfTen {
     var basePower: Int { 0 }
 }
 
-enum DistanceUnit: String, UnitWithPowerOfTen {
+enum LengthUnit: String, UnitWithPowerOfTen {
     case nm, µm, mm, m, km
     var id: Self { self }
     var basePower: Int { -9 }
+}
+
+enum VelocityFactorUnit: String, UnitWithPowerOfTen {
+    case V
+    var id: Self { self }
+    var basePower: Int { 0 }
+    var shouldRender: Bool {
+        return self != .V
+    }
 }
 
 enum CapacitanceUnit: String, UnitWithPowerOfTen {

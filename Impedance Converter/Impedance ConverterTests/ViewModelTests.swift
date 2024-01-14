@@ -682,7 +682,31 @@ class ElectricalLengthTests: ViewModelTestBase {
         let expectedWavelength = 3e8 / 300e6
         XCTAssertEqual(viewModel.wavelength, expectedWavelength)
     }
-
+    
+    // Testing Wavelength with velocity factor
+    func testWavelengthWithVelocityFactory() {
+        // Set a frequency and verify the wavelength calculation
+        viewModel.frequency = 300e6 // 300 MHz
+        viewModel.velocityFactor = 0.5
+        let expectedWavelength = 0.5 * 3e8 / 300e6
+        XCTAssertEqual(viewModel.wavelength, expectedWavelength)
+    }
+    
+    func testSetWavelength() {
+        // Set a wavelength and verify the frequency calculation
+        viewModel.wavelength = 40
+        let expectedFrequency = 3e8 / 40
+        XCTAssertEqual(viewModel.frequency, expectedFrequency)
+    }
+    
+    func testSetWavelengthWithVelocityFactor() {
+        // Set a wavelength and verify the frequency calculation
+        viewModel.velocityFactor = 0.5
+        viewModel.wavelength = 40
+        let expectedFrequency = 0.5 * 3e8 / 40
+        XCTAssertEqual(viewModel.frequency, expectedFrequency)
+    }
+    
     // Testing Wavelengths (Electrical Length in terms of Wavelength)
     func testWavelengths() {
         // Set frequency, reflection coefficient angle, and reference angle
@@ -704,21 +728,21 @@ class ElectricalLengthTests: ViewModelTestBase {
         XCTAssertEqual(viewModel.reflectionCoefficient.phase, expectedNewAngle.radians, accuracy: 1e-6)
     }
 
-    // Testing Distance
-    func testDistance() {
+    // Testing Length
+    func testLength() {
         // Set frequency and wavelengths
         viewModel.reactance = 30 // ohms
         viewModel.frequency = 300e6 // 300 MHz
         viewModel.wavelengths = 0.3 // Example value
 
-        // Calculate and verify distance
+        // Calculate and verify length
         let expectedDistance = viewModel.wavelengths * viewModel.wavelength
-        XCTAssertEqual(viewModel.distance, expectedDistance)
+        XCTAssertEqual(viewModel.length, expectedDistance)
 
-        // Set distance and verify wavelengths
-        let newDistance = 0.250 // meters
-        viewModel.distance = newDistance
-        XCTAssertEqual(viewModel.wavelengths, newDistance / viewModel.wavelength, accuracy: 1e-6)
+        // Set length and verify wavelengths
+        let newLength = 0.250 // meters
+        viewModel.length = newLength
+        XCTAssertEqual(viewModel.wavelengths, newLength / viewModel.wavelength, accuracy: 1e-6)
     }
 
     // Testing Zero Length Function
@@ -743,12 +767,12 @@ class FullTests: ViewModelTestBase {
         XCTAssertEqual(viewModel.wavelength, 0.10, accuracy: 1e-6)
         viewModel.zeroLength()
         viewModel.angleOrientation = .clockwise
-        viewModel.distance = 0.025
+        viewModel.length = 0.025
         XCTAssertEqual(viewModel.wavelengths, 0.25, accuracy: 1e-6)
         XCTAssertEqual(viewModel.resistance, 21.5, accuracy: 1e-1)
         XCTAssertEqual(viewModel.reactance, -8.5, accuracy: 2e-1)
         viewModel.angleOrientation = .counterclockwise
-        viewModel.distance = 0.025
+        viewModel.length = 0.025
         XCTAssertEqual(viewModel.wavelengths, 0.25, accuracy: 1e-6)
         XCTAssertEqual(viewModel.resistance, 21.5, accuracy: 1e-1)
         XCTAssertEqual(viewModel.reactance, -8.5, accuracy: 2e-1)
@@ -800,7 +824,9 @@ class FullTests: ViewModelTestBase {
         XCTAssertEqual(viewModel.wavelength, 21.13, accuracy: 5e-2)
         viewModel.angleOrientation = .clockwise
         viewModel.zeroLength()
-        viewModel.wavelengths = 0.0717
+        viewModel.velocityFactor = 0.66
+        viewModel.length = 1
+        XCTAssertEqual(viewModel.wavelengths, 0.0717, accuracy: 5e-2)
         XCTAssertEqual(viewModel.resistance, 17.8, accuracy: 2)
         XCTAssertEqual(viewModel.reactance, -22, accuracy: 5e-1)
     }
