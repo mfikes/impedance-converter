@@ -92,8 +92,10 @@ struct SmithChartContentView: View {
     func scale() -> [Double] {
         if (scalePreference == "1-2-5") {
             return [0.2, 0.5, 1, 2, 5]
-        } else {
+        } else if (scalePreference == "1/3-1-3") {
             return [1/3, 1, 3]
+        } else {
+            return [0.2, 0.5, 1, 1.4, 4]
         }
     }
     
@@ -294,7 +296,10 @@ struct SmithChartContentView: View {
     }
     
     private func drawResistanceCircle(context: GraphicsContext, center: CGPoint, radius: CGFloat, R: Double, color: Color, style: StrokeStyle, modeInterpolator: Double) {
-        let circleRadius = radius / (R + 1)
+        let smith = 1 / (1 + R)
+        let polar = polarRadiusFor(R: R)
+        
+        let circleRadius = radius * (abs(modeInterpolator) * smith + (1.0 - abs(modeInterpolator)) * polar)
         let circleCenter = CGPoint(x: center.x + modeInterpolator * radius * R / (R + 1), y: center.y)
         drawCircle(context: context, center: center, radius: radius, circleRadius: circleRadius, circleCenter: circleCenter, color: color, style: style)
     }
@@ -362,9 +367,13 @@ struct SmithChartContentView: View {
         switch (abs(X)) {
         case 5.0:
             return Angle(degrees: 30*X.signum())
+        case 4.0:
+            return Angle(degrees: 30*X.signum())
         case 3.0:
             return Angle(degrees: 45*X.signum())
         case 2.0:
+            return Angle(degrees: 60*X.signum())
+        case 1.4:
             return Angle(degrees: 60*X.signum())
         case 1.0:
             return Angle(degrees: 90*X.signum())
@@ -377,6 +386,11 @@ struct SmithChartContentView: View {
         default:
             return Angle(degrees: 45*X.signum())
         }
+    }
+    
+    private func polarRadiusFor(R: Double) -> Double {
+        let Rprime = R == 1.4 ? 2 : R
+        return 1 / (1 + Rprime);
     }
     
     private func calculateAnchor(X: Double, radius: CGFloat, modeInterpolator: Double) -> Complex<Double> {
