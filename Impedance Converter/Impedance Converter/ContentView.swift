@@ -46,13 +46,13 @@ struct ContentView: View {
                                 CircuitView(viewModel: viewModel)
                                 ParametersView(viewModel: viewModel)
                                 CharacterizationView(viewModel: viewModel)
-                                ElectricalLengthView(viewModel: viewModel)
                                 Spacer()
                             }
                             VStack {
                                 Spacer()
                                 SmithChartView(viewModel: viewModel)
-                                Spacer()
+                                ElectricalLengthView(viewModel: viewModel)
+                                Spacer(minLength: 46)
                             }
                         }
                     }
