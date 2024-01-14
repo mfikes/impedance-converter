@@ -13,7 +13,7 @@ struct WavelengthView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        UnitInputView(value: $viewModel.wavelength, unit: LengthUnit.m, label: "λ", description: "wavelength")
+        UnitInputView(value: $viewModel.wavelength, unit: WavelengthUnit.m, label: "λ", description: "wavelength")
     }
 }
 

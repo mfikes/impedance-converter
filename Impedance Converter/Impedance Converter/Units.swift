@@ -123,6 +123,12 @@ enum LengthUnit: String, UnitWithPowerOfTen {
     var basePower: Int { -9 }
 }
 
+enum WavelengthUnit: String, UnitWithPowerOfTen {
+    case µm, mm, m, km
+    var id: Self { self }
+    var basePower: Int { -6 }
+}
+
 enum VelocityFactorUnit: String, UnitWithPowerOfTen {
     case V
     var id: Self { self }
