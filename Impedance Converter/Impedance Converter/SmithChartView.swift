@@ -19,7 +19,7 @@ extension Double {
 
 struct SmithChartContentView: View {
     
-    @AppStorage("scale") private var scalePreference = "1/3-1-3"
+    @AppStorage("scale") private var scalePreference = "Simple"
     
     @AppStorage("showLength") private var showLength = false
     
