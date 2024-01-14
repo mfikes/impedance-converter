@@ -531,7 +531,7 @@ class ViewModel: ObservableObject, Codable {
             return _velocityFactor
         }
         set {
-            if (0..<1).contains(newValue) {
+            if 0 < newValue && newValue <= 1 {
                 if _velocityFactor != newValue {
                     _velocityFactor = newValue
                     addCheckpoint()
