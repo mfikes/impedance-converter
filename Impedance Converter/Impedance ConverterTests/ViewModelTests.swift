@@ -822,9 +822,10 @@ class FullTests: ViewModelTestBase {
         XCTAssertEqual(viewModel.swr, 3.4, accuracy: 1e-1)
         XCTAssertEqual(viewModel.swr_dB, 10.6, accuracy: 3e-1)
         XCTAssertEqual(viewModel.wavelength, 21.13, accuracy: 5e-2)
+        viewModel.velocityFactor = 0.66
+        XCTAssertEqual(viewModel.wavelength, 13.95, accuracy: 5e-2)
         viewModel.angleOrientation = .clockwise
         viewModel.zeroLength()
-        viewModel.velocityFactor = 0.66
         viewModel.length = 1
         XCTAssertEqual(viewModel.wavelengths, 0.0717, accuracy: 5e-2)
         XCTAssertEqual(viewModel.resistance, 17.8, accuracy: 2)
