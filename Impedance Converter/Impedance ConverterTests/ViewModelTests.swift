@@ -667,3 +667,77 @@ class ElectricalLengthTests: ViewModelTestBase {
         XCTAssertEqual(viewModel.refAngle.radians, viewModel.reflectionCoefficient.phase)
     }
 }
+
+class FullTests: ViewModelTestBase {
+    
+    // From https://youtu.be/FeDm4iFXcX0?si=Tmp6rgcy1vIlVTut
+    func testLengthSwr() {
+        viewModel.resistance = 100
+        viewModel.reactance = 40
+        XCTAssertEqual(viewModel.swr, 2.4, accuracy: 1e-2)
+        viewModel.frequency = 3e9
+        XCTAssertEqual(viewModel.wavelength, 0.10, accuracy: 1e-6)
+        viewModel.zeroLength()
+        viewModel.angleOrientation = .clockwise
+        viewModel.distance = 0.025
+        XCTAssertEqual(viewModel.wavelengths, 0.25, accuracy: 1e-6)
+        XCTAssertEqual(viewModel.resistance, 21.5, accuracy: 1e-1)
+        XCTAssertEqual(viewModel.reactance, -8.5, accuracy: 2e-1)
+        viewModel.angleOrientation = .counterclockwise
+        viewModel.distance = 0.025
+        XCTAssertEqual(viewModel.wavelengths, 0.25, accuracy: 1e-6)
+        XCTAssertEqual(viewModel.resistance, 21.5, accuracy: 1e-1)
+        XCTAssertEqual(viewModel.reactance, -8.5, accuracy: 2e-1)
+    }
+    
+    // From https://youtu.be/qkyQqE_g6Q8?si=JZrVj5qaxOlLhXCY
+    func testSmithChartCalc() {
+        viewModel.resistance = 25
+        viewModel.reactance = 50
+        XCTAssertEqual(viewModel.swr, 4.2, accuracy: 1e-1)
+        XCTAssertEqual(Angle(radians: viewModel.reflectionCoefficient.phase).degrees, 82, accuracy: 1)
+        viewModel.zeroLength()
+        viewModel.angleOrientation = .clockwise
+        viewModel.wavelengths = 3.3
+        XCTAssertEqual(viewModel.resistance, 12, accuracy: 2)
+        XCTAssertEqual(viewModel.reactance, -20, accuracy: 3e-1)
+    }
+    
+    // From https://youtu.be/3JOtWxpUtbI?si=rqXUsoBqzEacU-8d
+    func testQuarterWaveMatch() {
+        viewModel.resistance = 50
+        viewModel.reactance = 70
+        viewModel.angleOrientation = .counterclockwise
+        let rotateBy = viewModel.wavelengths
+        XCTAssertEqual(rotateBy, 0.077, accuracy: 1e-3)
+        viewModel.zeroLength()
+        viewModel.angleOrientation = .clockwise
+        viewModel.wavelengths = rotateBy
+        XCTAssertEqual(viewModel.resistance, 180, accuracy: 5)
+        viewModel.referenceImpedance = Complex(sqrt(viewModel.resistance * 50), 0)
+        viewModel.zeroLength()
+        viewModel.wavelengths = 0.25
+        XCTAssertEqual(viewModel.resistance, 50, accuracy: 1e-6)
+    }
+    
+    // From https://youtu.be/ImNRca5ecF0?si=Q6Rw7vBU9ROjMRVQ (W2AEW)
+    func testSmithChartExample() {
+        viewModel.frequency = 14.2e6
+        viewModel.circuitMode = .series
+        viewModel.resistance = 33
+        viewModel.capacitance = 220e-12
+        XCTAssertEqual(viewModel.reactance, -51, accuracy: 5e-1)
+        XCTAssertEqual(viewModel.reflectionCoefficient.length, 0.54, accuracy: 5e-2)
+        XCTAssertEqual(Angle(radians: viewModel.reflectionCoefficient.phase).degrees, -76.4, accuracy: 8e-1)
+        // TODO gamma power should be 0.3
+        XCTAssertEqual(viewModel.returnLoss, 5.25, accuracy: 1e-1)
+        XCTAssertEqual(viewModel.swr, 3.4, accuracy: 1e-1)
+        // TODO SWR DB 10.6
+        XCTAssertEqual(viewModel.wavelength, 21.13, accuracy: 5e-2)
+        viewModel.angleOrientation = .clockwise
+        viewModel.zeroLength()
+        viewModel.wavelengths = 0.0717
+        XCTAssertEqual(viewModel.resistance, 17.8, accuracy: 2)
+        XCTAssertEqual(viewModel.reactance, -22, accuracy: 5e-1)
+    }
+}
