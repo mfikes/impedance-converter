@@ -52,6 +52,33 @@ enum StandingWaveRatioUnit: String, UnitWithPowerOfTen {
     case SWR
     var id: Self { self }
     var basePower: Int { 0 }
+    var shouldRender: Bool {
+        return self != .SWR
+    }
+}
+
+enum StandingWaveRatioDBUnit: String, UnitWithPowerOfTen {
+    case dB
+    var id: Self { self }
+    var basePower: Int { 0 }
+}
+
+enum ReflectionCoefficientRhoUnit: String, UnitWithPowerOfTen {
+    case ρ
+    var id: Self { self }
+    var basePower: Int { 0 }
+    var shouldRender: Bool {
+        return self != .ρ
+    }
+}
+
+enum ReflectionCoefficientPowerUnit: String, UnitWithPowerOfTen {
+    case ρ²
+    var id: Self { self }
+    var basePower: Int { 0 }
+    var shouldRender: Bool {
+        return self != .ρ²
+    }
 }
 
 enum ReturnLossUnit: String, UnitWithPowerOfTen {
@@ -61,9 +88,21 @@ enum ReturnLossUnit: String, UnitWithPowerOfTen {
 }
 
 enum TransmissionCoefficientUnit: String, UnitWithPowerOfTen {
-    case T
+    case τ
     var id: Self { self }
     var basePower: Int { 0 }
+    var shouldRender: Bool {
+        return self != .τ
+    }
+}
+
+enum TransmissionCoefficientPowerUnit: String, UnitWithPowerOfTen {
+    case τ²
+    var id: Self { self }
+    var basePower: Int { 0 }
+    var shouldRender: Bool {
+        return self != .τ²
+    }
 }
 
 enum TransmissionLossUnit: String, UnitWithPowerOfTen {

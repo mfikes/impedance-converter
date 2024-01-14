@@ -8,11 +8,27 @@ struct SWRView: View {
     }
 }
 
-struct ReturnLossView: View {
+struct SWRDBView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        UnitInputView(value: $viewModel.returnLoss, unit: ReturnLossUnit.dB, label: "RL", description: "return loss")
+        UnitInputView(value: $viewModel.swr_dB, unit: StandingWaveRatioDBUnit.dB, label: "SWR", description: "st. wave ratio")
+    }
+}
+
+struct ReflectionCoefficientView: View {
+    @ObservedObject var viewModel: ViewModel
+    
+    var body: some View {
+        UnitInputView(value: $viewModel.reflectionCoefficientRho, unit: ReflectionCoefficientRhoUnit.ρ, label: "ρ", description: "refl. coeff.")
+    }
+}
+
+struct ReflectionCoefficientPowerView: View {
+    @ObservedObject var viewModel: ViewModel
+    
+    var body: some View {
+        UnitInputView(value: $viewModel.reflectionCoefficientPower, unit: ReflectionCoefficientPowerUnit.ρ², label: "ρ²", description: "refl. coeff. power")
     }
 }
 
@@ -20,7 +36,23 @@ struct TransmissionCoefficientView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        UnitInputView(value: $viewModel.transmissionCoefficient, unit: TransmissionCoefficientUnit.T, label: "T", description: "transmission coeff.")
+        UnitInputView(value: $viewModel.transmissionCoefficient, unit: TransmissionCoefficientUnit.τ, label: "τ", description: "trans. coeff.")
+    }
+}
+
+struct TransmissionCoefficientPowerView: View {
+    @ObservedObject var viewModel: ViewModel
+    
+    var body: some View {
+        UnitInputView(value: $viewModel.transmissionCoefficientPower, unit: TransmissionCoefficientPowerUnit.τ², label: "τ²", description: "trans. coeff. power")
+    }
+}
+
+struct ReturnLossView: View {
+    @ObservedObject var viewModel: ViewModel
+    
+    var body: some View {
+        UnitInputView(value: $viewModel.returnLoss, unit: ReturnLossUnit.dB, label: "RL", description: "return loss")
     }
 }
 
@@ -43,12 +75,24 @@ struct CharacterizationView: View {
             DisplayView {
                 HStack {
                     SWRView(viewModel: viewModel)
-                    ReturnLossView(viewModel: viewModel)
+                    SWRDBView(viewModel: viewModel)
                 }
             }
             DisplayView {
                 HStack {
+                    ReflectionCoefficientView(viewModel: viewModel)
                     TransmissionCoefficientView(viewModel: viewModel)
+                }
+            }
+            DisplayView {
+                HStack {
+                    ReflectionCoefficientPowerView(viewModel: viewModel)
+                    TransmissionCoefficientPowerView(viewModel: viewModel)
+                }
+            }
+            DisplayView {
+                HStack {
+                    ReturnLossView(viewModel: viewModel)
                     TransmissionLossView(viewModel: viewModel)
                 }
             }

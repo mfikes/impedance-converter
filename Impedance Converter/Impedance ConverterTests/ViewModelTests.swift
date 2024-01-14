@@ -546,6 +546,70 @@ class TransmissionParametersTests: ViewModelTestBase {
         XCTAssertEqual(viewModel.swr, 1)
     }
 
+    // Testing Standing Wave Ratio (SWR) dB
+    func testSWR_db() {
+        viewModel.reactance = 40
+        viewModel.swr = 10
+        XCTAssertEqual(viewModel.swr_dB, 20, accuracy: 1e-6)
+        
+        viewModel.swr = 100
+        XCTAssertEqual(viewModel.swr_dB, 40, accuracy: 1e-6)
+        
+        viewModel.swr_dB = 20
+        XCTAssertEqual(viewModel.swr, 10, accuracy: 1e-6)
+        
+        viewModel.swr = 1
+        XCTAssertEqual(viewModel.swr_dB, 0, accuracy: 1e-6)
+        
+        viewModel.reactance = 40
+        viewModel.swr_dB = 0
+        XCTAssertEqual(viewModel.swr, 1, accuracy: 1e-6)
+    }
+    
+    // Testing Reflection Coefficient Power
+    func testReflectionCoefficientPower() {
+        let reflectionCoefficient = Complex(0.5, 0)
+        viewModel.reflectionCoefficient = reflectionCoefficient
+
+        let expectedReflectionCoefficientPower = reflectionCoefficient.lengthSquared
+        XCTAssertEqual(viewModel.reflectionCoefficientPower, expectedReflectionCoefficientPower)
+
+        let newReflectionCoefficientPower = 0.3
+        viewModel.reflectionCoefficientPower = newReflectionCoefficientPower
+        let expectedReflectionCoefficientMagnitude = sqrt(newReflectionCoefficientPower)
+        XCTAssertEqual(viewModel.reflectionCoefficient.magnitude, expectedReflectionCoefficientMagnitude, accuracy: 1e-6)
+    }
+    
+    // Testing Transmission Coefficient Power
+    func testTransmissionCoefficientPower() {
+        let reflectionCoefficient = Complex(0.5, 0)
+        viewModel.reflectionCoefficient = reflectionCoefficient
+
+        let expectedTransmisionCoefficientPower = pow(1 - reflectionCoefficient.length, 2)
+        XCTAssertEqual(viewModel.transmissionCoefficientPower, expectedTransmisionCoefficientPower)
+
+        let newTransmissionCoefficientPower = 0.3
+        viewModel.transmissionCoefficientPower = newTransmissionCoefficientPower
+        let expectedReflectionCoefficientMagnitude = 1 - sqrt(newTransmissionCoefficientPower)
+        XCTAssertEqual(viewModel.reflectionCoefficient.magnitude, expectedReflectionCoefficientMagnitude, accuracy: 1e-6)
+    }
+    
+    func testReflectionCoefficientTransmissionCoefficient() {
+        viewModel.reactance = 40
+        property("Reflection coefficient plus transmission coefficient must sum to 1") <- forAll( Gen<Double>.choose((0, 1)) ) { rho in
+            self.viewModel.reflectionCoefficientRho = rho
+            return abs(rho + self.viewModel.transmissionCoefficient - 1) < 1e-6
+        }
+    }
+    
+    func testTransmissionCoefficientReflectionCoefficient() {
+        viewModel.reactance = 40
+        property("Reflection coefficient plus transmission coefficient must sum to 1") <- forAll( Gen<Double>.choose((0, 1)) ) { tau in
+            self.viewModel.transmissionCoefficient = tau
+            return abs(self.viewModel.reflectionCoefficientRho + tau - 1) < 1e-6
+        }
+    }
+    
     // Testing Return Loss
     func testReturnLoss() {
         let reflectionCoefficient = Complex(0.5, 0)
@@ -575,13 +639,13 @@ class TransmissionParametersTests: ViewModelTestBase {
         viewModel.reflectionCoefficient = reflectionCoefficient
 
         // Check transmission coefficient calculation
-        let expectedTransmissionCoefficient = 1 - pow(reflectionCoefficient.magnitude, 2)
+        let expectedTransmissionCoefficient = 1 - reflectionCoefficient.length
         XCTAssertEqual(viewModel.transmissionCoefficient, expectedTransmissionCoefficient)
 
         // Set transmission coefficient and check reflection coefficient changes
         let newTransmissionCoefficient = 0.75
         viewModel.transmissionCoefficient = newTransmissionCoefficient
-        let expectedReflectionCoefficientMagnitude = sqrt(1 - newTransmissionCoefficient)
+        let expectedReflectionCoefficientMagnitude = 1 - newTransmissionCoefficient
         XCTAssertEqual(viewModel.reflectionCoefficient.magnitude, expectedReflectionCoefficientMagnitude, accuracy: 1e-6)
     }
     
@@ -598,13 +662,13 @@ class TransmissionParametersTests: ViewModelTestBase {
         viewModel.transmissionCoefficient = 0.75
 
         // Check transmission loss calculation
-        let expectedTransmissionLoss = -10 * log10(viewModel.transmissionCoefficient)
+        let expectedTransmissionLoss = -20 * log10(viewModel.transmissionCoefficient)
         XCTAssertEqual(viewModel.transmissionLoss, expectedTransmissionLoss)
 
         // Set transmission loss and check transmission coefficient changes
         let newTransmissionLoss = 3.0
         viewModel.transmissionLoss = newTransmissionLoss
-        let expectedTransmissionCoefficientValue = pow(10, -newTransmissionLoss / 10)
+        let expectedTransmissionCoefficientValue = pow(10, -newTransmissionLoss / 20)
         XCTAssertEqual(viewModel.transmissionCoefficient, expectedTransmissionCoefficientValue, accuracy: 1e-6)
     }
 }
@@ -729,10 +793,10 @@ class FullTests: ViewModelTestBase {
         XCTAssertEqual(viewModel.reactance, -51, accuracy: 5e-1)
         XCTAssertEqual(viewModel.reflectionCoefficient.length, 0.54, accuracy: 5e-2)
         XCTAssertEqual(Angle(radians: viewModel.reflectionCoefficient.phase).degrees, -76.4, accuracy: 8e-1)
-        // TODO gamma power should be 0.3
+        XCTAssertEqual(viewModel.reflectionCoefficientPower, 0.3, accuracy: 5e-2)
         XCTAssertEqual(viewModel.returnLoss, 5.25, accuracy: 1e-1)
         XCTAssertEqual(viewModel.swr, 3.4, accuracy: 1e-1)
-        // TODO SWR DB 10.6
+        XCTAssertEqual(viewModel.swr_dB, 10.6, accuracy: 3e-1)
         XCTAssertEqual(viewModel.wavelength, 21.13, accuracy: 5e-2)
         viewModel.angleOrientation = .clockwise
         viewModel.zeroLength()
