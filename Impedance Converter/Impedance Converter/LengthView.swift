@@ -28,8 +28,8 @@ struct ElectricalLengthView: View {
                 Spacer()
                 Text("Direction:")
                 Picker("Direction", selection: $viewModel.angleOrientation) {
-                    Text("↺").tag(AngleOrientation.counterclockwise)
                     Text("↻").tag(AngleOrientation.clockwise)
+                    Text("↺").tag(AngleOrientation.counterclockwise)
                 }
                 .pickerStyle(SegmentedPickerStyle())
                 .padding([.horizontal], 10)
