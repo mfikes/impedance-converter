@@ -17,14 +17,14 @@
 			<string>Simple</string>
 			<key>Titles</key>
 			<array>
-				<string>1-2-5 Series</string>
 				<string>Simple</string>
+				<string>1-2-5 Series</string>
 				<string>10-25-50-70-200</string>
 			</array>
 			<key>Values</key>
 			<array>
-				<string>1-2-5</string>
 				<string>Simple</string>
+				<string>1-2-5</string>
 				<string>10-25-50-70-200</string>
 			</array>
 		</dict>
