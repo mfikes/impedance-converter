@@ -226,7 +226,7 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                                         Button(action: {
                                                             selectUnit(unitCase)
                                                         }) {
-                                                            Text(unitCase.shouldRender ? unitCase.rawValue : "_")
+                                                            Text(unitCase.shouldRender ? unitCase.rawValue : unitCases.count == 1 ? "⏎" : "_")
                                                                 .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.5))
                                                                 .fontWeight(unitCase == unit ? .bold : .regular)
                                                         }
