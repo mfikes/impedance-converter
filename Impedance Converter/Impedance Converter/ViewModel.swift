@@ -125,7 +125,7 @@ class ViewModel: ObservableObject, Codable {
         
     @Published var refAngle: Angle = Angle(radians: 0)
     
-    @Published var angleOrientation: AngleOrientation = .counterclockwise {
+    @Published var angleOrientation: AngleOrientation = .clockwise {
         didSet {
             if angleOrientation != oldValue {
                 addCheckpoint()
