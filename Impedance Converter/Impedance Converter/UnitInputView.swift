@@ -121,8 +121,8 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
             }
         }
         
-        // Return the original unit if no suitable unit is found
-        return unit
+        // Return the last unit if no suitable unit is found
+        return sortedUnits.last!
     }
     
     private func toggleNegation() {
