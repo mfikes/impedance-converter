@@ -102,7 +102,7 @@ class ViewModel: ObservableObject, Codable {
             return _frequency
         }
         set {
-            if newValue > 0 {
+            if newValue > 0 && newValue.isFinite {
                 if _frequency != newValue {
                     let value = prepareHold()
                     _frequency = newValue
@@ -524,8 +524,34 @@ class ViewModel: ObservableObject, Codable {
         }
     }
 
+    @Published var _velocityFactor: Double = 1
+
+    var velocityFactor: Double {
+        get {
+            return _velocityFactor
+        }
+        set {
+            if 0 < newValue && newValue <= 1 {
+                if _velocityFactor != newValue {
+                    _velocityFactor = newValue
+                    addCheckpoint()
+                }
+            }
+        }
+    }
+    
+    private var propagationVelocity: Double {
+        get {
+            return velocityFactor * 3e8
+        }
+    }
     var wavelength: Double {
-        return 3e8 / frequency
+        get {
+            return propagationVelocity / frequency
+        }
+        set {
+            frequency = propagationVelocity / newValue
+        }
     }
     
     var angleSign: Double {
@@ -548,7 +574,7 @@ class ViewModel: ObservableObject, Codable {
         }
     }
     
-    var distance: Double {
+    var length: Double {
         get {
             return wavelengths * wavelength
         }
@@ -581,7 +607,7 @@ class ViewModel: ObservableObject, Codable {
         case displayMode, circuitMode,
              immittance, immittanceType,
              referenceImmittance, referenceImmittanceType,
-             frequency,
+             frequency, velocityFactor,
              refAngle, measureOrientation
     }
     
@@ -595,6 +621,7 @@ class ViewModel: ObservableObject, Codable {
         immittance = try container.decode(Immittance.self, forKey: .immittance)
         referenceImmittance = try container.decode(Immittance.self, forKey: .referenceImmittance)
         frequency = try container.decode(Double.self, forKey: .frequency)
+        velocityFactor = try container.decode(Double.self, forKey: .velocityFactor)
         let angleRadians = try container.decode(Double.self, forKey: .refAngle)
         refAngle = Angle(radians:angleRadians)
         angleOrientation = try container.decode(AngleOrientation.self, forKey: .measureOrientation)
@@ -607,6 +634,7 @@ class ViewModel: ObservableObject, Codable {
         try container.encode(immittance, forKey: .immittance)
         try container.encode(referenceImmittance, forKey: .referenceImmittance)
         try container.encode(frequency, forKey: .frequency)
+        try container.encode(velocityFactor, forKey: .velocityFactor)
         try container.encode(refAngle.radians, forKey: .refAngle)
         try container.encode(angleOrientation, forKey: .measureOrientation)
     }
@@ -617,6 +645,7 @@ class ViewModel: ObservableObject, Codable {
         self.immittance = other.immittance
         self.referenceImmittance = other.referenceImmittance
         self.frequency = other.frequency
+        self.velocityFactor = other.velocityFactor
         self.refAngle = other.refAngle
         self.angleOrientation = other.angleOrientation
     }
