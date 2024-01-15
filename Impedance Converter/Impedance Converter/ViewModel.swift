@@ -460,7 +460,11 @@ class ViewModel: ObservableObject, Codable {
     
     var reflectionCoefficientPower: Double {
         get {
-            return reflectionCoefficient.lengthSquared
+            if (unityReflectionCoefficient()) {
+                return 1
+            } else {
+                return reflectionCoefficient.lengthSquared
+            }
         }
         set {
             guard !reflectionCoefficient.phase.isNaN else { return }
@@ -483,44 +487,41 @@ class ViewModel: ObservableObject, Codable {
         }
     }
 
-    var transmissionCoefficient: Double {
+    var transmissionCoefficient: Complex<Double> {
         get {
-            if (unityReflectionCoefficient()) {
-                return 0
-            } else {
-                return 1 - reflectionCoefficient.length
-            }
+            1 + reflectionCoefficient
         }
         set {
-            guard newValue >= 0 && newValue <= 1 else { return }
-            let reflectionCoefficientLength = 1 - newValue
-            reflectionCoefficient = Complex.init(length: reflectionCoefficientLength, phase: reflectionCoefficient.phase)
+            reflectionCoefficient = newValue - 1
+        }
+    }
+    
+    var transmissionCoefficientTau: Double {
+        get {
+            return transmissionCoefficient.length
+        }
+        set {
+            guard !transmissionCoefficient.phase.isNaN else { return }
+            transmissionCoefficient = Complex.init(length: newValue, phase: transmissionCoefficient.phase)
         }
     }
     
     var transmissionCoefficientPower: Double {
         get {
-            if (unityReflectionCoefficient()) {
-                return 0
-            } else {
-                return transmissionCoefficient * transmissionCoefficient
-            }
+            1 - reflectionCoefficientPower
         }
         set {
-            guard newValue >= 0 && newValue <= 1 else { return }
-            transmissionCoefficient = sqrt(newValue)
+            reflectionCoefficientPower = 1 - newValue
         }
     }
 
-    var transmissionLoss: Double {
+    var reflectionLoss: Double {
         get {
-            let transmissionCoefficientValue = transmissionCoefficientPower
-            return -10 * log10(transmissionCoefficientValue)
+            return -10 * log10(transmissionCoefficientPower)
         }
         set {
             guard newValue >= 0 else { return }
-            let transmissionCoefficientValue = pow(10, -newValue / 10)
-            transmissionCoefficientPower = transmissionCoefficientValue
+            transmissionCoefficientPower = pow(10, -newValue / 10)
         }
     }
 

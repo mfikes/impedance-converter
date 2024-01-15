@@ -97,15 +97,15 @@ enum TransmissionCoefficientUnit: String, UnitWithPowerOfTen {
 }
 
 enum TransmissionCoefficientPowerUnit: String, UnitWithPowerOfTen {
-    case τ²
+    case P
     var id: Self { self }
     var basePower: Int { 0 }
     var shouldRender: Bool {
-        return self != .τ²
+        return self != .P
     }
 }
 
-enum TransmissionLossUnit: String, UnitWithPowerOfTen {
+enum ReflectionLossUnit: String, UnitWithPowerOfTen {
     case dB
     var id: Self { self }
     var basePower: Int { 0 }

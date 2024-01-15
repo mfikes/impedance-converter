@@ -28,7 +28,7 @@ struct ReflectionCoefficientPowerView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        UnitInputView(value: $viewModel.reflectionCoefficientPower, unit: ReflectionCoefficientPowerUnit.ρ², label: "ρ²", description: "refl. coeff. power")
+        UnitInputView(value: $viewModel.reflectionCoefficientPower, unit: ReflectionCoefficientPowerUnit.ρ², label: "RP", description: "refl. power")
     }
 }
 
@@ -36,7 +36,7 @@ struct TransmissionCoefficientView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        UnitInputView(value: $viewModel.transmissionCoefficient, unit: TransmissionCoefficientUnit.τ, label: "τ", description: "trans. coeff.")
+        UnitInputView(value: $viewModel.transmissionCoefficientTau, unit: TransmissionCoefficientUnit.τ, label: "τ", description: "trans. coeff.")
     }
 }
 
@@ -44,7 +44,7 @@ struct TransmissionCoefficientPowerView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        UnitInputView(value: $viewModel.transmissionCoefficientPower, unit: TransmissionCoefficientPowerUnit.τ², label: "τ²", description: "trans. coeff. power")
+        UnitInputView(value: $viewModel.transmissionCoefficientPower, unit: TransmissionCoefficientPowerUnit.P, label: "TP", description: "trans. power")
     }
 }
 
@@ -56,11 +56,11 @@ struct ReturnLossView: View {
     }
 }
 
-struct TransmissionLossView: View {
+struct ReflectionLossView: View {
     @ObservedObject var viewModel: ViewModel
     
     var body: some View {
-        UnitInputView(value: $viewModel.transmissionLoss, unit: TransmissionLossUnit.dB, label: "TL", description: "transmission loss")
+        UnitInputView(value: $viewModel.reflectionLoss, unit: ReflectionLossUnit.dB, label: "RL", description: "reflection loss")
     }
 }
 
@@ -93,7 +93,7 @@ struct CharacterizationView: View {
             DisplayView {
                 HStack {
                     ReturnLossView(viewModel: viewModel)
-                    TransmissionLossView(viewModel: viewModel)
+                    ReflectionLossView(viewModel: viewModel)
                 }
             }
         }
