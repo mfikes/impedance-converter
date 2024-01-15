@@ -585,7 +585,7 @@ struct SmithChartView: View {
                 SmithChartContentView(viewModel: viewModel)
                 
                 ScanLinesEffect()
-                    .cornerRadius(8)
+                    .cornerRadius(20)
                     .padding(10)
                     .aspectRatio(1, contentMode: .fit)
                     .allowsHitTesting(false)
