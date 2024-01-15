@@ -93,7 +93,7 @@ struct SmithChartContentView: View {
         if (scalePreference == "1-2-5") {
             return [0.2, 0.5, 1, 2, 5]
         } else if (scalePreference == "Simple") {
-            return [sqrt(2) - 1, 1, sqrt(2) + 1]
+            return [0.5, 1, 2]
         } else {
             return [0.2, 0.5, 1, 1.4, 4]
         }
@@ -381,18 +381,22 @@ struct SmithChartContentView: View {
             return Angle(degrees: 30*X.signum())
         case 3.0:
             return Angle(degrees: 45*X.signum())
-        case sqrt(2) + 1:
-            return Angle(degrees: 45*X.signum())
         case 2.0:
-            return Angle(degrees: 60*X.signum())
+            if scalePreference == "Simple" {
+                return Angle(degrees: 45*X.signum())
+            } else {
+                return Angle(degrees: 60*X.signum())
+            }
         case 1.4:
             return Angle(degrees: 60*X.signum())
         case 1.0:
             return Angle(degrees: 90*X.signum())
         case 0.5:
-            return Angle(degrees: 120*X.signum())
-        case sqrt(2) - 1:
-            return Angle(degrees: 135*X.signum())
+            if scalePreference == "Simple" {
+                return Angle(degrees: 135*X.signum())
+            } else {
+                return Angle(degrees: 120*X.signum())
+            }
         case 1.0/3.0:
             return Angle(degrees: 135*X.signum())
         case 0.2:
