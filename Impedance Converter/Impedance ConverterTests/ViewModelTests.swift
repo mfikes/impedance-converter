@@ -590,16 +590,18 @@ class TransmissionParametersTests: ViewModelTestBase {
     }
     
     func testReflectionCoefficientTransmissionCoefficient() {
-        viewModel.reactance = 40
         property("Reflection coefficient power plus transmission coefficient power must sum to 1") <- forAll( Gen<Double>.choose((0, 1)) ) { rho in
+            self.viewModel.reactance = 3
+            self.viewModel.reactance = 4
             self.viewModel.reflectionCoefficientPower = rho
             return abs(rho + self.viewModel.transmissionCoefficientPower - 1) < 1e-6
         }
     }
     
     func testTransmissionCoefficientReflectionCoefficient() {
-        viewModel.reactance = 40
         property("Reflection coefficient power plus transmission coefficient power must sum to 1") <- forAll( Gen<Double>.choose((0, 1)) ) { tau in
+            self.viewModel.reactance = 3
+            self.viewModel.reactance = 4
             self.viewModel.transmissionCoefficientPower = tau
             return abs(self.viewModel.reflectionCoefficientPower + tau - 1) < 1e-6
         }
