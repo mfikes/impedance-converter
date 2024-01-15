@@ -32,7 +32,12 @@ struct ReferenceView: View {
         if (viewModel.displayMode != .admittance) {
             UnitInputView(value: Binding(
                 get: { viewModel.referenceImpedance.real },
-                set: { viewModel.referenceImpedance = Complex($0, 0)}
+                set: {
+                    viewModel.setValueRecordingTrace(from: viewModel.referenceImpedance.real, to: $0) {
+                        intermediateValue in
+                        viewModel.referenceImpedance = Complex(intermediateValue, 0)
+                    }
+                }
             ), unit: ResistanceUnit.Ω, label: "Z₀", description: "ref. impedance")
         } else {
             UnitInputView(value: Binding(

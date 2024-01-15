@@ -10,6 +10,28 @@
 			<key>Type</key>
 			<string>PSMultiValueSpecifier</string>
 			<key>Title</key>
+			<string>Trace Persistence</string>
+			<key>Key</key>
+			<string>tracePersistence</string>
+			<key>DefaultValue</key>
+			<string>Normal</string>
+			<key>Titles</key>
+			<array>
+				<string>Normal</string>
+				<string>Long</string>
+				<string>Infinite</string>
+			</array>
+			<key>Values</key>
+			<array>
+				<string>Normal</string>
+				<string>Long</string>
+				<string>Infinite</string>
+			</array>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSMultiValueSpecifier</string>
+			<key>Title</key>
 			<string>Smith Chart Scale</string>
 			<key>Key</key>
 			<string>scale</string>
