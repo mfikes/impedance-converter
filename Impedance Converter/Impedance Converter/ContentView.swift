@@ -99,13 +99,19 @@ struct ContentView: View {
             }
         }
         .alert(isPresented: $showUndoConfirmation) {
-            Alert(
-                title: Text("Undo Action"),
-                primaryButton: .destructive(Text("Undo")) {
-                    viewModel.undo()
-                },
-                secondaryButton: .cancel()
-            )
+            if viewModel.canUndo {
+                return Alert(
+                    title: Text("Undo Action"),
+                    primaryButton: .destructive(Text("Undo")) {
+                        viewModel.undo()
+                    },
+                    secondaryButton: .cancel()
+                )
+            } else {
+                return Alert(
+                    title: Text("Cannot Undo")
+                )
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
             viewModel.appDidBecomeActive()
