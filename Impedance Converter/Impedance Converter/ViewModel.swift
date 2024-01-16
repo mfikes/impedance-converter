@@ -82,6 +82,7 @@ class ViewModel: ObservableObject, Codable {
     }
 
     func performHold(held: (type: Hold, value: Double)) {
+        let isUndoCheckpointEnabledPrev = isUndoCheckpointEnabled
         isUndoCheckpointEnabled = false
         switch held.type {
         case .none:
@@ -91,7 +92,7 @@ class ViewModel: ObservableObject, Codable {
         case .capacitance:
             capacitance = held.value
         }
-        isUndoCheckpointEnabled = true
+        isUndoCheckpointEnabled = isUndoCheckpointEnabledPrev
         hold = held.type
     }
 
@@ -617,6 +618,8 @@ class ViewModel: ObservableObject, Codable {
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        let isUndoCheckpointEnabledPrev = isUndoCheckpointEnabled
+        isUndoCheckpointEnabled = false
         displayMode = try container.decode(DisplayMode.self, forKey: .displayMode)
         circuitMode = try container.decode(CircuitMode.self, forKey: .circuitMode)
         immittance = try container.decode(Immittance.self, forKey: .immittance)
@@ -626,6 +629,7 @@ class ViewModel: ObservableObject, Codable {
         let angleRadians = try container.decode(Double.self, forKey: .refAngle)
         refAngle = Angle(radians:angleRadians)
         angleOrientation = try container.decode(AngleOrientation.self, forKey: .measureOrientation)
+        isUndoCheckpointEnabled = isUndoCheckpointEnabledPrev
     }
     
     func encode(to encoder: Encoder) throws {
@@ -641,6 +645,8 @@ class ViewModel: ObservableObject, Codable {
     }
     
     func update(from other: ViewModel) {
+        let isUndoCheckpointEnabledPrev = isUndoCheckpointEnabled
+        isUndoCheckpointEnabled = false
         self.displayMode = other.displayMode
         self.circuitMode = other.circuitMode
         self.immittance = other.immittance
@@ -649,6 +655,7 @@ class ViewModel: ObservableObject, Codable {
         self.velocityFactor = other.velocityFactor
         self.refAngle = other.refAngle
         self.angleOrientation = other.angleOrientation
+        isUndoCheckpointEnabled = isUndoCheckpointEnabledPrev
     }
     
     func encodeToJSON() -> String? {
@@ -689,6 +696,12 @@ class ViewModel: ObservableObject, Codable {
         }
     }
 
+    var canUndo: Bool {
+        get {
+            checkpoints.count > 1
+        }
+    }
+    
     func undo() {
         // Ensure there's more than one checkpoint
         guard checkpoints.count > 1 else { return }
