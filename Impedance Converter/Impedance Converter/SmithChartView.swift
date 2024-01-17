@@ -17,6 +17,15 @@ extension Double {
     }
 }
 
+struct ConstraintValues {
+    let resistance: Double
+    let reactance: Double
+    let conductance: Double
+    let susceptance: Double
+    let length: Double
+    let phase: Double
+}
+
 struct SmithChartContentView: View {
     
     @AppStorage("scale") private var scalePreference = "Simple"
@@ -114,6 +123,7 @@ struct SmithChartContentView: View {
             ZStack {
                 let dotRadius:CGFloat = constraintKind == .unset ? 10 : 40
                 
+                // Grid canvas, top and parts of bottom
                 Canvas { context, size in
                     
                     let (center, radius) = createCenterAndRadius(size: size)
@@ -176,7 +186,10 @@ struct SmithChartContentView: View {
                         refAngleInterpolator = Angle(radians: start + shortestDifference * interpolatorValue)
                     }
                 }
+                .blur(radius: 0.4)
+                .brightness(0.1)
                 
+                // Grid canvas, remaining parts of bottom
                 Canvas { context, size in
                     
                     let (center, radius) = createCenterAndRadius(size: size)
@@ -206,7 +219,10 @@ struct SmithChartContentView: View {
                 .onChange(of: viewModel.displayMode) { _ in
                     startAnimatingModeChange(target:SmithChartContentView.animationTarget(for: viewModel.displayMode))
                 }
+                .blur(radius: 0.4)
+                .brightness(0.1)
                 
+                // Constraint indicator canvas
                 Canvas { context, size in
                     
                     let (center, radius) = createCenterAndRadius(size: size)
@@ -232,7 +248,68 @@ struct SmithChartContentView: View {
                     }
                     
                 }
+                .blur(radius: 0.5)
+                .brightness(0.1)
                 
+                // Trace canvas (blurred bottom)
+                Canvas { context, size in
+                    
+                    let (center, radius) = createCenterAndRadius(size: size)
+                    
+                    // Creating a path for the trace
+                    let trace = viewModel.trace
+                    var tracePath = Path()
+                    if let firstPoint = trace.first {
+                        let firstCGPoint = CGPoint(
+                            x: firstPoint.real,
+                            y: firstPoint.imaginary
+                        )
+                        let transformedFirstPoint = transformPoint(center: center, radius: radius, point: firstCGPoint)
+                        tracePath.move(to: transformedFirstPoint)
+                    }
+                    
+                    for complexPoint in trace.dropFirst() {
+                        let cgPoint = CGPoint(
+                            x: complexPoint.real,
+                            y: complexPoint.imaginary
+                        )
+                        let transformedPoint = transformPoint(center: center, radius: radius, point: cgPoint)
+                        tracePath.addLine(to: transformedPoint)
+                    }
+                    
+                    context.stroke(tracePath, with: .color(Color.basePrimaryOrange.adjusted(brightness: 0.5)), lineWidth: 4)
+                }.blur(radius: 10)
+                
+                // Trace canvas
+                Canvas { context, size in
+                    
+                    let (center, radius) = createCenterAndRadius(size: size)
+                    
+                    // Creating a path for the trace
+                    let trace = viewModel.trace
+                    var tracePath = Path()
+                    if let firstPoint = trace.first {
+                        let firstCGPoint = CGPoint(
+                            x: firstPoint.real,
+                            y: firstPoint.imaginary
+                        )
+                        let transformedFirstPoint = transformPoint(center: center, radius: radius, point: firstCGPoint)
+                        tracePath.move(to: transformedFirstPoint)
+                    }
+                    
+                    for complexPoint in trace.dropFirst() {
+                        let cgPoint = CGPoint(
+                            x: complexPoint.real,
+                            y: complexPoint.imaginary
+                        )
+                        let transformedPoint = transformPoint(center: center, radius: radius, point: cgPoint)
+                        tracePath.addLine(to: transformedPoint)
+                    }
+                    
+                    context.stroke(tracePath, with: .color(Color.basePrimaryOrange.adjusted(brightness: 0.5)), lineWidth: 1)
+                }.blur(radius: 1)
+                  
+                // Impedance dot canvas
                 Canvas { context, size in
                     
                     let (center, radius) = createCenterAndRadius(size: size)
@@ -441,6 +518,8 @@ struct SmithChartContentView: View {
         )
     }
     
+    @State private var capturedConstraintValues: ConstraintValues?
+
     private func handleDrag(at location: CGPoint, in size: CGSize) {
         viewModel.isUndoCheckpointEnabled = false
         let center = CGPoint(x: size.width / 2, y: size.height / 2)
@@ -453,13 +532,17 @@ struct SmithChartContentView: View {
         )
         
         var reflectionCoefficient = Complex(tapPoint.x, -tapPoint.y)
-                
-        let resistance = viewModel.resistance
-        let reactance = viewModel.reactance
-        let conductance = viewModel.conductance
-        let susceptance = viewModel.susceptance
-        let length = viewModel.reflectionCoefficient.length
-        let phase = viewModel.reflectionCoefficient.phase
+        
+        if (viewModel.traceRecordingEnabled) {
+            capturedConstraintValues = ConstraintValues(
+                resistance: viewModel.resistance,
+                reactance: viewModel.reactance,
+                conductance: viewModel.conductance,
+                susceptance: viewModel.susceptance,
+                length: viewModel.reflectionCoefficient.length,
+                phase: viewModel.reflectionCoefficient.phase
+            )
+        }
         
         if (constraintKind != .unset && constraintKind != .none) {
             if (reflectionCoefficient - viewModel.reflectionCoefficient).length > 0.2 {
@@ -470,10 +553,42 @@ struct SmithChartContentView: View {
         
         if (reflectionCoefficient.length > 1) {
             reflectionCoefficient = Complex.init(length: 1, phase: reflectionCoefficient.phase)
-            viewModel.reflectionCoefficient = reflectionCoefficient
-        } else {
-            viewModel.reflectionCoefficient = reflectionCoefficient
         }
+        
+        switch viewModel.displayMode {
+        case .impedance:
+            viewModel.impedance = viewModel.referenceImpedance * (Complex.one + reflectionCoefficient) / (Complex.one - reflectionCoefficient)
+        case .admittance:
+            viewModel.admittance = viewModel.referenceAdmittance * (Complex.one - reflectionCoefficient) / (Complex.one + reflectionCoefficient)
+        case .reflectionCoefficient:
+            viewModel.setValueRecordingTrace(
+                from: viewModel.reflectionCoefficient,
+                to: reflectionCoefficient,
+                operation: { intermediateValue in
+                    viewModel.reflectionCoefficient = intermediateValue
+                },
+                interpolationMethod: { (oldValue, newValue, fraction) in
+                    return oldValue.polarInterpolated(to: newValue , fraction: fraction)
+                }
+            )
+        }
+        
+        if (viewModel.traceRecordingEnabled) {
+            // Now that we have captured first drag transition, turn off trace recording
+            viewModel.traceRecordingEnabled = false
+            // Only on subsequent drag calls will we allow constraints to kick in return early
+            return
+        }
+        
+        // We are now dragging, so clear any trace now
+        viewModel.startAnimatingTrace(delay: 0)
+        
+        let resistance = capturedConstraintValues!.resistance
+        let reactance = capturedConstraintValues!.reactance
+        let conductance = capturedConstraintValues!.conductance
+        let susceptance = capturedConstraintValues!.susceptance
+        let length = capturedConstraintValues!.length
+        let phase = capturedConstraintValues!.phase
         
         switch constraintKind {
         case .unset:
@@ -544,6 +659,7 @@ struct SmithChartContentView: View {
     
     private func handleDragEnd() {
         constraintKind = .unset
+        viewModel.traceRecordingEnabled = true
         viewModel.isUndoCheckpointEnabled = true
         viewModel.addCheckpoint()
     }
@@ -591,8 +707,8 @@ struct SmithChartView: View {
                     .allowsHitTesting(false)
                 
                 // First radial gradient for central brightness
-                RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.8), Color.white.opacity(0)]),
-                               center: .center, startRadius: 10, endRadius: 200)
+                RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.8), Color.white.opacity(0.0)]),
+                               center: .center, startRadius: 10, endRadius: 250)
                 .blendMode(.overlay)
                 .allowsHitTesting(false)
                 

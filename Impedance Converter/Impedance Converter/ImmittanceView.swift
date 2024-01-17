@@ -2,6 +2,7 @@ import SwiftUI
 import Numerics
 
 struct PolarParameterView<UnitType>: View where UnitType: RawRepresentable, UnitType.RawValue == String, UnitType: UnitWithPowerOfTen {
+    let viewModel: ViewModel
     @Binding var complexValue: Complex<Double>
     var magnitudeUnit: UnitType
     var angleUnit: AngleUnit
@@ -16,14 +17,20 @@ struct PolarParameterView<UnitType>: View where UnitType: RawRepresentable, Unit
                 UnitInputView(value: Binding(
                     get: { self.complexValue.length },
                     set: {
-                        self.complexValue = Complex.init(length: $0, phase: self.complexValue.phase)
+                        viewModel.setValueRecordingTrace(from: self.complexValue.length, to: $0) {
+                            intermediateValue in
+                            self.complexValue = Complex.init(length: intermediateValue, phase: self.complexValue.phase)
+                        }
                     }
                 ), unit: magnitudeUnit, label: magnitudeLabel, description: magnitudeDescription)
                 
                 UnitInputView(value: Binding(
                     get: { Angle(radians: self.complexValue.phase).degrees },
                     set: {
-                        self.complexValue = Complex.init(length: self.complexValue.length, phase:Angle(degrees: $0).radians)
+                        viewModel.setValueRecordingTrace(from: Angle(radians: self.complexValue.phase).degrees, to: $0) {
+                            intermediateValue in
+                            self.complexValue = Complex.init(length: self.complexValue.length, phase:Angle(degrees: intermediateValue).radians)
+                        }
                     }
                 ), unit: angleUnit, label: angleLabel, description: angleDescription, showNegationDecorator: true)
             }
@@ -36,6 +43,7 @@ struct PolarImpedanceView: View {
     
     var body: some View {
         PolarParameterView<ResistanceUnit>(
+            viewModel: viewModel,
             complexValue: $viewModel.impedance,
             magnitudeUnit: .Ω,
             angleUnit: .degree,
@@ -52,6 +60,7 @@ struct PolarAdmittanceView: View {
     
     var body: some View {
         PolarParameterView<ConductanceUnit>(
+            viewModel: viewModel,
             complexValue: $viewModel.admittance,
             magnitudeUnit: .S,
             angleUnit: .degree,
@@ -68,6 +77,7 @@ struct PolarReflectionCoefficientView: View {
     
     var body: some View {
         PolarParameterView<ReflectionCoefficientUnit>(
+            viewModel: viewModel,
             complexValue: $viewModel.reflectionCoefficient,
             magnitudeUnit: .Γ,
             angleUnit: .degree,
@@ -80,6 +90,7 @@ struct PolarReflectionCoefficientView: View {
 }
 
 struct RectangularParameterView<UnitType: UnitWithPowerOfTen>: View {
+    let viewModel: ViewModel
     @Binding var complexValue: Complex<Double>
     var realPartUnit: UnitType
     var imaginaryPartUnit: UnitType
@@ -95,12 +106,24 @@ struct RectangularParameterView<UnitType: UnitWithPowerOfTen>: View {
             HStack {
                 UnitInputView(value: Binding(
                     get: { self.complexValue.canonicalizedReal },
-                    set: { self.complexValue = Complex($0, self.complexValue.canonicalizedImaginary) }
+                    set: {
+                        let imaginary = self.complexValue.canonicalizedImaginary
+                        viewModel.setValueRecordingTrace(from: self.complexValue.canonicalizedReal, to: $0) {
+                            intermediateValue in
+                            self.complexValue = Complex(intermediateValue, imaginary)
+                        }
+                    }
                 ), unit: realPartUnit, label: realPartLabel, description: realPartDescription,
                               showNegationDecorator: realCanBeNegative)
                 UnitInputView(value: Binding(
                     get: { self.complexValue.canonicalizedImaginary },
-                    set: { self.complexValue = Complex(self.complexValue.canonicalizedReal, $0) }
+                    set: {
+                        let real = self.complexValue.canonicalizedReal
+                        viewModel.setValueRecordingTrace(from: self.complexValue.canonicalizedImaginary, to: $0) {
+                            intermediateValue in
+                            self.complexValue = Complex(real, intermediateValue)
+                        }
+                    }
                 ), unit: imaginaryPartUnit, label: imaginaryPartLabel, description: imaginaryPartDescription,
                               showNegationDecorator: imaginaryCanBeNegative)
             }
@@ -113,6 +136,7 @@ struct RectangularImpedanceView: View {
     
     var body: some View {
         RectangularParameterView<ResistanceUnit>(
+            viewModel: viewModel,
             complexValue: $viewModel.impedance,
             realPartUnit: .Ω,
             imaginaryPartUnit: .Ω,
@@ -131,6 +155,7 @@ struct RectangularAdmittanceView: View {
     
     var body: some View {
         RectangularParameterView<ConductanceUnit>(
+            viewModel: viewModel,
             complexValue: $viewModel.admittance,
             realPartUnit: .S,
             imaginaryPartUnit: .S,
@@ -149,6 +174,7 @@ struct RectangularReflectionCoefficientView: View {
     
     var body: some View {
         RectangularParameterView<ReflectionCoefficientUnit>(
+            viewModel: viewModel,
             complexValue: $viewModel.reflectionCoefficient,
             realPartUnit: .Γ,
             imaginaryPartUnit: .Γ,

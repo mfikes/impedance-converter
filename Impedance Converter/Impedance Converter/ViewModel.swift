@@ -60,8 +60,123 @@ struct Immittance: Codable, Equatable {
     
 }
 
+extension Double {
+    
+    func linearlyInterpolated(to endValue: Double, fraction: Double) -> Double {
+        return self + (endValue - self) * fraction
+    }
+    
+    func logarithmicallyInterpolated(to endValue: Double, fraction: Double) -> Double {
+        // Special case handling for values around zero
+        if (self >= 0 && endValue <= 0) || (self <= 0 && endValue >= 0) {
+            return linearlyInterpolated(to: endValue, fraction: fraction)
+        }
+
+        // Extract signs and magnitudes
+        let signStart = self.sign == .minus ? -1.0 : 1.0
+        let signEnd = endValue.sign == .minus ? -1.0 : 1.0
+
+        // Use absolute values for logarithmic interpolation
+        let magnitudeStart = abs(self)
+        let magnitudeEnd = abs(endValue)
+        
+        // Logarithmic interpolation for magnitudes (guard against zero)
+        guard magnitudeStart > 0, magnitudeEnd > 0 else { return (self + endValue) / 2 }
+        let logStart = Double.log(magnitudeStart)
+        let logEnd = Double.log(magnitudeEnd)
+        let logInterpolated = (1 - fraction) * logStart + fraction * logEnd
+        let interpolatedMagnitude = Double.exp(logInterpolated)
+
+        // Determine the sign for the interpolated value
+        // If signs are different, use the sign of the end value
+        let interpolatedSign = (signStart == signEnd) ? signStart : signEnd
+
+        return interpolatedSign * interpolatedMagnitude
+    }
+}
+
+protocol Interpolatable {
+    func interpolated(to endValue: Self, fraction: Double) -> Self
+}
+
+extension Double: Interpolatable {
+    func interpolated(to endValue: Double, fraction: Double) -> Double {
+        return logarithmicallyInterpolated(to: endValue, fraction: fraction)
+    }
+}
+
+extension Complex<Double> {
+    
+    func polarInterpolated(to endValue: Complex<Double>, fraction: Double) -> Complex<Double> {
+        let interpolatedLength = length.linearlyInterpolated(to: endValue.length, fraction: fraction)
+        let shortestDifference = symmetricRemainder(dividend: endValue.phase - phase, divisor: 2 * .pi)
+        let interpolatedPhase = phase.linearlyInterpolated(to: phase + shortestDifference, fraction: fraction)
+        return Complex<Double>.init(length: interpolatedLength, phase: interpolatedPhase.isNaN ? 0 : interpolatedPhase)
+    }
+    
+    func rectangularInterpolated(to endValue: Complex<Double>, fraction: Double) -> Complex<Double> {
+        let interpolatedReal = real.linearlyInterpolated(to: endValue.real, fraction: fraction)
+        let interpolatedImaginary = imaginary.linearlyInterpolated(to: endValue.imaginary, fraction: fraction)
+        return Complex<Double>(interpolatedReal, interpolatedImaginary)
+    }
+}
+
+extension Complex<Double>: Interpolatable {
+    func interpolated(to endValue: Complex<Double>, fraction: Double) -> Complex<Double> {
+        return rectangularInterpolated(to: endValue, fraction: fraction)
+    }
+}
+
 class ViewModel: ObservableObject, Codable {
     
+    @AppStorage("tracePersistence") private var tracePersistence = "Normal"
+    
+    let traceRecordLength: Int = 100
+    
+    @Published var traceRecordingEnabled = true
+    @Published var trace: [Complex<Double>] = []
+    
+    var traceAnimator = SmoothAnimation(initialValue: 0)
+    
+    func startAnimatingTrace(delay: Double) {
+        if delay.isFinite {
+            traceAnimator.startAnimating(from: 1, target: 0, totalAnimationTime: 0.05, delay: delay) { interpolatorValue in
+                let elementsToKeep = Int((Double(self.traceRecordLength) * interpolatorValue).rounded(.down))
+                if elementsToKeep < self.trace.count {
+                    self.trace.removeFirst(self.trace.count - elementsToKeep)
+                }
+            }
+        }
+    }
+    
+    func setValueRecordingTrace<T: Interpolatable>(from oldValue: T, to newValue: T, operation: (T) -> Void, interpolationMethod: ((T, T, Double) -> T)? = nil) {
+        if (!traceRecordingEnabled) {
+            operation(newValue)
+        } else {
+            let traceRecordingEnabledPrev = traceRecordingEnabled
+            traceRecordingEnabled = false
+            let isUndoCheckpointEnabledPrev = isUndoCheckpointEnabled
+            isUndoCheckpointEnabled = false
+            
+            let steps = traceRecordLength
+            
+            var trace: [Complex<Double>] = []
+            for step in 0...steps {
+                let fraction = Double(step) / Double(steps)
+                let intermediateValue = interpolationMethod?(oldValue, newValue, fraction) ?? oldValue.interpolated(to: newValue, fraction: fraction)
+                operation(intermediateValue)
+                trace.append(reflectionCoefficient)
+            }
+            
+            self.trace = trace
+            isUndoCheckpointEnabled = isUndoCheckpointEnabledPrev
+            operation(newValue)
+            traceRecordingEnabled = traceRecordingEnabledPrev
+            let delay = tracePersistence == "Normal" ? 0.00 : tracePersistence == "Long" ? 1.0 : Double.infinity
+            startAnimatingTrace(delay: delay)
+        }
+    }
+
     @Published var updateTrigger = false
     
     func appDidBecomeActive() {
@@ -199,7 +314,9 @@ class ViewModel: ObservableObject, Codable {
         }
         set {
             let previousImmittance = immittance
-            immittance = Immittance(impedance: ensurePositiveReal(value: newValue))
+            setValueRecordingTrace(from: impedance, to: ensurePositiveReal(value: newValue)) { intermediateValue in
+                immittance = Immittance(impedance: intermediateValue)
+            }
             if (immittance != previousImmittance) {
                 addCheckpoint()
                 hold = .none
@@ -213,7 +330,9 @@ class ViewModel: ObservableObject, Codable {
         }
         set {
             let previousImmittance = immittance
-            immittance = Immittance(admittance: ensurePositiveReal(value: newValue))
+            setValueRecordingTrace(from: admittance, to: ensurePositiveReal(value: newValue)) { intermediateValue in
+                immittance = Immittance(admittance: intermediateValue)
+            }
             if (immittance != previousImmittance) {
                 addCheckpoint()
                 hold = .none
@@ -226,7 +345,9 @@ class ViewModel: ObservableObject, Codable {
             return impedance.canonicalizedReal
         }
         set {
-            impedance = Complex(newValue, reactance)
+            setValueRecordingTrace(from: resistance, to: newValue) { intermediateValue in
+                impedance = Complex(intermediateValue, reactance)
+            }
         }
     }
     
@@ -235,7 +356,9 @@ class ViewModel: ObservableObject, Codable {
             return impedance.canonicalizedImaginary
         }
         set {
-            impedance = Complex(resistance, newValue)
+            setValueRecordingTrace(from: reactance, to: newValue) { intermediateValue in
+                impedance = Complex(resistance, intermediateValue)
+            }
         }
     }
     
@@ -244,7 +367,9 @@ class ViewModel: ObservableObject, Codable {
             return admittance.canonicalizedReal
         }
         set {
-            admittance = Complex(newValue, susceptance)
+            setValueRecordingTrace(from: conductance, to: newValue) { intermediateValue in
+                admittance = Complex(intermediateValue, susceptance)
+            }
         }
     }
     
@@ -253,7 +378,9 @@ class ViewModel: ObservableObject, Codable {
             return admittance.canonicalizedImaginary
         }
         set {
-            admittance = Complex(conductance, newValue)
+            setValueRecordingTrace(from: susceptance, to: newValue) { intermediateValue in
+                admittance = Complex(conductance, intermediateValue)
+            }
         }
     }
     
@@ -335,7 +462,7 @@ class ViewModel: ObservableObject, Codable {
                         reactance = resistance / newValue
                     }
                 } else {
-                    resistance =  abs(reactance) * newValue
+                    resistance = abs(reactance) * newValue
                 }
             case .admittance:
                 if susceptance == 0 || abs(susceptance).isInfinite {
@@ -409,11 +536,13 @@ class ViewModel: ObservableObject, Codable {
             }
         }
         set {
-            switch (immittance.type) {
-            case .impedance:
-                impedance = referenceImpedance * (Complex.one + newValue) / (Complex.one - newValue)
-            case .admittance:
-                admittance = referenceAdmittance * (Complex.one - newValue) / (Complex.one + newValue)
+            setValueRecordingTrace(from: reflectionCoefficient, to: newValue) { intermediateValue in
+                switch (immittance.type) {
+                case .impedance:
+                    impedance = referenceImpedance * (Complex.one + intermediateValue) / (Complex.one - intermediateValue)
+                case .admittance:
+                    admittance = referenceAdmittance * (Complex.one - intermediateValue) / (Complex.one + intermediateValue)
+                }
             }
         }
     }
@@ -435,8 +564,10 @@ class ViewModel: ObservableObject, Codable {
         set {
             guard newValue >= 1 else { return }
             guard !reflectionCoefficient.phase.isNaN else { return }
-            let reflectionCoefficientLength = (newValue - 1) / (newValue + 1)
-            reflectionCoefficient = Complex.init(length: reflectionCoefficientLength, phase: reflectionCoefficient.phase)
+            setValueRecordingTrace(from: swr, to: newValue) { intermediateValue in
+                let reflectionCoefficientLength = (intermediateValue - 1) / (intermediateValue + 1)
+                reflectionCoefficient = Complex.init(length: reflectionCoefficientLength, phase: reflectionCoefficient.phase)
+            }
         }
     }
     
@@ -455,7 +586,9 @@ class ViewModel: ObservableObject, Codable {
         }
         set {
             guard !reflectionCoefficient.phase.isNaN else { return }
-            reflectionCoefficient = Complex.init(length: newValue, phase: reflectionCoefficient.phase)
+            setValueRecordingTrace(from: reflectionCoefficientRho, to: newValue) { intermediateValue in
+                reflectionCoefficient = Complex.init(length: intermediateValue, phase: reflectionCoefficient.phase)
+            }
         }
     }
     
@@ -469,7 +602,9 @@ class ViewModel: ObservableObject, Codable {
         }
         set {
             guard !reflectionCoefficient.phase.isNaN else { return }
-            reflectionCoefficient = Complex.init(length: sqrt(newValue), phase: reflectionCoefficient.phase)
+            setValueRecordingTrace(from: reflectionCoefficientPower, to: newValue) { intermediateValue in
+                reflectionCoefficient = Complex.init(length: sqrt(intermediateValue), phase: reflectionCoefficient.phase)
+            }
         }
     }
     
@@ -483,8 +618,10 @@ class ViewModel: ObservableObject, Codable {
         }
         set {
             guard newValue >= 0 else { return }
-            let reflectionCoefficientLength = pow(10, -newValue / 20)
-            reflectionCoefficient = Complex.init(length: reflectionCoefficientLength, phase: reflectionCoefficient.phase)
+            setValueRecordingTrace(from: returnLoss, to: newValue) { intermediateValue in
+                let reflectionCoefficientLength = pow(10, -intermediateValue / 20)
+                reflectionCoefficient = Complex.init(length: reflectionCoefficientLength, phase: reflectionCoefficient.phase)
+            }
         }
     }
 
@@ -572,7 +709,9 @@ class ViewModel: ObservableObject, Codable {
             return adjustedRemainder / (4 * Double.pi)
         }
         set {
-            reflectionCoefficient = Complex.init(length: reflectionCoefficient.length, phase: angleSign * (4 * Double.pi) * newValue + refAngle.radians)
+            setValueRecordingTrace(from: wavelengths, to: newValue) { intermediateValue in
+                reflectionCoefficient = Complex.init(length: reflectionCoefficient.length, phase: angleSign * (4 * Double.pi) * intermediateValue + refAngle.radians)
+            }
         }
     }
     
@@ -610,7 +749,8 @@ class ViewModel: ObservableObject, Codable {
              immittance, immittanceType,
              referenceImmittance, referenceImmittanceType,
              frequency, velocityFactor,
-             refAngle, measureOrientation
+             refAngle, measureOrientation,
+             trace
     }
     
     init() {
@@ -629,6 +769,10 @@ class ViewModel: ObservableObject, Codable {
         let angleRadians = try container.decode(Double.self, forKey: .refAngle)
         refAngle = Angle(radians:angleRadians)
         angleOrientation = try container.decode(AngleOrientation.self, forKey: .measureOrientation)
+        trace = try container.decode([Complex<Double>].self, forKey: .trace)
+        if tracePersistence != "Infinite" {
+            trace = []
+        }
         isUndoCheckpointEnabled = isUndoCheckpointEnabledPrev
     }
     
@@ -642,6 +786,7 @@ class ViewModel: ObservableObject, Codable {
         try container.encode(velocityFactor, forKey: .velocityFactor)
         try container.encode(refAngle.radians, forKey: .refAngle)
         try container.encode(angleOrientation, forKey: .measureOrientation)
+        try container.encode(trace, forKey: .trace)
     }
     
     func update(from other: ViewModel) {
@@ -655,6 +800,7 @@ class ViewModel: ObservableObject, Codable {
         self.velocityFactor = other.velocityFactor
         self.refAngle = other.refAngle
         self.angleOrientation = other.angleOrientation
+        self.trace = other.trace
         isUndoCheckpointEnabled = isUndoCheckpointEnabledPrev
     }
     
