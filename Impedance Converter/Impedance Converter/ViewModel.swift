@@ -149,6 +149,11 @@ class ViewModel: ObservableObject, Codable {
         }
     }
     
+    private func doTracePersistence() {
+        let delay = tracePersistence == "Normal" ? 0.00 : tracePersistence == "Long" ? 1.0 : Double.infinity
+        startAnimatingTrace(delay: delay)
+    }
+    
     func setValueRecordingTrace<T: Interpolatable>(from oldValue: T, to newValue: T, operation: (T) -> Void, interpolationMethod: ((T, T, Double) -> T)? = nil) {
         if (!traceRecordingEnabled) {
             operation(newValue)
@@ -172,8 +177,7 @@ class ViewModel: ObservableObject, Codable {
             isUndoCheckpointEnabled = isUndoCheckpointEnabledPrev
             operation(newValue)
             traceRecordingEnabled = traceRecordingEnabledPrev
-            let delay = tracePersistence == "Normal" ? 0.00 : tracePersistence == "Long" ? 1.0 : Double.infinity
-            startAnimatingTrace(delay: delay)
+            doTracePersistence()
         }
     }
 
@@ -181,6 +185,7 @@ class ViewModel: ObservableObject, Codable {
     
     func appDidBecomeActive() {
         updateTrigger.toggle()
+        doTracePersistence()
     }
     
     @Published var hold: Hold = .none
