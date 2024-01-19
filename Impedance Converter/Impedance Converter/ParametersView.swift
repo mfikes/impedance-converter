@@ -9,22 +9,6 @@ struct FrequencyView: View {
     }
 }
 
-struct WavelengthView: View {
-    @ObservedObject var viewModel: ViewModel
-    
-    var body: some View {
-        UnitInputView(value: $viewModel.wavelength, unit: WavelengthUnit.m, label: "λ", description: "wavelength")
-    }
-}
-
-struct VelocityFactorView: View {
-    @ObservedObject var viewModel: ViewModel
-    
-    var body: some View {
-        UnitInputView(value: $viewModel.velocityFactor, unit: VelocityFactorUnit.V, label: "V", description: "velocity factor")
-    }
-}
-
 struct ReferenceView: View {
     @ObservedObject var viewModel: ViewModel
     
@@ -60,12 +44,6 @@ struct ParametersView: View {
                 HStack {
                     ReferenceView(viewModel: viewModel)
                     FrequencyView(viewModel: viewModel)
-                }
-            }
-            DisplayView {
-                HStack {
-                    VelocityFactorView(viewModel: viewModel)
-                    WavelengthView(viewModel: viewModel)
                 }
             }
         }
