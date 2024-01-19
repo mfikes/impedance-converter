@@ -16,6 +16,22 @@ struct LengthView: View {
     }
 }
 
+struct WavelengthView: View {
+    @ObservedObject var viewModel: ViewModel
+    
+    var body: some View {
+        UnitInputView(value: $viewModel.wavelength, unit: WavelengthUnit.m, label: "λ", description: "wavelength")
+    }
+}
+
+struct VelocityFactorView: View {
+    @ObservedObject var viewModel: ViewModel
+    
+    var body: some View {
+        UnitInputView(value: $viewModel.velocityFactor, unit: VelocityFactorUnit.V, label: "V", description: "velocity factor")
+    }
+}
+
 struct ElectricalLengthView: View {
     
     @AppStorage("showLength") private var showLength = false
@@ -50,6 +66,12 @@ struct ElectricalLengthView: View {
                 HStack {
                     WavelengthsView(viewModel: viewModel)
                     LengthView(viewModel: viewModel)
+                }
+            }
+            DisplayView {
+                HStack {
+                    VelocityFactorView(viewModel: viewModel)
+                    WavelengthView(viewModel: viewModel)
                 }
             }
         }
