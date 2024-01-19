@@ -105,24 +105,21 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
     }
     
     private func determineAppropriateUnit(for value: Double) -> UnitType {
-        // Assuming that the units are sorted in the order of their magnitude
-        let sortedUnits = unitCases.sorted { $0.powerOfTen < $1.powerOfTen }
-        
-        for unit in sortedUnits {
+        for unit in unitCases {
             if (value.isInfinite || value == 0 || value.isNaN) {
                 if unit.powerOfTen == 0 {
                     return unit;
                 }
             } else {
                 let unitValue = abs(value) / pow(10, Double(unit.powerOfTen))
-                if unitValue >= 1 && unitValue < 1000 {
+                if unitValue < 1000 {
                     return unit
                 }
             }
         }
         
         // Return the last unit if no suitable unit is found
-        return sortedUnits.last!
+        return unitCases.last!
     }
     
     private func toggleNegation() {
