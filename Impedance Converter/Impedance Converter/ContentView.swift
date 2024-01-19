@@ -64,8 +64,8 @@ struct ContentView: View {
                             LazyVStack {
                                 ImmittanceView(viewModel: viewModel)
                                 CircuitView(viewModel: viewModel)
-                                ParametersView(viewModel: viewModel)
                                 SmithChartView(viewModel: viewModel)
+                                ParametersView(viewModel: viewModel)
                                 CharacterizationView(viewModel: viewModel)
                                 ElectricalLengthView(viewModel: viewModel)
                                 Spacer()
