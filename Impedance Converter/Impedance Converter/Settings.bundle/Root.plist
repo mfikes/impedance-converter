@@ -60,7 +60,7 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>L / C / Q / D</string>
+			<string>Equivalent Circuit</string>
 			<key>Key</key>
 			<string>showLCQD</string>
 			<key>DefaultValue</key>
