@@ -70,9 +70,9 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>Reference / Frequency</string>
+			<string>Smith Chart</string>
 			<key>Key</key>
-			<string>showParameters</string>
+			<string>showSmithChart</string>
 			<key>DefaultValue</key>
 			<true/>
 		</dict>
@@ -80,9 +80,9 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>Smith Chart</string>
+			<string>Reference / Frequency</string>
 			<key>Key</key>
-			<string>showSmithChart</string>
+			<string>showParameters</string>
 			<key>DefaultValue</key>
 			<true/>
 		</dict>
