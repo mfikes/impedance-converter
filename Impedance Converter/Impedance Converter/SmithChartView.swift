@@ -707,10 +707,12 @@ struct SmithChartView: View {
                     .allowsHitTesting(false)
                 
                 // First radial gradient for central brightness
-                RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.8), Color.white.opacity(0.0)]),
-                               center: .center, startRadius: 10, endRadius: 250)
-                .blendMode(.overlay)
-                .allowsHitTesting(false)
+                GeometryReader { geometry in
+                    RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.8), Color.white.opacity(0.0)]),
+                                   center: .center, startRadius: 10, endRadius: geometry.size.width/1.4)
+                    .blendMode(.overlay)
+                    .allowsHitTesting(false)
+                }
                 
                 // Second radial gradient for specular light reflection
                 GeometryReader { geometry in
