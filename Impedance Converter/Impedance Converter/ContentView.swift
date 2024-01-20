@@ -39,20 +39,22 @@ struct ContentView: View {
                 if geometry.size.width > geometry.size.height {
                     VStack {
                         ModePickerView(viewModel: viewModel)
-                        HStack(alignment: .top, spacing: 10) {
-                            VStack {
-                                Spacer()
-                                ImmittanceView(viewModel: viewModel)
-                                CircuitView(viewModel: viewModel)
-                                ParametersView(viewModel: viewModel)
-                                CharacterizationView(viewModel: viewModel)
-                                Spacer()
-                            }
-                            VStack {
-                                Spacer()
-                                SmithChartView(viewModel: viewModel)
-                                ElectricalLengthView(viewModel: viewModel)
-                                Spacer(minLength: 46)
+                        ScrollView {
+                            HStack(alignment: .top, spacing: 10) {
+                                VStack {
+                                    Spacer()
+                                    ImmittanceView(viewModel: viewModel)
+                                    CircuitView(viewModel: viewModel)
+                                    ParametersView(viewModel: viewModel)
+                                    CharacterizationView(viewModel: viewModel)
+                                    Spacer()
+                                }
+                                VStack {
+                                    Spacer()
+                                    SmithChartView(viewModel: viewModel)
+                                    ElectricalLengthView(viewModel: viewModel)
+                                    Spacer(minLength: 46)
+                                }
                             }
                         }
                     }
