@@ -1,5 +1,22 @@
 import SwiftUI
 
+struct CircuitPickerView: View {
+    @ObservedObject var viewModel: ViewModel
+    var body: some View {
+        HStack {
+            Spacer()
+            Picker("Mode", selection: $viewModel.circuitMode) {
+                Image("Series").tag(CircuitMode.series)
+                Image("Parallel").tag(CircuitMode.parallel)
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .frame(maxWidth: 200)
+            Spacer()
+        }
+        .padding(10)
+    }
+}
+
 struct CapacitanceView: View {
     @ObservedObject var viewModel: ViewModel
     
@@ -38,13 +55,12 @@ struct CircuitView: View {
     
     var body: some View {
         if (showLCQD) {
-            Picker("Mode", selection: $viewModel.circuitMode) {
-                Image("Series").tag(CircuitMode.series)
-                Image("Parallel").tag(CircuitMode.parallel)
+            HStack(alignment: .bottom, spacing: 0) {
+                CircuitPickerView(viewModel: viewModel)
+                DisplayView {
+                    FrequencyView(viewModel: viewModel)
+                }
             }
-            .pickerStyle(SegmentedPickerStyle())
-            .padding([.horizontal], 10)
-            .frame(maxWidth: 200)
             InductanceView(viewModel: viewModel)
             CapacitanceView(viewModel: viewModel)
         }
