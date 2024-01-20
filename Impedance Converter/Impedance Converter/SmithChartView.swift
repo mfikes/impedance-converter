@@ -346,10 +346,8 @@ struct SmithChartContentView: View {
                     )
             }
             .background(Color.smithBackground)
-            .cornerRadius(20)
         }
         .aspectRatio(1, contentMode: .fit)
-        .padding([.horizontal], 10)
     }
     
     private func drawReferenceAngleIndicator(context: GraphicsContext, center: CGPoint, radius: CGFloat, angle: Angle, color: Color) {
@@ -701,8 +699,6 @@ struct SmithChartView: View {
                 SmithChartContentView(viewModel: viewModel)
                 
                 ScanLinesEffect()
-                    .cornerRadius(20)
-                    .padding(10)
                     .aspectRatio(1, contentMode: .fit)
                     .allowsHitTesting(false)
                 
@@ -724,6 +720,8 @@ struct SmithChartView: View {
                     .allowsHitTesting(false)
                 }
             }
+            .cornerRadius(20)
+            .padding(10)
         }
     }
 }
