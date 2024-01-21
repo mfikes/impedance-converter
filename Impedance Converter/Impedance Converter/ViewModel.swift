@@ -67,6 +67,26 @@ extension Double {
     }
     
     func logarithmicallyInterpolated(to endValue: Double, fraction: Double) -> Double {
+        // Check if either value is infinite
+        let startIsInfinite = self.isInfinite
+        let endIsInfinite = endValue.isInfinite
+        
+        // Handle cases with infinity
+        if startIsInfinite || endIsInfinite {
+            // Use a proxy for infinity
+            let proxyForInfinity = (startIsInfinite ? self : endValue) > 0 ? Double.greatestFiniteMagnitude : -Double.greatestFiniteMagnitude
+            
+            // If both are infinite (and same sign), return either of them
+            if startIsInfinite && endIsInfinite && (self.sign == endValue.sign) {
+                return self
+            }
+            
+            // Compute interpolation with the proxy value
+            let finiteValue = startIsInfinite ? endValue : self
+            let adjustedFraction = startIsInfinite ? 1 - fraction : fraction
+            return finiteValue.linearlyInterpolated(to: proxyForInfinity, fraction: adjustedFraction)
+        }
+        
         // Special case handling for values around zero
         if (self >= 0 && endValue <= 0) || (self <= 0 && endValue >= 0) {
             return linearlyInterpolated(to: endValue, fraction: fraction)

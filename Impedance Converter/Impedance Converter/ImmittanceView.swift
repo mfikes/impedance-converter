@@ -108,7 +108,7 @@ struct RectangularParameterView<UnitType: UnitWithPowerOfTen>: View {
                 UnitInputView(value: Binding(
                     get: { self.complexValue.canonicalizedReal },
                     set: {
-                        let imaginary = self.complexValue.canonicalizedImaginary
+                        let imaginary = self.complexValue.canonicalizedImaginary.isNaN ? 0 : self.complexValue.canonicalizedImaginary
                         viewModel.setValueRecordingTrace(from: self.complexValue.canonicalizedReal, to: $0) {
                             intermediateValue in
                             self.complexValue = Complex(intermediateValue, imaginary)
@@ -119,7 +119,7 @@ struct RectangularParameterView<UnitType: UnitWithPowerOfTen>: View {
                 UnitInputView(value: Binding(
                     get: { self.complexValue.canonicalizedImaginary },
                     set: {
-                        let real = self.complexValue.canonicalizedReal
+                        let real = self.complexValue.canonicalizedReal.isNaN ? 0 : self.complexValue.canonicalizedReal
                         viewModel.setValueRecordingTrace(from: self.complexValue.canonicalizedImaginary, to: $0) {
                             intermediateValue in
                             self.complexValue = Complex(real, intermediateValue)
