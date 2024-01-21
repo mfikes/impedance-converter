@@ -163,7 +163,6 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                         TextField("", text: $displayedValue)
                             .multilineTextAlignment(.trailing)
                             .font(.custom("Segment7Standard", size: 30))
-                            .kerning(3)
                             .lineLimit(1)
                             .minimumScaleFactor(0.5)
                             .foregroundColor(Color.basePrimaryOrange.adjusted(brightness: disabled() ? 0.5 : 1.6))
@@ -174,7 +173,6 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                     TextField("", text: $displayedValue)
                                         .multilineTextAlignment(.trailing)
                                         .font(.custom("Segment7Standard", size: 30))
-                                        .kerning(3)
                                         .lineLimit(1)
                                         .minimumScaleFactor(0.5)
                                         .foregroundColor(Color.basePrimaryOrange.adjusted(brightness: disabled() ? 0.5 : 1.5))
@@ -208,27 +206,57 @@ struct UnitInputView<UnitType>: View where UnitType: RawRepresentable & Hashable
                                         }
                                         .toolbar {
                                             ToolbarItemGroup(placement: .keyboard) {
-                                                if isFocused {
-                                                    if showNegationDecorator {
-                                                        Spacer()
-                                                        Button(action: toggleNegation) {
-                                                            Text("-")
-                                                                .font(.custom("Segment7Standard", size: 30))
-                                                                .foregroundColor(.black)
+                                                if #available(iOS 16, *) {
+                                                    // iOS 16 and above layout (without HStack)
+                                                    if isFocused {
+                                                        if showNegationDecorator {
+                                                            Spacer()
+                                                            Button(action: toggleNegation) {
+                                                                Text("-")
+                                                                    .font(.custom("Segment7Standard", size: 30))
+                                                                    .foregroundColor(.black)
+                                                            }
+                                                            .frame(minWidth: 44)
                                                         }
-                                                        .frame(minWidth: 44)
+                                                        Spacer()
+                                                        ForEach(unitCases, id: \.self) { unitCase in
+                                                            Button(action: {
+                                                                selectUnit(unitCase)
+                                                            }) {
+                                                                Text(unitCase.shouldRender ? unitCase.rawValue : unitCases.count == 1 ? "⏎" : "_")
+                                                                    .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.5))
+                                                                    .fontWeight(unitCase == unit ? .bold : .regular)
+                                                            }
+                                                            .frame(minWidth: 44)
+                                                            Spacer()
+                                                        }
                                                     }
-                                                    Spacer()
-                                                    ForEach(unitCases, id: \.self) { unitCase in
-                                                        Button(action: {
-                                                            selectUnit(unitCase)
-                                                        }) {
-                                                            Text(unitCase.shouldRender ? unitCase.rawValue : unitCases.count == 1 ? "⏎" : "_")
-                                                                .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.5))
-                                                                .fontWeight(unitCase == unit ? .bold : .regular)
+                                                } else {
+                                                    // iOS 15 layout (with HStack) (but not centered)
+                                                    HStack {
+                                                        if isFocused {
+                                                            if showNegationDecorator {
+                                                                Spacer()
+                                                                Button(action: toggleNegation) {
+                                                                    Text("-")
+                                                                        .font(.custom("Segment7Standard", size: 30))
+                                                                        .foregroundColor(.black)
+                                                                }
+                                                                .frame(minWidth: 44)
+                                                            }
+                                                            Spacer()
+                                                            ForEach(unitCases, id: \.self) { unitCase in
+                                                                Button(action: {
+                                                                    selectUnit(unitCase)
+                                                                }) {
+                                                                    Text(unitCase.shouldRender ? unitCase.rawValue : unitCases.count == 1 ? "⏎" : "_")
+                                                                        .foregroundColor(Color.baseSecondaryRed.adjusted(brightness: 1.5))
+                                                                        .fontWeight(unitCase == unit ? .bold : .regular)
+                                                                }
+                                                                .frame(minWidth: 44)
+                                                                Spacer()
+                                                            }
                                                         }
-                                                        .frame(minWidth: 44)
-                                                        Spacer()
                                                     }
                                                 }
                                             }
