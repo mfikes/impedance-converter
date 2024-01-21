@@ -17,9 +17,10 @@ struct PolarParameterView<UnitType>: View where UnitType: RawRepresentable, Unit
                 UnitInputView(value: Binding(
                     get: { self.complexValue.length },
                     set: {
+                        let phase = self.complexValue.phase.isNaN ? 0 : self.complexValue.phase
                         viewModel.setValueRecordingTrace(from: self.complexValue.length, to: $0) {
                             intermediateValue in
-                            self.complexValue = Complex.init(length: intermediateValue, phase: self.complexValue.phase)
+                            self.complexValue = Complex.init(length: intermediateValue, phase: phase)
                         }
                     }
                 ), unit: magnitudeUnit, label: magnitudeLabel, description: magnitudeDescription)
