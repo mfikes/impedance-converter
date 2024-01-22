@@ -84,7 +84,7 @@
 			<key>Key</key>
 			<string>showParameters</string>
 			<key>DefaultValue</key>
-			<true/>
+			<false/>
 		</dict>
 		<dict>
 			<key>Type</key>
