@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct DisplayView<Content: View>: View {
     var content: Content
@@ -25,66 +26,72 @@ struct ContentView: View {
     @SceneStorage("ContentView.viewModel") var storedViewModel: String?
     
     @State private var showUndoConfirmation = false
+    @State private var isLandscape: Bool = UIDevice.current.orientation.isLandscape
     
     init() {
         UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(Color.baseSegmentControlTintColor)
         UIButton.appearance().backgroundColor = UIColor(Color.baseSegmentControlTintColor)
+        UIDevice.current.beginGeneratingDeviceOrientationNotifications()
     }
     
     var body: some View {
-                
-        GeometryReader { geometry in
-            ZStack {
-                Color.baseAppBackgroundColor.edgesIgnoringSafeArea(.all)
-                if geometry.size.width > geometry.size.height {
-                    VStack {
-                        ModePickerView(viewModel: viewModel)
-                        ScrollView {
-                            HStack(alignment: .top, spacing: 10) {
-                                VStack {
-                                    Spacer()
-                                    ImmittanceView(viewModel: viewModel)
-                                    CircuitView(viewModel: viewModel)
-                                    ParametersView(viewModel: viewModel)
-                                    CharacterizationView(viewModel: viewModel)
-                                    Spacer()
-                                }
-                                VStack {
-                                    Spacer()
-                                    SmithChartView(viewModel: viewModel)
-                                    ElectricalLengthView(viewModel: viewModel)
-                                    Spacer(minLength: 46)
-                                }
+        ZStack {
+            Color.baseAppBackgroundColor.edgesIgnoringSafeArea(.all)
+            
+            if isLandscape {
+                // Landscape layout
+                VStack {
+                    ModePickerView(viewModel: viewModel)
+                    ScrollView {
+                        HStack(alignment: .top, spacing: 10) {
+                            VStack {
+                                Spacer()
+                                ImmittanceView(viewModel: viewModel)
+                                CircuitView(viewModel: viewModel)
+                                ParametersView(viewModel: viewModel)
+                                CharacterizationView(viewModel: viewModel)
+                                Spacer()
+                            }
+                            VStack {
+                                Spacer()
+                                SmithChartView(viewModel: viewModel)
+                                ElectricalLengthView(viewModel: viewModel)
+                                Spacer(minLength: 46)
                             }
                         }
                     }
                     .padding(10)
-                } else {
-                    VStack {
-                        ModePickerView(viewModel: viewModel)
-                        ScrollView {
-                            LazyVStack {
-                                ImmittanceView(viewModel: viewModel)
-                                CircuitView(viewModel: viewModel)
-                                SmithChartView(viewModel: viewModel)
-                                ParametersView(viewModel: viewModel)
-                                CharacterizationView(viewModel: viewModel)
-                                ElectricalLengthView(viewModel: viewModel)
-                                Spacer()
-                            }
+                }
+            } else {
+                // Portrait layout
+                VStack {
+                    ModePickerView(viewModel: viewModel)
+                    ScrollView {
+                        LazyVStack {
+                            ImmittanceView(viewModel: viewModel)
+                            CircuitView(viewModel: viewModel)
+                            SmithChartView(viewModel: viewModel)
+                            ParametersView(viewModel: viewModel)
+                            CharacterizationView(viewModel: viewModel)
+                            ElectricalLengthView(viewModel: viewModel)
+                            Spacer()
                         }
                     }
                     .frame(maxWidth: 500)
                     .padding(.top, 1)
                 }
-                ShakeDetectorView() {
-                    showUndoConfirmation = true
-                }
-                .frame(width: 0, height: 0)
             }
-            .dynamicTypeSize(.medium)
+            
+            ShakeDetectorView() {
+                showUndoConfirmation = true
+            }
+            .frame(width: 0, height: 0)
         }
+        .dynamicTypeSize(.medium)
         .onAppear {
+            NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification, object: nil, queue: .main) { _ in
+                self.isLandscape = UIDevice.current.orientation.isLandscape
+            }
             SmoothAnimation.isAnimationDisabled = true
             if let storedViewModel = storedViewModel,
                let restoredViewModel = ViewModel.decodeFromJSON(storedViewModel) {
