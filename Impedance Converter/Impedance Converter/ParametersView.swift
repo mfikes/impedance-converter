@@ -34,7 +34,7 @@ struct ReferenceView: View {
 
 struct ParametersView: View {
     
-    @AppStorage("showParameters") private var showParameters = true
+    @AppStorage("showParameters") private var showParameters = false
     
     @ObservedObject var viewModel: ViewModel
     
