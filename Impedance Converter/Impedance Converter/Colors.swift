@@ -30,6 +30,39 @@ extension Color {
                      green: min(g * brightness, 1.0),
                      blue: min(b * brightness, 1.0))
     }
+    
+    func adjusted(transparency: Double) -> Color {
+        guard let components = UIColor(self).cgColor.components else {
+            return self
+        }
+
+        let r: Double
+        let g: Double
+        let b: Double
+        let a: Double
+
+        if components.count >= 4 {
+            // If the color has an alpha component
+            r = Double(components[0])
+            g = Double(components[1])
+            b = Double(components[2])
+            a = Double(components[3])
+        } else if components.count >= 3 {
+            // If the color only has RGB components
+            r = Double(components[0])
+            g = Double(components[1])
+            b = Double(components[2])
+            a = 1.0 // Default alpha is 1.0 (fully opaque)
+        } else {
+            // If the color does not have enough components, return the original color
+            return self
+        }
+
+        // Adjust the alpha, ensuring it remains between 0.0 and 1.0
+        let adjustedAlpha = max(min(a * transparency, 1.0), 0.0)
+
+        return Color(red: r, green: g, blue: b, opacity: adjustedAlpha)
+    }
 
     // Base Color Definitions
     static let baseLabelTextColor = Color(hex: "#969F91")

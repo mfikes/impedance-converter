@@ -769,13 +769,23 @@ class ViewModel: ObservableObject, Codable {
     
     @Published var displayMode: DisplayMode = .impedance
     
+    @Published var constantCircleCursor = false
+    
+    @Published var constantArcCursor = false
+    
+    @Published var constantMagnitudeCursor = false
+    
+    @Published var constantAngleCursor = false
+    
     enum CodingKeys: CodingKey {
         case displayMode, circuitMode,
              immittance, immittanceType,
              referenceImmittance, referenceImmittanceType,
              frequency, velocityFactor,
              refAngle, measureOrientation,
-             trace
+             trace,
+             constantCircleCursor, constantArcCursor,
+             constantMagnitudeCursor, constantAngleCursor
     }
     
     init() {
@@ -798,6 +808,10 @@ class ViewModel: ObservableObject, Codable {
         if tracePersistence != "Infinite" {
             trace = []
         }
+        constantCircleCursor = try container.decode(Bool.self, forKey: .constantCircleCursor)
+        constantArcCursor = try container.decode(Bool.self, forKey: .constantArcCursor)
+        constantMagnitudeCursor = try container.decode(Bool.self, forKey: .constantMagnitudeCursor)
+        constantAngleCursor = try container.decode(Bool.self, forKey: .constantAngleCursor)
         isUndoCheckpointEnabled = isUndoCheckpointEnabledPrev
     }
     
@@ -812,6 +826,10 @@ class ViewModel: ObservableObject, Codable {
         try container.encode(refAngle.radians, forKey: .refAngle)
         try container.encode(angleOrientation, forKey: .measureOrientation)
         try container.encode(trace, forKey: .trace)
+        try container.encode(constantCircleCursor, forKey: .constantCircleCursor)
+        try container.encode(constantArcCursor, forKey: .constantArcCursor)
+        try container.encode(constantMagnitudeCursor, forKey: .constantMagnitudeCursor)
+        try container.encode(constantAngleCursor, forKey: .constantAngleCursor)
     }
     
     func update(from other: ViewModel) {
@@ -826,6 +844,10 @@ class ViewModel: ObservableObject, Codable {
         self.refAngle = other.refAngle
         self.angleOrientation = other.angleOrientation
         self.trace = other.trace
+        self.constantCircleCursor = other.constantCircleCursor
+        self.constantArcCursor = other.constantArcCursor
+        self.constantMagnitudeCursor = other.constantMagnitudeCursor
+        self.constantAngleCursor = other.constantAngleCursor
         isUndoCheckpointEnabled = isUndoCheckpointEnabledPrev
     }
     

@@ -80,6 +80,16 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
+			<string>Cursor Controls</string>
+			<key>Key</key>
+			<string>showCursorControls</string>
+			<key>DefaultValue</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>Type</key>
+			<string>PSToggleSwitchSpecifier</string>
+			<key>Title</key>
 			<string>Reference / Frequency</string>
 			<key>Key</key>
 			<string>showParameters</string>
