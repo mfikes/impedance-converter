@@ -22,11 +22,9 @@ struct CapacitanceView: View {
     
     var body: some View {
         DisplayView {
-            VStack {
-                HStack {
-                    UnitInputView(value: $viewModel.capacitance, unit: CapacitanceUnit.F, label: "C", description: "capacitance")
-                    UnitInputView(value: $viewModel.dissipationFactor, unit: DissipationUnit.D, label: "D", description: "dissipation factor")
-                }
+            HStack {
+                UnitInputView(value: $viewModel.capacitance, unit: CapacitanceUnit.F, label: "C", description: "capacitance")
+                UnitInputView(value: $viewModel.dissipationFactor, unit: DissipationUnit.D, label: "D", description: "dissipation factor")
             }
         }
     }
@@ -37,11 +35,9 @@ struct InductanceView: View {
     
     var body: some View {
         DisplayView {
-            VStack {
-                HStack {
-                    UnitInputView(value: $viewModel.inductance, unit: InductanceUnit.H, label: "L", description: "inductance")
-                    UnitInputView(value: $viewModel.qualityFactor, unit: QualityUnit.Q, label: "Q", description: "quality factor")
-                }
+            HStack {
+                UnitInputView(value: $viewModel.inductance, unit: InductanceUnit.H, label: "L", description: "inductance")
+                UnitInputView(value: $viewModel.qualityFactor, unit: QualityUnit.Q, label: "Q", description: "quality factor")
             }
         }
     }

@@ -12,29 +12,27 @@ struct PolarParameterView<UnitType>: View where UnitType: RawRepresentable, Unit
     var angleDescription: String
     
     var body: some View {
-        VStack {
-            HStack {
-                UnitInputView(value: Binding(
-                    get: { self.complexValue.length },
-                    set: {
-                        let phase = self.complexValue.phase.isNaN ? 0 : self.complexValue.phase
-                        viewModel.setValueRecordingTrace(from: self.complexValue.length, to: $0) {
-                            intermediateValue in
-                            self.complexValue = Complex.init(length: intermediateValue, phase: phase)
-                        }
+        HStack {
+            UnitInputView(value: Binding(
+                get: { self.complexValue.length },
+                set: {
+                    let phase = self.complexValue.phase.isNaN ? 0 : self.complexValue.phase
+                    viewModel.setValueRecordingTrace(from: self.complexValue.length, to: $0) {
+                        intermediateValue in
+                        self.complexValue = Complex.init(length: intermediateValue, phase: phase)
                     }
-                ), unit: magnitudeUnit, label: magnitudeLabel, description: magnitudeDescription)
-                
-                UnitInputView(value: Binding(
-                    get: { Angle(radians: self.complexValue.phase).degrees },
-                    set: {
-                        viewModel.setValueRecordingTrace(from: Angle(radians: self.complexValue.phase).degrees, to: $0) {
-                            intermediateValue in
-                            self.complexValue = Complex.init(length: self.complexValue.length, phase:Angle(degrees: intermediateValue).radians)
-                        }
+                }
+            ), unit: magnitudeUnit, label: magnitudeLabel, description: magnitudeDescription)
+            
+            UnitInputView(value: Binding(
+                get: { Angle(radians: self.complexValue.phase).degrees },
+                set: {
+                    viewModel.setValueRecordingTrace(from: Angle(radians: self.complexValue.phase).degrees, to: $0) {
+                        intermediateValue in
+                        self.complexValue = Complex.init(length: self.complexValue.length, phase:Angle(degrees: intermediateValue).radians)
                     }
-                ), unit: angleUnit, label: angleLabel, description: angleDescription, showNegationDecorator: true)
-            }
+                }
+            ), unit: angleUnit, label: angleLabel, description: angleDescription, showNegationDecorator: true)
         }
     }
 }
@@ -103,31 +101,29 @@ struct RectangularParameterView<UnitType: UnitWithPowerOfTen>: View {
     var imaginaryCanBeNegative: Bool
     
     var body: some View {
-        VStack {
-            HStack {
-                UnitInputView(value: Binding(
-                    get: { self.complexValue.canonicalizedReal },
-                    set: {
-                        let imaginary = self.complexValue.canonicalizedImaginary.isNaN ? 0 : self.complexValue.canonicalizedImaginary
-                        viewModel.setValueRecordingTrace(from: self.complexValue.canonicalizedReal, to: $0) {
-                            intermediateValue in
-                            self.complexValue = Complex(intermediateValue, imaginary)
-                        }
+        HStack {
+            UnitInputView(value: Binding(
+                get: { self.complexValue.canonicalizedReal },
+                set: {
+                    let imaginary = self.complexValue.canonicalizedImaginary.isNaN ? 0 : self.complexValue.canonicalizedImaginary
+                    viewModel.setValueRecordingTrace(from: self.complexValue.canonicalizedReal, to: $0) {
+                        intermediateValue in
+                        self.complexValue = Complex(intermediateValue, imaginary)
                     }
-                ), unit: realPartUnit, label: realPartLabel, description: realPartDescription,
-                              showNegationDecorator: realCanBeNegative)
-                UnitInputView(value: Binding(
-                    get: { self.complexValue.canonicalizedImaginary },
-                    set: {
-                        let real = self.complexValue.canonicalizedReal.isNaN ? 0 : self.complexValue.canonicalizedReal
-                        viewModel.setValueRecordingTrace(from: self.complexValue.canonicalizedImaginary, to: $0) {
-                            intermediateValue in
-                            self.complexValue = Complex(real, intermediateValue)
-                        }
+                }
+            ), unit: realPartUnit, label: realPartLabel, description: realPartDescription,
+                          showNegationDecorator: realCanBeNegative)
+            UnitInputView(value: Binding(
+                get: { self.complexValue.canonicalizedImaginary },
+                set: {
+                    let real = self.complexValue.canonicalizedReal.isNaN ? 0 : self.complexValue.canonicalizedReal
+                    viewModel.setValueRecordingTrace(from: self.complexValue.canonicalizedImaginary, to: $0) {
+                        intermediateValue in
+                        self.complexValue = Complex(real, intermediateValue)
                     }
-                ), unit: imaginaryPartUnit, label: imaginaryPartLabel, description: imaginaryPartDescription,
-                              showNegationDecorator: imaginaryCanBeNegative)
-            }
+                }
+            ), unit: imaginaryPartUnit, label: imaginaryPartLabel, description: imaginaryPartDescription,
+                          showNegationDecorator: imaginaryCanBeNegative)
         }
     }
 }
