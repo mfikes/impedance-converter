@@ -43,6 +43,32 @@ struct InductanceView: View {
     }
 }
 
+extension Binding where Value: BinaryFloatingPoint {
+    static func reciprocal(_ source: Binding<Value>) -> Binding<Value> {
+        Binding(
+            get: { 1 / source.wrappedValue },
+            set: { source.wrappedValue = 1 / $0 }
+        )
+    }
+}
+
+struct ResistorView: View {
+    @ObservedObject var viewModel: ViewModel
+    
+    var body: some View {
+        switch (viewModel.circuitMode, viewModel.displayMode) {
+        case (.series, .impedance), (.series, .reflectionCoefficient):
+            UnitInputView(value: $viewModel.resistance, unit: ResistanceUnit.Ω, label: "ESR", description: "eq. series res.")
+        case (.parallel, .impedance), (.parallel, .reflectionCoefficient):
+            UnitInputView(value: .reciprocal($viewModel.conductance), unit: ResistanceUnit.Ω, label: "Rₚ", description: "eq. parallel res.")
+        case (.series, .admittance):
+            UnitInputView(value: .reciprocal($viewModel.resistance), unit: ConductanceUnit.S, label: "Gₛ", description: "eq. series cond.")
+        case (.parallel, .admittance):
+            UnitInputView(value: $viewModel.conductance, unit: ConductanceUnit.S, label: "Gₚ", description: "eq. parallel cond.")
+        }
+    }
+}
+
 struct CircuitView: View {
     
     @AppStorage("showLCQD") private var showLCQD = true
@@ -51,14 +77,15 @@ struct CircuitView: View {
     
     var body: some View {
         if (showLCQD) {
-            HStack(alignment: .bottom, spacing: 0) {
-                CircuitPickerView(viewModel: viewModel)
-                DisplayView {
+            CircuitPickerView(viewModel: viewModel)
+            InductanceView(viewModel: viewModel)
+            CapacitanceView(viewModel: viewModel)
+            DisplayView {
+                HStack {
+                    ResistorView(viewModel: viewModel)
                     FrequencyView(viewModel: viewModel)
                 }
             }
-            InductanceView(viewModel: viewModel)
-            CapacitanceView(viewModel: viewModel)
         }
     }
 }
