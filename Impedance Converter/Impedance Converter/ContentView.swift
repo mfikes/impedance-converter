@@ -55,6 +55,7 @@ struct ContentView: View {
                             VStack {
                                 Spacer()
                                 SmithChartView(viewModel: viewModel)
+                                CursorsView(viewModel: viewModel)
                                 ElectricalLengthView(viewModel: viewModel)
                                 Spacer(minLength: 46)
                             }
@@ -71,6 +72,7 @@ struct ContentView: View {
                             ImmittanceView(viewModel: viewModel)
                             CircuitView(viewModel: viewModel)
                             SmithChartView(viewModel: viewModel)
+                            CursorsView(viewModel: viewModel)
                             ParametersView(viewModel: viewModel)
                             CharacterizationView(viewModel: viewModel)
                             ElectricalLengthView(viewModel: viewModel)

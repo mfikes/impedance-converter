@@ -29,6 +29,7 @@
 		EDBBC7612B48ACC1004B844C /* ShakeDetectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */; };
 		EDBBC7632B48FE76004B844C /* ImmittanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDBBC7622B48FE76004B844C /* ImmittanceView.swift */; };
 		EDBBC7652B4A24B4004B844C /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EDBBC7642B4A24B3004B844C /* Settings.bundle */; };
+		EDC389FA2B6144BF00E61C79 /* CursorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC389F92B6144BF00E61C79 /* CursorsView.swift */; };
 		EDD36F182B443CB00032B9BC /* LengthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD36F172B443CB00032B9BC /* LengthView.swift */; };
 		EDDCB6292B4E29DC008A0E28 /* ComplexModule in Frameworks */ = {isa = PBXBuildFile; productRef = EDDCB6282B4E29DC008A0E28 /* ComplexModule */; };
 		EDDCB62B2B4E29DC008A0E28 /* Numerics in Frameworks */ = {isa = PBXBuildFile; productRef = EDDCB62A2B4E29DC008A0E28 /* Numerics */; };
@@ -73,6 +74,7 @@
 		EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeDetectorView.swift; sourceTree = "<group>"; };
 		EDBBC7622B48FE76004B844C /* ImmittanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImmittanceView.swift; sourceTree = "<group>"; };
 		EDBBC7642B4A24B3004B844C /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		EDC389F92B6144BF00E61C79 /* CursorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CursorsView.swift; sourceTree = "<group>"; };
 		EDD36F172B443CB00032B9BC /* LengthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -133,6 +135,7 @@
 				ED737AB52B3F57F400926575 /* CircuitView.swift */,
 				ED737AB72B3F589600926575 /* ParametersView.swift */,
 				ED737AAF2B3F568200926575 /* SmithChartView.swift */,
+				EDC389F92B6144BF00E61C79 /* CursorsView.swift */,
 				EDB2C5942B42FDDE009362F2 /* CharacterizationView.swift */,
 				EDD36F172B443CB00032B9BC /* LengthView.swift */,
 				ED737AAB2B3F4C6100926575 /* Colors.swift */,
@@ -289,6 +292,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EDC389FA2B6144BF00E61C79 /* CursorsView.swift in Sources */,
 				EDB2C5992B4376A6009362F2 /* Haptics.swift in Sources */,
 				ED737AAE2B3F562A00926575 /* ViewModel.swift in Sources */,
 				EDBBC7632B48FE76004B844C /* ImmittanceView.swift in Sources */,

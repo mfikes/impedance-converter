@@ -53,6 +53,16 @@ struct SmithChartContentView: View {
     
     var refAngleAnimationManager = SmoothAnimation(initialValue: 0)
     
+    @State private var constantCircleCursorInterpolator: Double = 0
+    @State private var constantArcCursorInterpolator: Double = 0
+    @State private var constantMagnitudeCursorInterpolator: Double = 0
+    @State private var constantAngleCursorInterpolator: Double = 0
+    
+    var constantCircleCursorAnimationManager = SmoothAnimation(initialValue: 0)
+    var constantArcCursorAnimationManager = SmoothAnimation(initialValue: 0)
+    var constantMagnitudeCursorAnimationManager = SmoothAnimation(initialValue: 0)
+    var constantAngleCursorAnimationManager = SmoothAnimation(initialValue: 0)
+    
     init(viewModel: ViewModel) {
         self.viewModel = viewModel
         let initialModeInterpolator = SmithChartContentView.animationTarget(for: viewModel.displayMode)
@@ -186,6 +196,26 @@ struct SmithChartContentView: View {
                         refAngleInterpolator = Angle(radians: start + shortestDifference * interpolatorValue)
                     }
                 }
+                .onChange(of: viewModel.constantCircleCursor) { _ in
+                    constantCircleCursorAnimationManager.startAnimating(from: viewModel.constantCircleCursor ? 0 : 1, target: viewModel.constantCircleCursor ? 1 : 0, totalAnimationTime: 0.2) { interpolatorValue in
+                        constantCircleCursorInterpolator = interpolatorValue
+                    }
+                }
+                .onChange(of: viewModel.constantArcCursor) { _ in
+                    constantArcCursorAnimationManager.startAnimating(from: viewModel.constantArcCursor ? 0 : 1, target: viewModel.constantArcCursor ? 1 : 0, totalAnimationTime: 0.2) { interpolatorValue in
+                        constantArcCursorInterpolator = interpolatorValue
+                    }
+                }
+                .onChange(of: viewModel.constantMagnitudeCursor) { _ in
+                    constantMagnitudeCursorAnimationManager.startAnimating(from: viewModel.constantMagnitudeCursor ? 0 : 1, target: viewModel.constantMagnitudeCursor ? 1 : 0, totalAnimationTime: 0.2) { interpolatorValue in
+                        constantMagnitudeCursorInterpolator = interpolatorValue
+                    }
+                }
+                .onChange(of: viewModel.constantAngleCursor) { _ in
+                    constantAngleCursorAnimationManager.startAnimating(from: viewModel.constantAngleCursor ? 0 : 1, target: viewModel.constantAngleCursor ? 1 : 0, totalAnimationTime: 0.2) { interpolatorValue in
+                        constantAngleCursorInterpolator = interpolatorValue
+                    }
+                }
                 .blur(radius: 0.4)
                 .brightness(0.1)
                 
@@ -222,7 +252,7 @@ struct SmithChartContentView: View {
                 .blur(radius: 0.4)
                 .brightness(0.1)
                 
-                // Constraint indicator canvas
+                // Constraint indicator and cursor canvas
                 Canvas { context, size in
                     
                     let (center, radius) = createCenterAndRadius(size: size)
@@ -245,6 +275,42 @@ struct SmithChartContentView: View {
                     
                     if (constraintKind == .angle) {
                         drawRadius(context: context, center: center, radius: radius, angle: Angle(radians: constraintValue), color: Color.basePrimaryOrange, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                    }
+                    
+                    let cursorColorBaseTransparency = pow(modeInterpolator, 16) + pow(1-abs(modeInterpolator), 16)
+                    
+                    let constantCircleCursorColor = Color.blue.adjusted(transparency: constantCircleCursorInterpolator * cursorColorBaseTransparency)
+                    
+                    if (modeInterpolator > 0.5) {
+                        drawResistanceCircle(context: context, center: center, radius: radius, R: viewModel.resistance / viewModel.referenceImpedance.real, color: constantCircleCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                    } else if (modeInterpolator < -0.5) {
+                        drawResistanceCircle(context: context, center: center, radius: radius, R: viewModel.conductance / viewModel.referenceAdmittance.real, color: constantCircleCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                    } else {
+                        drawCircle(context: context, center: center, radius: radius, circleRadius: viewModel.reflectionCoefficient.length * radius, circleCenter: center, color: constantCircleCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                    }
+                    
+                    
+                    let constantArcCursorColor = Color.blue.adjusted(transparency: constantArcCursorInterpolator * cursorColorBaseTransparency)
+                    
+                    if (modeInterpolator > 0.5) {
+                        drawReactanceArc(context: context, center: center, radius: radius, X: viewModel.reactance / viewModel.referenceImpedance.real, color: constantArcCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                    } else if (modeInterpolator < -0.5) {
+                        drawReactanceArc(context: context, center: center, radius: radius, X: -viewModel.referenceAdmittance.real / viewModel.susceptance, color: constantArcCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                    } else {
+                        if (!viewModel.reflectionCoefficient.phase.isNaN) {
+                            drawRadius(context: context, center: center, radius: radius, angle: Angle(radians: viewModel.reflectionCoefficient.phase), color: constantArcCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                        }
+                    }
+                    
+                    let constantMagnitudeCursorColor = Color.blue.adjusted(transparency: constantMagnitudeCursorInterpolator * cursorColorBaseTransparency)
+                    
+                    drawCircle(context: context, center: center, radius: radius, circleRadius: viewModel.reflectionCoefficient.length * radius, circleCenter: center, color: constantMagnitudeCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]))
+                    
+                    let constantAngleCursorColor = Color.blue.adjusted(transparency: constantAngleCursorInterpolator * cursorColorBaseTransparency)
+                    
+                    if (!viewModel.reflectionCoefficient.phase.isNaN) {
+                        drawRadius(context: context, center: center, radius: radius, angle: Angle(radians: viewModel.reflectionCoefficient.phase), color: constantAngleCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                        drawRadius(context: context, center: center, radius: radius, angle: Angle(radians: viewModel.reflectionCoefficient.phase + Double.pi), color: constantAngleCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
                     }
                     
                 }
@@ -721,7 +787,7 @@ struct SmithChartView: View {
                 }
             }
             .cornerRadius(20)
-            .padding(10)
+            .padding(.horizontal, 10)
         }
     }
 }

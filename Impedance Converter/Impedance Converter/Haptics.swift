@@ -43,17 +43,21 @@ class Haptics {
         }
     }
 
-    func playHapticFeedback(for constraintEnabled: Bool) {
+    func playHapticFeedback(for on: Bool) {
         guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
 
         var events = [CHHapticEvent]()
-        if constraintEnabled {
-            // Create a sharp, strong tap for enabling constraints
-            let event = CHHapticEvent(eventType: .hapticTransient, parameters: [], relativeTime: 0)
+        if on {
+            // Create a sharp, strong tap
+            let intensity = CHHapticEventParameter(parameterID: .hapticIntensity, value: 1.0) // Strong intensity
+            let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness, value: 1.0) // Sharp feel
+            let event = CHHapticEvent(eventType: .hapticTransient, parameters: [intensity, sharpness], relativeTime: 0)
             events.append(event)
         } else {
-            // Create a softer, brief tap for disabling constraints
-            let event = CHHapticEvent(eventType: .hapticTransient, parameters: [], relativeTime: 0)
+            // Create a softer, less sharp tap
+            let intensity = CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.8) // Softer intensity
+            let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.5) // Less sharp feel
+            let event = CHHapticEvent(eventType: .hapticTransient, parameters: [intensity, sharpness], relativeTime: 0)
             events.append(event)
         }
 
