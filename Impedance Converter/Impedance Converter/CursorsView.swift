@@ -49,7 +49,7 @@ struct ToggleButton: View {
     @State private var isPressed = false // State to track if the button is being pressed
 
     var rectColor: Color = .gray // The constant color of the rectangle
-    var pressedRectColor: Color { rectColor.adjusted(brightness: 0.8) } // Darker color for pressed state
+    var pressedRectColor: Color { rectColor.adjusted(brightness: 0.95) } // Darker color for pressed state
     var offCircleColor: Color = .black // Color of the circle when off
     var onCircleColor: Color = .green // Color of the circle when on
     var panelGapColor: Color = .black // Color of the gap between button and front panel
@@ -60,36 +60,50 @@ struct ToggleButton: View {
     
     var body: some View {
         ZStack {
+            let padding: CGFloat = 5
+            let offset: CGFloat = padding / 2
+            // Shadow under button
+            GeometryReader { geometry in
+                RadialGradient(gradient: Gradient(colors: [Color.gray.opacity(0.95), Color.gray.opacity(0)]),
+                               center: .center,
+                               startRadius: 1,
+                               endRadius: 20)
+                .scaleEffect(x: 1.5, y: 0.5, anchor: .bottom) // Scale in y-direction to create an ellipse
+                .frame(width: geometry.size.width, height: geometry.size.height + (isPressed ? offset : padding))
+            }
+            .blendMode(.normal)
+            .allowsHitTesting(false)
             // Use a custom gesture instead of Button
             Canvas { context, size in
                 let panelGapWidth: CGFloat = min(size.width, size.height) * 0.11
                 let cornerRadius: CGFloat = 10
+                let buttonSize = size.width - padding
                 
                 // Drawing the panel gap
-                let outerRect = CGRect(x: panelGapWidth / 2,
-                                       y: panelGapWidth / 2,
-                                       width: size.width - panelGapWidth,
-                                       height: size.height - panelGapWidth)
-                context.fill(Path(roundedRect: outerRect, cornerRadius: cornerRadius*1.1), with: .color(panelGapColor))
+                let outerRect = CGRect(x: panelGapWidth / 2 + offset,
+                                       y: panelGapWidth / 2 + offset,
+                                       width: buttonSize - panelGapWidth,
+                                       height: buttonSize - panelGapWidth)
+                context.fill(Path(roundedRect: outerRect, cornerRadius: cornerRadius*1.2), with: .color(panelGapColor))
                 
                 // Drawing the inner rectangle (button)
-                let innerRectSize: CGFloat = min(size.width, size.height) - 2 * panelGapWidth
-                let innerRect = CGRect(x: panelGapWidth,
-                                       y: panelGapWidth,
+                let innerRectSize: CGFloat = buttonSize - 2 * panelGapWidth
+                let innerRect = CGRect(x: panelGapWidth + offset,
+                                       y: panelGapWidth + offset,
                                        width: innerRectSize,
                                        height: innerRectSize)
                 context.fill(Path(roundedRect: innerRect, cornerRadius: cornerRadius), with: .color(isPressed ? pressedRectColor : rectColor))
                 
                 // Drawing the circle
                 let circleDiameter: CGFloat = innerRectSize / 4
-                let circleRect = CGRect(x: (size.width - circleDiameter) / 2,
-                                        y: (size.height - circleDiameter) / 2,
+                let circleRect = CGRect(x: (buttonSize - circleDiameter) / 2 + offset,
+                                        y: (buttonSize - circleDiameter) / 2 + offset,
                                         width: circleDiameter,
                                         height: circleDiameter)
                 let circlePath = Path(ellipseIn: circleRect)
                 
                 // Shiny edge
-                context.stroke(Path(roundedRect: innerRect, cornerRadius: cornerRadius), with: .color(isPressed ? pressedRectColor : rectColor.adjusted(brightness: 1.2)))
+                context.stroke(Path(roundedRect: innerRect, cornerRadius: cornerRadius), with: .color(isPressed ? pressedRectColor : rectColor.adjusted(brightness: 1.2)), lineWidth: 0.5)
                 
                 if isOn {
                     // Draw a blurred green circle and shiny edge blur
@@ -123,14 +137,14 @@ struct ToggleButton: View {
                         self.isOn.toggle()  // Toggle the state when the gesture ends
                     })
             )
+            // Phong in button
             GeometryReader { geometry in
                 RadialGradient(gradient: Gradient(colors: [Color.white.opacity(0.2), Color.white.opacity(0)]),
                                center: .center,
                                startRadius: 1,
                                endRadius: 20)
                 .scaleEffect(x: 1, y: 0.5, anchor: .bottom) // Scale in y-direction to create an ellipse
-                .frame(width: geometry.size.width, height: geometry.size.height)
-                .clipShape(Rectangle()) // Clip to the frame's bounds
+                .frame(width: geometry.size.width - padding , height: geometry.size.height - padding)
             }
             .blendMode(.normal)
             .allowsHitTesting(false)
@@ -147,28 +161,28 @@ struct CursorsView: View {
     var body: some View {
         if (showCursorControls) {
             HStack() {
-                Spacer()
-                HStack {
+                Spacer(minLength: 15)
+                HStack(spacing: -5) {
                     SmithChartIcon(type: .constantResistance)
                     ToggleButton(isOn: $viewModel.constantCircleCursor)
                 }
                 Spacer()
-                HStack {
+                HStack(spacing: -5) {
                     SmithChartIcon(type: .constantReactance)
                     ToggleButton(isOn: $viewModel.constantArcCursor)
                 }
                 Spacer()
-                HStack {
+                HStack(spacing: -5) {
                     SmithChartIcon(type: .constantMagnitude)
                     ToggleButton(isOn: $viewModel.constantMagnitudeCursor)
                 }
                 Spacer()
-                HStack {
+                HStack(spacing: -5) {
                     SmithChartIcon(type: .constantAngle)
                     ToggleButton(isOn: $viewModel.constantAngleCursor)
                 }
-                Spacer()
             }
+            .padding(.vertical, -2)
         }
     }
 }
