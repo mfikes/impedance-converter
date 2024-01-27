@@ -132,19 +132,40 @@ struct ContentView: View {
 
 struct ModePickerView: View {
     @ObservedObject var viewModel: ViewModel
+    
     var body: some View {
         HStack {
-            Picker("Mode", selection: $viewModel.displayMode) {
-                Text("Impedance Z").tag(DisplayMode.impedance)
-                Text("Admittance Y").tag(DisplayMode.admittance)
-                Text("Refl. Coeff. Γ").tag(DisplayMode.reflectionCoefficient)
+            HStack {
+                Spacer(minLength: 15)
+                HStack(spacing: 2) {
+                    Text("Z")
+                    ToggleButtonView(isOn: Binding(
+                        get: { viewModel.displayMode == .impedance },
+                        set: { if $0 { viewModel.displayMode = .impedance }}
+                    ))
+                }
+                Spacer()
+                HStack(spacing: 2) {
+                    Text("Y")
+                    ToggleButtonView(isOn: Binding(
+                        get: { viewModel.displayMode == .admittance },
+                        set: { if $0 { viewModel.displayMode = .admittance }}
+                    ))
+                }
+                Spacer()
+                HStack(spacing: 2) {
+                    Text("Γ")
+                    ToggleButtonView(isOn: Binding(
+                        get: { viewModel.displayMode == .reflectionCoefficient },
+                        set: { if $0 { viewModel.displayMode = .reflectionCoefficient }}
+                    ))
+                }
+                Spacer()
             }
-            .pickerStyle(SegmentedPickerStyle())
+            .padding(.vertical, -2)
+            .frame(maxWidth: 250, maxHeight: 50)
             SettingsButtonView()
         }
-        .padding([.horizontal], 10)
-        .padding([.top], 10)
-        .frame(maxWidth: 500)
     }
 }
 
