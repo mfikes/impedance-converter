@@ -43,20 +43,20 @@ class Haptics {
         }
     }
 
-    func playHapticFeedback(for on: Bool) {
+    private func playHapticFeedback(for on: Bool, sharpnessOn: Float, sharpnessOff: Float) {
         guard CHHapticEngine.capabilitiesForHardware().supportsHaptics else { return }
 
         var events = [CHHapticEvent]()
         if on {
             // Create a sharp, strong tap
             let intensity = CHHapticEventParameter(parameterID: .hapticIntensity, value: 1.0) // Strong intensity
-            let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness, value: 1.0) // Sharp feel
+            let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness, value: sharpnessOn) // Sharp feel
             let event = CHHapticEvent(eventType: .hapticTransient, parameters: [intensity, sharpness], relativeTime: 0)
             events.append(event)
         } else {
             // Create a softer, less sharp tap
             let intensity = CHHapticEventParameter(parameterID: .hapticIntensity, value: 0.8) // Softer intensity
-            let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness, value: 0.5) // Less sharp feel
+            let sharpness = CHHapticEventParameter(parameterID: .hapticSharpness, value: sharpnessOff) // Less sharp feel
             let event = CHHapticEvent(eventType: .hapticTransient, parameters: [intensity, sharpness], relativeTime: 0)
             events.append(event)
         }
@@ -68,5 +68,13 @@ class Haptics {
         } catch {
             print("Failed to play haptic feedback: \(error)")
         }
+    }
+    
+    func playConstraintHapticFeedback(for on: Bool) {
+        playHapticFeedback(for: on, sharpnessOn: 1.0, sharpnessOff: 0.6)
+    }
+    
+    func playButtonHapticFeedback(for on: Bool) {
+        playHapticFeedback(for: on, sharpnessOn: 0.4, sharpnessOff: 0.4)
     }
 }
