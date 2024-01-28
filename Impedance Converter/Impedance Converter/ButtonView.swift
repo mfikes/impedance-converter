@@ -4,15 +4,13 @@ import SwiftUI
 
 struct BaseButtonView<Content: View>: View {
     @Binding var isPressed: Bool
-    var rectColor: Color
-    var pressedRectColor: Color { rectColor.adjusted(brightness: 0.95) }
-    var panelGapColor: Color
+    let rectColor = Color.buttonColor
+    let pressedRectColor = Color.buttonColor.adjusted(brightness: 0.95)
+    let panelGapColor = Color.black
     let content: Content
 
-    init(isPressed: Binding<Bool>, rectColor: Color, panelGapColor: Color, @ViewBuilder content: () -> Content) {
+    init(isPressed: Binding<Bool>, @ViewBuilder content: () -> Content) {
         self._isPressed = isPressed
-        self.rectColor = rectColor
-        self.panelGapColor = panelGapColor
         self.content = content()
     }
 
@@ -76,12 +74,10 @@ struct BaseButtonView<Content: View>: View {
 
 struct ButtonView: View {
     @State private var isPressed = false
-    var rectColor: Color = .gray
-    var panelGapColor: Color = .black
     var action: () -> Void
 
     var body: some View {
-        BaseButtonView(isPressed: $isPressed, rectColor: rectColor, panelGapColor: panelGapColor) {
+        BaseButtonView(isPressed: $isPressed) {
             // Empty for now as no specific UI elements are needed
         }
         .gesture(
@@ -105,13 +101,11 @@ struct ToggleButtonView: View {
     @Binding var isOn: Bool
     @State private var isPressed = false
 
-    var rectColor: Color = .gray
-    var offCircleColor: Color = .black
-    var onCircleColor: Color = .green
-    var panelGapColor: Color = .black
+    let offCircleColor = Color.baseComponentBackgroundColor
+    let onCircleColor = Color.basePrimaryOrange.adjusted(brightness: 1.5)
 
     var body: some View {
-        BaseButtonView(isPressed: $isPressed, rectColor: rectColor, panelGapColor: panelGapColor) {
+        BaseButtonView(isPressed: $isPressed) {
             let circleDiameter: CGFloat = 10
             let circleColor = isOn ? onCircleColor : offCircleColor
 
