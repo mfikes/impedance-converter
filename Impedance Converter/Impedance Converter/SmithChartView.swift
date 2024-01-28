@@ -293,9 +293,13 @@ struct SmithChartContentView: View {
                     let constantArcCursorColor = Color.blue.adjusted(transparency: constantArcCursorInterpolator * cursorColorBaseTransparency)
                     
                     if (modeInterpolator > 0.5) {
-                        drawReactanceArc(context: context, center: center, radius: radius, X: viewModel.reactance / viewModel.referenceImpedance.real, color: constantArcCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                        if (!viewModel.reactance.isNaN) {
+                            drawReactanceArc(context: context, center: center, radius: radius, X: viewModel.reactance / viewModel.referenceImpedance.real, color: constantArcCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                        }
                     } else if (modeInterpolator < -0.5) {
-                        drawReactanceArc(context: context, center: center, radius: radius, X: -viewModel.referenceAdmittance.real / viewModel.susceptance, color: constantArcCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                        if (!viewModel.susceptance.isNaN && viewModel.susceptance != 0) {
+                            drawReactanceArc(context: context, center: center, radius: radius, X: -viewModel.referenceAdmittance.real / viewModel.susceptance, color: constantArcCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                        }
                     } else {
                         if (!viewModel.reflectionCoefficient.phase.isNaN) {
                             drawRadius(context: context, center: center, radius: radius, angle: Angle(radians: viewModel.reflectionCoefficient.phase), color: constantArcCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
