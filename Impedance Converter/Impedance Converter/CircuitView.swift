@@ -6,7 +6,7 @@ struct CircuitPickerView: View {
     var body: some View {
         HStack {
             Spacer(minLength: 15)
-            HStack(spacing: -10) {
+            HStack(spacing: -5) {
                 Image("Series")
                 ToggleButtonView(isOn: Binding(
                     get: { viewModel.circuitMode == .series },
