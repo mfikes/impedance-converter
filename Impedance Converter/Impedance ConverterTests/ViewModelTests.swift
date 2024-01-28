@@ -344,6 +344,12 @@ class ReactiveParametersTests: ViewModelTestBase {
         viewModel.inductance = newInductance
         XCTAssertEqual(viewModel.reactance, newInductance * viewModel.omega)
     }
+    
+    func testInductanceWithZeroSusceptance() {
+        viewModel.susceptance = 0
+        viewModel.circuitMode = .parallel
+        XCTAssertEqual(viewModel.inductance, Double.infinity)
+    }
 
     // Testing Capacitance
     func testCapacitance() {
@@ -357,6 +363,12 @@ class ReactiveParametersTests: ViewModelTestBase {
         let newCapacitance = 1e-6 // 1 µF
         viewModel.capacitance = newCapacitance
         XCTAssertEqual(viewModel.susceptance, newCapacitance * viewModel.omega)
+    }
+    
+    func testCapacitanceWithZeroReactance() {
+        viewModel.reactance = 0
+        viewModel.circuitMode = .series
+        XCTAssertEqual(viewModel.capacitance, Double.infinity)
     }
 
     // Testing Dissipation Factor (D)

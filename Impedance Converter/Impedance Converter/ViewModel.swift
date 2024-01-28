@@ -413,7 +413,7 @@ class ViewModel: ObservableObject, Codable {
         get {
             switch circuitMode {
             case .series:
-                return -1 / (omega * reactance)
+                return reactance.isZero ? Double.infinity : -1 / (omega * reactance)
             case .parallel:
                 return susceptance / omega
             }
@@ -435,7 +435,7 @@ class ViewModel: ObservableObject, Codable {
             case .series:
                 return reactance / omega
             case .parallel:
-                return -1 / (susceptance * omega)
+                return susceptance.isZero ? Double.infinity : -1 / (susceptance * omega)
             }
         }
         set {
