@@ -133,7 +133,7 @@ struct ModePickerView: View {
         HStack {
             HStack {
                 Spacer(minLength: 15)
-                VStack(spacing: -2) {
+                VStack(alignment: .leading, spacing: -2) {
                     HStack(spacing: -15) {
                         Text("Z")
                         ToggleButtonView(isOn: Binding(
@@ -145,7 +145,7 @@ struct ModePickerView: View {
                     Text("Impedance")
                 }
                 Spacer()
-                VStack(spacing: -2) {
+                VStack(alignment: .leading, spacing: -2) {
                     HStack(spacing: -15) {
                         Text("Y")
                         ToggleButtonView(isOn: Binding(
@@ -157,7 +157,7 @@ struct ModePickerView: View {
                     Text("Admittance")
                 }
                 Spacer()
-                VStack(spacing: -2) {
+                VStack(alignment: .leading, spacing: -2) {
                     HStack(spacing: -15) {
                         Text("Γ")
                         ToggleButtonView(isOn: Binding(
@@ -171,7 +171,7 @@ struct ModePickerView: View {
                 Spacer()
             }
             .padding(.vertical, -10)
-            .frame(maxWidth: 300, maxHeight: 70)
+            .frame(maxWidth: 320, maxHeight: 70)
             SettingsButtonView()
         }
     }

@@ -54,22 +54,22 @@ struct CursorsView: View {
         if (showCursorControls) {
             HStack() {
                 Spacer(minLength: 15)
-                HStack(spacing: -5) {
+                HStack(spacing: -3) {
                     SmithChartIcon(type: .constantResistance)
                     ToggleButtonView(isOn: $viewModel.constantCircleCursor)
                 }
                 Spacer()
-                HStack(spacing: -5) {
+                HStack(spacing: -3) {
                     SmithChartIcon(type: .constantReactance)
                     ToggleButtonView(isOn: $viewModel.constantArcCursor)
                 }
                 Spacer()
-                HStack(spacing: -5) {
+                HStack(spacing: -3) {
                     SmithChartIcon(type: .constantMagnitude)
                     ToggleButtonView(isOn: $viewModel.constantMagnitudeCursor)
                 }
                 Spacer()
-                HStack(spacing: -5) {
+                HStack(spacing: -3) {
                     SmithChartIcon(type: .constantAngle)
                     ToggleButtonView(isOn: $viewModel.constantAngleCursor)
                 }
