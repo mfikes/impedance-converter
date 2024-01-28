@@ -735,7 +735,7 @@ struct SmithChartContentView: View {
     }
     
     private func playHapticsFor(constraintEnabled: Bool) {
-        Haptics.shared.playHapticFeedback(for: constraintEnabled)
+        Haptics.shared.playConstraintHapticFeedback(for: constraintEnabled)
     }
 }
 
