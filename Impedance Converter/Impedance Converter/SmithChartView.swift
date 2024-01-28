@@ -299,6 +299,8 @@ struct SmithChartContentView: View {
                     } else if (modeInterpolator < -0.5) {
                         if (!viewModel.susceptance.isNaN && viewModel.susceptance != 0) {
                             drawReactanceArc(context: context, center: center, radius: radius, X: -viewModel.referenceAdmittance.real / viewModel.susceptance, color: constantArcCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
+                        } else if (viewModel.susceptance == 0) {
+                            drawReactanceArc(context: context, center: center, radius: radius, X: 0, color: constantArcCursorColor, style: StrokeStyle(lineWidth: 2, dash: [5, 5]), modeInterpolator: modeInterpolator)
                         }
                     } else {
                         if (!viewModel.reflectionCoefficient.phase.isNaN) {
