@@ -86,12 +86,12 @@ struct ButtonView: View {
                     if (!self.isPressed) {
                         self.isPressed = true
                         Haptics.shared.playHapticFeedback(for: self.isPressed)
+                        action()
                     }
                 })
                 .onEnded({ _ in
                     self.isPressed = false
                     Haptics.shared.playHapticFeedback(for: self.isPressed)
-                    action()
                 })
         )
     }
@@ -127,12 +127,12 @@ struct ToggleButtonView: View {
                     if (!self.isPressed) {
                         self.isPressed = true
                         Haptics.shared.playHapticFeedback(for: self.isPressed)
+                        self.isOn.toggle()
                     }
                 })
                 .onEnded({ _ in
                     self.isPressed = false
                     Haptics.shared.playHapticFeedback(for: self.isPressed)
-                    self.isOn.toggle()
                 })
         )
     }
