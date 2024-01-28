@@ -647,12 +647,12 @@ struct SmithChartContentView: View {
         // We are now dragging, so clear any trace now
         viewModel.startAnimatingTrace(delay: 0)
         
-        let resistance = capturedConstraintValues!.resistance
-        let reactance = capturedConstraintValues!.reactance
-        let conductance = capturedConstraintValues!.conductance
-        let susceptance = capturedConstraintValues!.susceptance
-        let length = capturedConstraintValues!.length
-        let phase = capturedConstraintValues!.phase
+        let resistance = capturedConstraintValues?.resistance ?? 0
+        let reactance = capturedConstraintValues?.reactance ?? 0
+        let conductance = capturedConstraintValues?.conductance ?? 0
+        let susceptance = capturedConstraintValues?.susceptance ?? 0
+        let length = capturedConstraintValues?.length ?? 0
+        let phase = capturedConstraintValues?.phase ?? 0
         
         switch constraintKind {
         case .unset:
