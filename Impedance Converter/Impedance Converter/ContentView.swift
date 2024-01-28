@@ -137,33 +137,45 @@ struct ModePickerView: View {
         HStack {
             HStack {
                 Spacer(minLength: 15)
-                HStack(spacing: 2) {
-                    Text("Z")
-                    ToggleButtonView(isOn: Binding(
-                        get: { viewModel.displayMode == .impedance },
-                        set: { if $0 { viewModel.displayMode = .impedance }}
-                    ))
+                VStack(spacing: -2) {
+                    HStack(spacing: -15) {
+                        Text("Z")
+                        ToggleButtonView(isOn: Binding(
+                            get: { viewModel.displayMode == .impedance },
+                            set: { if $0 { viewModel.displayMode = .impedance }}
+                        ))
+                    }
+                    .frame(maxHeight: 50)
+                    Text("Impedance")
                 }
                 Spacer()
-                HStack(spacing: 2) {
-                    Text("Y")
-                    ToggleButtonView(isOn: Binding(
-                        get: { viewModel.displayMode == .admittance },
-                        set: { if $0 { viewModel.displayMode = .admittance }}
-                    ))
+                VStack(spacing: -2) {
+                    HStack(spacing: -15) {
+                        Text("Y")
+                        ToggleButtonView(isOn: Binding(
+                            get: { viewModel.displayMode == .admittance },
+                            set: { if $0 { viewModel.displayMode = .admittance }}
+                        ))
+                    }
+                    .frame(maxHeight: 50)
+                    Text("Admittance")
                 }
                 Spacer()
-                HStack(spacing: 2) {
-                    Text("Γ")
-                    ToggleButtonView(isOn: Binding(
-                        get: { viewModel.displayMode == .reflectionCoefficient },
-                        set: { if $0 { viewModel.displayMode = .reflectionCoefficient }}
-                    ))
+                VStack(spacing: -2) {
+                    HStack(spacing: -15) {
+                        Text("Γ")
+                        ToggleButtonView(isOn: Binding(
+                            get: { viewModel.displayMode == .reflectionCoefficient },
+                            set: { if $0 { viewModel.displayMode = .reflectionCoefficient }}
+                        ))
+                    }
+                    .frame(maxHeight: 50)
+                    Text("Refl. Coeff.")
                 }
                 Spacer()
             }
-            .padding(.vertical, -2)
-            .frame(maxWidth: 250, maxHeight: 50)
+            .padding(.vertical, -10)
+            .frame(maxWidth: 300, maxHeight: 70)
             SettingsButtonView()
         }
     }
