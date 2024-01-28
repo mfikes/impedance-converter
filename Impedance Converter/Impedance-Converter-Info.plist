@@ -4,11 +4,11 @@
 <dict>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.3</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Segment7Standard.otf</string>
 	</array>
-        <key>LSMinimumSystemVersion</key>
-        <string>13.3</string>
 </dict>
 </plist>
