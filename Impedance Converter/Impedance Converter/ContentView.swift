@@ -26,7 +26,6 @@ struct ContentView: View {
     @SceneStorage("ContentView.viewModel") var storedViewModel: String?
     
     @State private var showUndoConfirmation = false
-    @State private var isLandscape: Bool = UIDevice.current.orientation.isLandscape
     
     init() {
         UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(Color.baseSegmentControlTintColor)
@@ -38,8 +37,8 @@ struct ContentView: View {
         ZStack {
             Color.baseAppBackgroundColor.edgesIgnoringSafeArea(.all)
             
-            if isLandscape {
-                // Landscape layout
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                // iPad layout
                 VStack {
                     ModePickerView(viewModel: viewModel)
                     ScrollView {
@@ -64,7 +63,7 @@ struct ContentView: View {
                     .padding(10)
                 }
             } else {
-                // Portrait layout
+                // iPhone layout
                 VStack {
                     ModePickerView(viewModel: viewModel)
                     ScrollView {
@@ -91,9 +90,6 @@ struct ContentView: View {
         }
         .dynamicTypeSize(.medium)
         .onAppear {
-            NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification, object: nil, queue: .main) { _ in
-                self.isLandscape = UIDevice.current.orientation.isLandscape
-            }
             SmoothAnimation.isAnimationDisabled = true
             if let storedViewModel = storedViewModel,
                let restoredViewModel = ViewModel.decodeFromJSON(storedViewModel) {
