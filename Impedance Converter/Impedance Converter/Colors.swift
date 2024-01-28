@@ -75,4 +75,5 @@ extension Color {
     static let dimGridView = Color(hex:"#FFFFFF").adjusted(brightness:0.4)
     static let smithOuterCircle = Color(hex: "#CCCCCC")
     static let smithBackground = Color(hex: "#3A0C08").adjusted(brightness: 0.6)
+    static let buttonColor = Color(hex: "#73765C")
 }
