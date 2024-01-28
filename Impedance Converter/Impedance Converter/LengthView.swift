@@ -42,24 +42,38 @@ struct ElectricalLengthView: View {
         if (showLength) {
             HStack {
                 Spacer()
-                Text("Direction:")
-                Picker("Direction", selection: $viewModel.angleOrientation) {
-                    Text("↻").tag(AngleOrientation.clockwise)
-                    Text("↺").tag(AngleOrientation.counterclockwise)
+                HStack {
+                    Spacer(minLength: 15)
+                    HStack(spacing: 2) {
+                        Text("↻")
+                        ToggleButtonView(isOn: Binding(
+                            get: { viewModel.angleOrientation == .clockwise },
+                            set: { if $0 { viewModel.angleOrientation = .clockwise }}
+                        ))
+                    }
+                    Spacer()
+                    HStack(spacing: 2) {
+                        Text("↺")
+                        ToggleButtonView(isOn: Binding(
+                            get: { viewModel.angleOrientation == .counterclockwise },
+                            set: { if $0 { viewModel.angleOrientation = .counterclockwise }}
+                        ))
+                    }
+                    Spacer()
                 }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding([.horizontal], 10)
-                .frame(maxWidth: 180)
+                .padding(.vertical, -2)
+                .frame(maxWidth: 180, maxHeight: 50)
                 Spacer()
-                Button("Zero") {
-                    viewModel.zeroLength()
+                HStack {
+                    Text("Zero")
+                    ButtonView() {
+                        if !viewModel.reflectionCoefficient.phase.isNaN {
+                            viewModel.zeroLength()
+                        }
+                    }
                 }
-                .padding()
-                .frame(maxHeight: 30)
-                .background(Color.baseSegmentControlTintColor)
-                .foregroundColor(Color.black)
-                .cornerRadius(10)
-                .disabled(viewModel.reflectionCoefficient.phase.isNaN)
+                .padding(.vertical, -2)
+                .frame(maxWidth: 100, maxHeight: 50)
                 Spacer()
             }
             DisplayView {

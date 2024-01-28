@@ -31,6 +31,7 @@
 		EDBBC7652B4A24B4004B844C /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = EDBBC7642B4A24B3004B844C /* Settings.bundle */; };
 		EDC389FA2B6144BF00E61C79 /* CursorsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDC389F92B6144BF00E61C79 /* CursorsView.swift */; };
 		EDD36F182B443CB00032B9BC /* LengthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD36F172B443CB00032B9BC /* LengthView.swift */; };
+		EDD95F8E2B65B80C00482CD8 /* ButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD95F8D2B65B80C00482CD8 /* ButtonView.swift */; };
 		EDDCB6292B4E29DC008A0E28 /* ComplexModule in Frameworks */ = {isa = PBXBuildFile; productRef = EDDCB6282B4E29DC008A0E28 /* ComplexModule */; };
 		EDDCB62B2B4E29DC008A0E28 /* Numerics in Frameworks */ = {isa = PBXBuildFile; productRef = EDDCB62A2B4E29DC008A0E28 /* Numerics */; };
 		EDDCB62D2B4E29DC008A0E28 /* RealModule in Frameworks */ = {isa = PBXBuildFile; productRef = EDDCB62C2B4E29DC008A0E28 /* RealModule */; };
@@ -76,6 +77,7 @@
 		EDBBC7642B4A24B3004B844C /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		EDC389F92B6144BF00E61C79 /* CursorsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CursorsView.swift; sourceTree = "<group>"; };
 		EDD36F172B443CB00032B9BC /* LengthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LengthView.swift; sourceTree = "<group>"; };
+		EDD95F8D2B65B80C00482CD8 /* ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +146,7 @@
 				ED737AB12B3F570900926575 /* Units.swift */,
 				ED16E7702B44C8FC00F1A9BC /* SmoothAnimation.swift */,
 				EDBBC7602B48ACC1004B844C /* ShakeDetectorView.swift */,
+				EDD95F8D2B65B80C00482CD8 /* ButtonView.swift */,
 				ED24868C2B3727B0008820C5 /* Assets.xcassets */,
 				EDBBC7642B4A24B3004B844C /* Settings.bundle */,
 				ED24868E2B3727B0008820C5 /* Preview Content */,
@@ -300,6 +303,7 @@
 				EDBBC7612B48ACC1004B844C /* ShakeDetectorView.swift in Sources */,
 				ED24868B2B3727AE008820C5 /* ContentView.swift in Sources */,
 				EDD36F182B443CB00032B9BC /* LengthView.swift in Sources */,
+				EDD95F8E2B65B80C00482CD8 /* ButtonView.swift in Sources */,
 				ED737AAC2B3F4C6100926575 /* Colors.swift in Sources */,
 				ED737AB22B3F570900926575 /* Units.swift in Sources */,
 				ED737AB02B3F568200926575 /* SmithChartView.swift in Sources */,

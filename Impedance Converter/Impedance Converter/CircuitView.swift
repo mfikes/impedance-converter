@@ -2,18 +2,28 @@ import SwiftUI
 
 struct CircuitPickerView: View {
     @ObservedObject var viewModel: ViewModel
+
     var body: some View {
         HStack {
-            Spacer()
-            Picker("Mode", selection: $viewModel.circuitMode) {
-                Image("Series").tag(CircuitMode.series)
-                Image("Parallel").tag(CircuitMode.parallel)
+            Spacer(minLength: 15)
+            HStack(spacing: -10) {
+                Image("Series")
+                ToggleButtonView(isOn: Binding(
+                    get: { viewModel.circuitMode == .series },
+                    set: { if $0 { viewModel.circuitMode = .series }}
+                ))
             }
-            .pickerStyle(SegmentedPickerStyle())
-            .frame(maxWidth: 200)
             Spacer()
+            HStack(spacing: -15) {
+                Image("Parallel")
+                ToggleButtonView(isOn: Binding(
+                    get: { viewModel.circuitMode == .parallel },
+                    set: { if $0 { viewModel.circuitMode = .parallel }}
+                ))
+            }
         }
-        .padding(10)
+        .padding(.vertical, -2)
+        .frame(maxWidth: 250, maxHeight: 50)
     }
 }
 
