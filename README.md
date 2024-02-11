@@ -5,4 +5,4 @@ Available on the App Store:  https://apps.apple.com/us/app/impedance-converter/i
 
 ## Demo
 
-[![Impedance Convert Demo](http://img.youtube.com/vi/GAQHbEcIUbI/0.jpg)]([https://youtu.be/GAQHbEcIUbI](https://youtu.be/GAQHbEcIUbI) "Impedance Converter Smith Chart Calculations")
+[![Impedance Convert Demo](http://img.youtube.com/vi/GAQHbEcIUbI/0.jpg)](http://www.youtube.com/watch?v=GAQHbEcIUbI "Impedance Converter Smith Chart Calculations")
